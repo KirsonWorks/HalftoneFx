@@ -1,8 +1,0 @@
-D:\Development\Git\BrizTm\Common\GUI\bin\Debug\GUI.dll
-D:\Development\Git\BrizTm\Common\GUI\bin\Debug\GUI.pdb
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.Properties.Resources.resources
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.csproj.GenerateResource.cache
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.csproj.CoreCompileInputs.cache
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.dll
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.pdb
-D:\Development\Git\BrizTm\Common\GUI\obj\Debug\GUI.csprojAssemblyReference.cache
