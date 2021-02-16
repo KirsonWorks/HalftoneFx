@@ -7,9 +7,18 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    public class GenerateDoneEventArgs : EventArgs
+    {
+        public Bitmap Image { get; set; }
+    }
+
     public class HalftoneFacade
     {
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
+
+        private CancellationTokenSource cancelationToken = null;
+
+        private Task task = null;
 
         public HalftoneFacade()
         {
@@ -19,10 +28,12 @@
             this.filter.Add(Filter.Contrast, new ImageFilterContrast());
             this.filter.Add(Filter.Quantization, new ImageFilterQuantization());
 
-            this.filter.OnValueChanged += (s, e) => this.OnChanged(s, e);
+            this.filter.OnValueChanged += (s, e) => this.OnPropertyChanged(s, e);
         }
 
-        public event EventHandler OnChanged = delegate { };
+        public event EventHandler OnPropertyChanged = delegate { };
+
+        public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
 
         public bool Grayscale
         {
@@ -33,7 +44,7 @@
         public bool Negative
         {
             get => this.filter[Filter.Negative] == 1;
-            set => this.filter[Filter.Grayscale] = Convert.ToInt32(value);
+            set => this.filter[Filter.Negative] = Convert.ToInt32(value);
         }
 
         public int Brightness
@@ -68,6 +79,46 @@
         public Bitmap Generate(Bitmap source)
         {
             return this.Generate(source, CancellationToken.None);
+        }
+
+        public async void GenerateAsync(Bitmap source, int delay = 10)
+        {
+            if (this.task != null && !this.task.IsCompleted)
+            {
+                this.cancelationToken.Cancel();
+                //this.task.Wait();
+            }
+
+            this.cancelationToken = new CancellationTokenSource();
+            var token = this.cancelationToken.Token;
+
+            try
+            {
+                this.task = Task.Run(
+                    async () =>
+                    {
+                        try
+                        {
+                            await Task.Delay(delay, token);
+
+                            var result = this.Generate(source, token);
+
+                            if (!token.IsCancellationRequested)
+                            {
+                                this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
+                            }
+                        }
+                        catch
+                        {
+                        }
+                    });
+
+                await task;
+            }
+            catch
+            {
+
+            }
         }
     }
 

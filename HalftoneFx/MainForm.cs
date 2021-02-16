@@ -12,8 +12,6 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
-    using System.Threading.Tasks;
-    using System.Threading;
 
     public partial class MainForm : Form
     {
@@ -34,7 +32,8 @@
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += PictureBoxZoomChanged;
 
-            this.halftone.OnChanged += HalftoneOnChanged;
+            this.halftone.OnPropertyChanged += HalftoneOnPropertyChanged;
+            this.halftone.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
@@ -55,9 +54,10 @@
                    .EndPanel();
         }
 
-        private void HalftoneOnChanged(object sender, EventArgs e)
+        private void HalftoneOnPropertyChanged(object sender, EventArgs e)
         {
             this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview);
+            this.halftone.GenerateAsync((Bitmap)this.original, 500);
         }
 
         private void PictureBoxZoomChanged(object sender, EventArgs e)

@@ -24,8 +24,6 @@
                 return new Bitmap(original);
             }
 
-            //options.CancellationToken.ThrowIfCancellationRequested();
-
             unsafe
             {
                 var pixelFormat = original.PixelFormat;
