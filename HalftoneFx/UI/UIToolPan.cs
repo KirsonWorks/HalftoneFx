@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 
 using GUI;
-using GUI.Controls;
 
 namespace HalftoneFx.UI
 {

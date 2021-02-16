@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-
-namespace GUI.Helpers
+﻿namespace GUI.Helpers
 {
+    using System;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+
     public static class GraphicsHelper
     {
         public static readonly Graphics GraphicsDummy = Graphics.FromImage(new Bitmap(1, 1));

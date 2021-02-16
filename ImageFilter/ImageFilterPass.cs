@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.GFX
+﻿namespace ImageFilter
 {
     using System;
     using System.Drawing;
@@ -24,17 +24,23 @@
                 return new Bitmap(original);
             }
 
+            //options.CancellationToken.ThrowIfCancellationRequested();
+
             unsafe
             {
                 var pixelFormat = original.PixelFormat;
                 var channels = Bitmap.GetPixelFormatSize(pixelFormat) / 8;
-
                 var rect = new Rectangle(0, 0, original.Width, original.Height);
                 
                 var destImage = new Bitmap(original.Width, original.Height, pixelFormat);
                 var sourceBits = original.LockBits(rect, ImageLockMode.ReadOnly, pixelFormat);
                 var destBits = destImage.LockBits(rect, ImageLockMode.WriteOnly, pixelFormat);
-                
+
+                if (channels < 3)
+                {
+                    throw new Exception("Pixel format not support");
+                }
+
                 var stride = sourceBits.Stride;
                 var widthInBytes = sourceBits.Width * channels;
                 byte* sourcePointer = (byte*)sourceBits.Scan0;
@@ -62,14 +68,10 @@
                         }
                     });
                 }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
                 finally
                 {
-                    original.UnlockBits(sourceBits);
-                    destImage.UnlockBits(destBits);
+                    original?.UnlockBits(sourceBits);
+                    destImage?.UnlockBits(destBits);
                 }
 
                 return destImage;
@@ -80,7 +82,7 @@
         {
             var options = new ParallelOptions
             {
-                MaxDegreeOfParallelism = System.Environment.ProcessorCount
+                MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
             return GetFiltered(original, filter, options);

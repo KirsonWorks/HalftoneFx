@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace HalftoneFx.GFX
+﻿namespace ImageFilter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class ImageFilterComplex: IImageFilter
     {
         private readonly Dictionary<int, IImageFilter> filters;
@@ -15,7 +15,7 @@ namespace HalftoneFx.GFX
             this.filters = new Dictionary<int, IImageFilter>();
         }
 
-        public void Add(int id, IImageFilter filter)
+        public IImageFilter Add(int id, IImageFilter filter)
         {
             if (filter == null)
             {
@@ -25,7 +25,10 @@ namespace HalftoneFx.GFX
             if (!this.filters.ContainsKey(id))
             {
                 this.filters.Add(id, filter);
+                return filter;
             }
+
+            return this.filters[id];
         }
 
         public void SetValue(int id, int value)

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Drawing;
-
-namespace HalftoneFx.GFX
+﻿namespace ImageFilter
 {
+    using System;
+
     public abstract class ImageFilterBase
     {
         private int value;
