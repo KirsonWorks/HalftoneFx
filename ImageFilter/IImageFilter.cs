@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.GFX
+﻿namespace ImageFilter
 {
     public interface IImageFilter
     {

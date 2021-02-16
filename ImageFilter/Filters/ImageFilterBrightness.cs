@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace HalftoneFx.GFX
+﻿namespace ImageFilter
 {
     public class ImageFilterBrightness : ImageFilterBase, IImageFilter
     {

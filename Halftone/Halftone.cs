@@ -1,18 +1,18 @@
-﻿namespace HalftoneFx.GFX
+﻿namespace Halftone
 {
     using System;
     using System.Drawing;
 
-    public class ImageHalftone
+    public class Halftone
     {
         public Image Generate(Bitmap image)
         {
             var columns = 200;
             var width = image.Width;
             var height = image.Height;
-            
+
             var result = new Bitmap(width, height);
-            
+
             using (var graphics = Graphics.FromImage(result))
             {
                 var cellSize = (int)Math.Ceiling((double)width / columns);

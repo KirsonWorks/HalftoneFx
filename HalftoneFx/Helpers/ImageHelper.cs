@@ -1,10 +1,9 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-
-namespace HalftoneFx.Helpers
+﻿namespace HalftoneFx.Helpers
 {
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
+
     public static class ImageHelper
     {
         public static Bitmap Resize(this Image image, int width, int height, InterpolationMode interpolation)

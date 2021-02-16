@@ -43,23 +43,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GFX\Filters\ImageFilterNegative.cs" />
-    <Compile Include="GFX\IImageFilter.cs" />
-    <Compile Include="GFX\ImageFilterBase.cs" />
-    <Compile Include="GFX\ImageFilterComplex.cs" />
-    <Compile Include="GFX\Filters\ImageFilterContrast.cs" />
-    <Compile Include="GFX\Filters\ImageFilterGrayscale.cs" />
-    <Compile Include="GFX\ImageFilterPass.cs" />
-    <Compile Include="GFX\Filters\ImageFilterBrightness.cs" />
-    <Compile Include="GFX\Filters\ImageFilterQuantization.cs" />
-    <Compile Include="GFX\ImageHalftone.cs" />
+    <Compile Include="HalftoneFacade.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
-    <Compile Include="MainForm.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
@@ -99,6 +91,14 @@
     <ProjectReference Include="..\GUI\GUI.csproj">
       <Project>{827d0c49-d29b-4918-aa9c-53be70c3342b}</Project>
       <Name>GUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Halftone\Halftone.csproj">
+      <Project>{aafc6719-d20d-4d17-9771-9470e90fbe3f}</Project>
+      <Name>Halftone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageFilter\ImageFilter.csproj">
+      <Project>{7ae1f799-de3e-4e3f-829e-73cec8923216}</Project>
+      <Name>ImageFilter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
