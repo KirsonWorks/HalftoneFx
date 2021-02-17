@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace HalftoneFx
+﻿namespace HalftoneFx
 {
+    using System;
+    using System.Windows.Forms;
+
     static class Program
     {
         /// <summary>
         /// Главная точка входа для приложения.
+        /// Main entry point of program.
         /// </summary>
         [STAThread]
         static void Main()

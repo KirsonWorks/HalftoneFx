@@ -17,17 +17,14 @@
 
         public static float Aspect(this SizeF size)
         {
-            if (size.Height > 0)
+            try
             {
                 return size.Width / size.Height;
             }
-            
-            if (size.Width > 0)
+            catch
             {
-                return size.Height / size.Width;
+                return float.NaN;
             }
-
-            return 1.0f;
         }
     }
 }

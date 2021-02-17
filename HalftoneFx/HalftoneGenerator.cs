@@ -19,7 +19,7 @@
         public float Percent { get; set; }
     }
 
-    public class HalftoneFacade
+    public class HalftoneGenerator
     {
         private readonly Halftone halftone = new Halftone();
 
@@ -29,7 +29,7 @@
 
         private Task task = null;
 
-        public HalftoneFacade()
+        public HalftoneGenerator()
         {
             this.filter.Add(Filter.Grayscale, new ImageFilterGrayscale());
             this.filter.Add(Filter.Negative, new ImageFilterNegative());

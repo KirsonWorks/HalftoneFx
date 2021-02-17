@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.UI
+﻿namespace HalftoneFx.Editor
 {
     using System;
     using System.Drawing;

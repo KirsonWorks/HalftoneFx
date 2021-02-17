@@ -1,9 +1,9 @@
-﻿using System.Drawing;
-
-using GUI;
-
-namespace HalftoneFx.UI
+﻿namespace HalftoneFx.Editor
 {
+    using GUI;
+
+    using System.Drawing;
+
     public class UIToolPan
     {
         public bool Active { get; set; }

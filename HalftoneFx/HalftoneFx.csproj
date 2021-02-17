@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HalftoneFacade.cs" />
+    <Compile Include="Editor\Commands\Command.cs" />
+    <Compile Include="Editor\Commands\ICommand.cs" />
+    <Compile Include="HalftoneGenerator.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -57,10 +59,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\UIPictureBox.cs" />
-    <Compile Include="UI\UIToolPan.cs" />
-    <Compile Include="UI\UIToolZoom.cs" />
-    <Compile Include="UI\UIWinForms.cs" />
+    <Compile Include="Editor\UIPictureBox.cs" />
+    <Compile Include="Editor\UIToolPan.cs" />
+    <Compile Include="Editor\UIToolZoom.cs" />
+    <Compile Include="Editor\UIWinForms.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
