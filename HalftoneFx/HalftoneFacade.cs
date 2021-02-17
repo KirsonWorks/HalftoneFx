@@ -12,6 +12,11 @@
         public Bitmap Image { get; set; }
     }
 
+    public class ProgressChangedEventArgs : EventArgs
+    {
+        public float Percent { get; set; }
+    }
+
     public class HalftoneFacade
     {
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
@@ -34,6 +39,8 @@
         public event EventHandler OnPropertyChanged = delegate { };
 
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
+
+        public event EventHandler<ProgressChangedEventArgs> OnProgressChanged = delegate { };
 
         public bool Grayscale
         {
@@ -73,7 +80,11 @@
                 MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
-            return ImageFilterPass.GetFiltered(source, this.filter, options);
+            return ImageFilterPass.GetFiltered(source, this.filter, 
+                (percent) =>
+                {
+                    this.OnProgressChanged.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
+                }, options);
         }
 
         public Bitmap Generate(Bitmap source)
@@ -86,39 +97,35 @@
             if (this.task != null && !this.task.IsCompleted)
             {
                 this.cancelationToken.Cancel();
-                //this.task.Wait();
             }
 
             this.cancelationToken = new CancellationTokenSource();
             var token = this.cancelationToken.Token;
 
-            try
-            {
-                this.task = Task.Run(
-                    async () =>
+            this.task = Task.Run(
+                async () =>
+                {
+                    try
                     {
-                        try
+                        await Task.Delay(delay, token);
+
+                        var result = this.Generate(source, token);
+
+                        if (!token.IsCancellationRequested)
                         {
-                            await Task.Delay(delay, token);
-
-                            var result = this.Generate(source, token);
-
-                            if (!token.IsCancellationRequested)
-                            {
-                                this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
-                            }
+                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
                         }
-                        catch
-                        {
-                        }
-                    });
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                });
 
-                await task;
-            }
-            catch
-            {
-
-            }
+            await task;
         }
     }
 

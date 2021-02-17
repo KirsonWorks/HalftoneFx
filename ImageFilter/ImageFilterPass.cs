@@ -3,11 +3,12 @@
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class ImageFilterPass
     {
-        public static Bitmap GetFiltered(Bitmap original, IImageFilter filter, ParallelOptions options)
+        public static Bitmap GetFiltered(Bitmap original, IImageFilter filter, Action<float> progressChanged, ParallelOptions options)
         {
             if (original == null)
             {
@@ -27,7 +28,7 @@
             unsafe
             {
                 var pixelFormat = original.PixelFormat;
-                var channels = Bitmap.GetPixelFormatSize(pixelFormat) / 8;
+                var channels = Image.GetPixelFormatSize(pixelFormat) / 8;
                 var rect = new Rectangle(0, 0, original.Width, original.Height);
                 
                 var destImage = new Bitmap(original.Width, original.Height, pixelFormat);
@@ -46,6 +47,8 @@
 
                 try
                 {
+                    int rowsCompleted = 0;
+
                     Parallel.For(0, sourceBits.Height, options, (y) =>
                     {
                         byte* sourceLine = sourcePointer + y * stride;
@@ -63,6 +66,14 @@
                             }
 
                             filter.RGB(ref destLine[x], ref destLine[x + 1], ref destLine[x + 2]);
+                        }
+
+                        var part = sourceBits.Height / 10;
+                        var count = Interlocked.Increment(ref rowsCompleted);
+
+                        if (count % part == 0)
+                        {
+                            progressChanged?.Invoke((float)count / sourceBits.Height);
                         }
                     });
                 }
@@ -83,7 +94,7 @@
                 MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
-            return GetFiltered(original, filter, options);
+            return GetFiltered(original, filter, null, options);
         }
     }
 }

@@ -2,10 +2,8 @@
 {
     using GUI;
     using GUI.Controls;
-    using GUI.Helpers;
 
     using Halftone;
-
     using HalftoneFx.UI;
     using HalftoneFx.Helpers;
 
@@ -25,6 +23,8 @@
 
         private readonly UILabel labelZoom;
 
+        private readonly UIProgressBar progress;
+
         private Image original, preview;
 
         public MainForm()
@@ -38,6 +38,7 @@
 
             this.halftone.OnPropertyChanged += HalftoneOnPropertyChanged;
             this.halftone.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
+            this.halftone.OnProgressChanged += (s, e) => { this.progress.Value = e.Percent; this.Invalidate(); };
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
@@ -54,7 +55,8 @@
                    .Label("QUANTIZATION").Stretch(90)
                    .Slider(1, 1, 255, 1).Changing(this.QuantizationChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
-                   .Label("ZOOM: 100%").Ref(ref labelZoom).Click((s, e) => this.pictureBox.ResetZoom())
+                   .Label("ZOOM: 100%").Ref(ref labelZoom).Click((s, e) => this.pictureBox.ResetZoom()).Stretch(90)
+                   .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
         }
 

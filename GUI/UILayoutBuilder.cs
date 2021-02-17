@@ -201,6 +201,14 @@
             this.Control = image;
             return this;
         }
+
+        public UILayoutBuilder Progress(float min, float max, float step)
+        {
+            var progress = this.Container.NewProgressBar(string.Empty);
+            progress.Setup(min, max, step, 0.0f);
+            this.Control = progress;
+            return this;
+        }
     }
 
     public class UILayoutStyle
