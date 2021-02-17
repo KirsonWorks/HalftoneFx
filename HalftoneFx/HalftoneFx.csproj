@@ -47,8 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Editor\Commands\Command.cs" />
-    <Compile Include="Editor\Commands\ICommand.cs" />
     <Compile Include="HalftoneGenerator.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="MainForm.cs">
