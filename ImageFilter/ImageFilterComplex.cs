@@ -15,7 +15,7 @@
             this.filters = new Dictionary<int, IImageFilter>();
         }
 
-        public IImageFilter Add(int id, IImageFilter filter)
+        public void Add(int id, IImageFilter filter)
         {
             if (filter == null)
             {
@@ -25,10 +25,7 @@
             if (!this.filters.ContainsKey(id))
             {
                 this.filters.Add(id, filter);
-                return filter;
             }
-
-            return this.filters[id];
         }
 
         public void SetValue(int id, int value)
