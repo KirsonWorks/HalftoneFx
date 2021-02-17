@@ -22,6 +22,7 @@
 
             if (!filter.HasEffect())
             {
+                progressChanged?.Invoke(1.0f);
                 return new Bitmap(original);
             }
 

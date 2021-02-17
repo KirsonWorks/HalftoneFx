@@ -1,5 +1,7 @@
-﻿namespace Halftone
+﻿namespace HalftoneFx
 {
+    using Halftone;
+
     using ImageFilter;
 
     using System;
@@ -19,6 +21,8 @@
 
     public class HalftoneFacade
     {
+        private readonly Halftone halftone = new Halftone();
+
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
 
         private CancellationTokenSource cancelationToken = null;
@@ -34,6 +38,7 @@
             this.filter.Add(Filter.Quantization, new ImageFilterQuantization());
 
             this.filter.OnValueChanged += (s, e) => this.OnPropertyChanged(s, e);
+            this.halftone.OnPropertyChanged += (s, e) => this.OnPropertyChanged(s, e);
         }
 
         public event EventHandler OnPropertyChanged = delegate { };
@@ -72,7 +77,13 @@
             set => this.filter[Filter.Quantization] = value;
         }
 
-        public Bitmap Generate(Bitmap source, CancellationToken token)
+        public int HalftoneSize
+        {
+            get => this.halftone.Size;
+            set => this.halftone.Size = value;
+        }
+
+        public Bitmap Generate(Bitmap source, bool ignoreHalftone, CancellationToken token)
         {
             var options = new ParallelOptions
             {
@@ -80,16 +91,18 @@
                 MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
-            return ImageFilterPass.GetFiltered(source, this.filter, 
+            var img = ImageFilterPass.GetFiltered(source, this.filter, 
                 (percent) =>
                 {
                     this.OnProgressChanged.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
                 }, options);
+
+            return ignoreHalftone ? img : this.halftone.Generate(img);
         }
 
-        public Bitmap Generate(Bitmap source)
+        public Bitmap Generate(Bitmap source, bool ignoreHalftone)
         {
-            return this.Generate(source, CancellationToken.None);
+            return this.Generate(source, ignoreHalftone, CancellationToken.None);
         }
 
         public async void GenerateAsync(Bitmap source, int delay = 10)
@@ -109,7 +122,7 @@
                     {
                         await Task.Delay(delay, token);
 
-                        var result = this.Generate(source, token);
+                        var result = this.Generate(source, false, token);
 
                         if (!token.IsCancellationRequested)
                         {

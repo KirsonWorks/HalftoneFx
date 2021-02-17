@@ -3,7 +3,6 @@
     using GUI;
     using GUI.Controls;
 
-    using Halftone;
     using HalftoneFx.UI;
     using HalftoneFx.Helpers;
 
@@ -58,6 +57,13 @@
                    .Label("ZOOM: 100%").Ref(ref labelZoom).Click((s, e) => this.pictureBox.ResetZoom()).Stretch(90)
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
+
+            builder.BeginPanel(45, 360)
+                   .Label("HALFTONE").TextColor(Color.Gold)
+                   .Label("SIZE").Stretch(90)
+                   .SliderInt(0, 25, 300, 1).Changing(this.HalftoneSizeChanging)
+                   .EndPanel();
+
         }
 
         private void LoadPicture(Image picture)
@@ -93,9 +99,10 @@
         {
             
         }
+
         private void HalftoneOnPropertyChanged(object sender, EventArgs e)
         {
-            this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview);
+            this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview, true);
             this.halftone.GenerateAsync((Bitmap)this.original, 500);
         }
 
@@ -132,6 +139,12 @@
         {
             var checkbox = sender as UICheckBox;
             this.halftone.Grayscale = checkbox.Checked;
+        }
+
+        private void HalftoneSizeChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.halftone.HalftoneSize = (int)slider.Value;
         }
     }
 }
