@@ -1,5 +1,7 @@
-﻿namespace Halftone
+﻿namespace HalftoneFx
 {
+    using Halftone;
+
     using ImageFilter;
 
     using System;
@@ -12,8 +14,15 @@
         public Bitmap Image { get; set; }
     }
 
+    public class ProgressChangedEventArgs : EventArgs
+    {
+        public float Percent { get; set; }
+    }
+
     public class HalftoneFacade
     {
+        private readonly Halftone halftone = new Halftone();
+
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
 
         private CancellationTokenSource cancelationToken = null;
@@ -29,11 +38,14 @@
             this.filter.Add(Filter.Quantization, new ImageFilterQuantization());
 
             this.filter.OnValueChanged += (s, e) => this.OnPropertyChanged(s, e);
+            this.halftone.OnPropertyChanged += (s, e) => this.OnPropertyChanged(s, e);
         }
 
         public event EventHandler OnPropertyChanged = delegate { };
 
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
+
+        public event EventHandler<ProgressChangedEventArgs> OnProgressChanged = delegate { };
 
         public bool Grayscale
         {
@@ -65,7 +77,13 @@
             set => this.filter[Filter.Quantization] = value;
         }
 
-        public Bitmap Generate(Bitmap source, CancellationToken token)
+        public int HalftoneSize
+        {
+            get => this.halftone.Size;
+            set => this.halftone.Size = value;
+        }
+
+        public Bitmap Generate(Bitmap source, bool ignoreHalftone, CancellationToken token)
         {
             var options = new ParallelOptions
             {
@@ -73,12 +91,18 @@
                 MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
-            return ImageFilterPass.GetFiltered(source, this.filter, options);
+            var img = ImageFilterPass.GetFiltered(source, this.filter, 
+                (percent) =>
+                {
+                    this.OnProgressChanged.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
+                }, options);
+
+            return ignoreHalftone ? img : this.halftone.Generate(img);
         }
 
-        public Bitmap Generate(Bitmap source)
+        public Bitmap Generate(Bitmap source, bool ignoreHalftone)
         {
-            return this.Generate(source, CancellationToken.None);
+            return this.Generate(source, ignoreHalftone, CancellationToken.None);
         }
 
         public async void GenerateAsync(Bitmap source, int delay = 10)
@@ -86,39 +110,35 @@
             if (this.task != null && !this.task.IsCompleted)
             {
                 this.cancelationToken.Cancel();
-                //this.task.Wait();
             }
 
             this.cancelationToken = new CancellationTokenSource();
             var token = this.cancelationToken.Token;
 
-            try
-            {
-                this.task = Task.Run(
-                    async () =>
+            this.task = Task.Run(
+                async () =>
+                {
+                    try
                     {
-                        try
+                        await Task.Delay(delay, token);
+
+                        var result = this.Generate(source, false, token);
+
+                        if (!token.IsCancellationRequested)
                         {
-                            await Task.Delay(delay, token);
-
-                            var result = this.Generate(source, token);
-
-                            if (!token.IsCancellationRequested)
-                            {
-                                this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
-                            }
+                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
                         }
-                        catch
-                        {
-                        }
-                    });
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                });
 
-                await task;
-            }
-            catch
-            {
-
-            }
+            await task;
         }
     }
 

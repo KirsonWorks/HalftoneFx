@@ -3,7 +3,7 @@ using System.Drawing;
 
 using GUI;
 using GUI.Common;
-using GUI.Controls;
+using GUI.Helpers;
 
 namespace HalftoneFx.UI
 {
@@ -56,6 +56,18 @@ namespace HalftoneFx.UI
             this.Scale = scale;
             this.Step = this.Scale / StepDivider;
             this.Zoom();
+        }
+
+        public void Zoom(SizeF size)
+        {
+            var a = size.Aspect();
+            var b = this.OriginalSize.Aspect();
+            
+            var sizeA = a > b ? size.Height : size.Width;
+            var sizeB = a > b ? this.OriginalSize.Height : this.OriginalSize.Width;
+            var scale = sizeA / Math.Max(1.0f, sizeB);
+
+            this.Zoom(scale);
         }
 
         public void Zoom(int delta)

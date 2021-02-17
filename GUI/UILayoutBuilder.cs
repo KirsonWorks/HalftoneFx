@@ -54,6 +54,13 @@
             return this;
         }
 
+        public UILayoutBuilder Ref<T>(ref T control) 
+            where T: UIControl
+        {
+            control = this.control as T;
+            return this;
+        }
+
         public UILayoutBuilder Indent(int count = 1)
         {
             this.positioner.Indent(count);
@@ -192,6 +199,14 @@
             this.positioner.Stretch(width);
             this.positioner.Tall(height);
             this.Control = image;
+            return this;
+        }
+
+        public UILayoutBuilder Progress(float min, float max, float step)
+        {
+            var progress = this.Container.NewProgressBar(string.Empty);
+            progress.Setup(min, max, step, 0.0f);
+            this.Control = progress;
             return this;
         }
     }

@@ -5,9 +5,32 @@
 
     public class Halftone
     {
-        public Image Generate(Bitmap image)
+        private int size;
+
+        public event EventHandler OnPropertyChanged = delegate { };
+
+        public int Size 
         {
-            var columns = 200;
+            get => this.size;
+
+            set
+            {
+                if (this.size != value)
+                {
+                    this.size = value;
+                    this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public Bitmap Generate(Bitmap image)
+        {
+            if (this.Size <= 0)
+            {
+                return new Bitmap(image);
+            }
+
+            var columns = this.Size;
             var width = image.Width;
             var height = image.Height;
 
@@ -27,9 +50,19 @@
                     var yPixel = Math.Min(y + cellSize / 2, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
 
+                    var brightness = color.GetBrightness();
+
+                    if (brightness == 0)
+                    {
+                        continue;
+                    }
+
+                    var dotSize = brightness * cellSize;
+                    var offset = (cellSize / 2.0f) - (dotSize / 2.0f);
+
                     using (var brush = new SolidBrush(color))
                     {
-                        graphics.FillRectangle(brush, new Rectangle(x, y, cellSize, cellSize));
+                        graphics.FillEllipse(brush, new RectangleF(x + offset, y + offset, dotSize, dotSize));
                     }
                 }
             }

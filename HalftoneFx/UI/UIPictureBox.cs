@@ -65,9 +65,23 @@
             this.OnZoomChanged(this, EventArgs.Empty);
         }
 
+        public void Zoom(SizeF size)
+        {
+            this.toolZoom.Zoom(size);
+            this.toolPan.Reset(this.ScreenPositionCenter);
+            this.OnZoomChanged(this, EventArgs.Empty);
+        }
+
         public void ResetZoom()
         {
-            this.Zoom(this.Scale == 1.0f ? 0.5f : 1.0f);
+            if (this.Scale == 1.0f)
+            {
+                this.Zoom(this.Size - new Size(25, 25));
+            }
+            else
+            {
+                this.Zoom(1.0f);
+            }
         }
 
         public void FullView()
