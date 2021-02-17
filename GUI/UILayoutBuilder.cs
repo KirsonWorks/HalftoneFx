@@ -54,6 +54,13 @@
             return this;
         }
 
+        public UILayoutBuilder Ref<T>(ref T control) 
+            where T: UIControl
+        {
+            control = this.control as T;
+            return this;
+        }
+
         public UILayoutBuilder Indent(int count = 1)
         {
             this.positioner.Indent(count);

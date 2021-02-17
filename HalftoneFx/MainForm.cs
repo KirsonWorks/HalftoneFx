@@ -15,11 +15,15 @@
 
     public partial class MainForm : Form
     {
+        private readonly HalftoneFacade halftone = new HalftoneFacade();
+
         private readonly UIWinForms ui = new UIWinForms();
 
         private readonly UIPictureBox pictureBox = new UIPictureBox();
 
-        private readonly HalftoneFacade halftone = new HalftoneFacade();
+        private readonly UILabel labelSize;
+
+        private readonly UILabel labelZoom;
 
         private Image original, preview;
 
@@ -49,20 +53,9 @@
                    .SliderInt(0, -50, 100, 1).Changing(this.ContrastChanging)
                    .Label("QUANTIZATION").Stretch(90)
                    .Slider(1, 1, 255, 1).Changing(this.QuantizationChanging)
-                   .Label("SIZE: 0x0").Name("label-size")
-                   .Label("ZOOM: 100%").Name("label-zoom").Click((s, e) => this.pictureBox.ResetZoom())
+                   .Label("SIZE: 0x0").Ref(ref labelSize)
+                   .Label("ZOOM: 100%").Ref(ref labelZoom).Click((s, e) => this.pictureBox.ResetZoom())
                    .EndPanel();
-        }
-
-        private void HalftoneOnPropertyChanged(object sender, EventArgs e)
-        {
-            this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview);
-            this.halftone.GenerateAsync((Bitmap)this.original, 500);
-        }
-
-        private void PictureBoxZoomChanged(object sender, EventArgs e)
-        {
-            this.ui.Find<UILabel>("label-zoom").Caption = $"ZOOM: {this.pictureBox.Scale:P0}";
         }
 
         private void LoadPicture(Image picture)
@@ -73,9 +66,9 @@
 
             this.pictureBox.Image = new Bitmap(picture);
             this.pictureBox.FullView();
-            this.ui.Reset(true);
 
-            this.ui.Find<UILabel>("label-size").Caption = $"SIZE: {this.pictureBox.ImageSize.ToStringWxH()}";
+            this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
+            this.ui.Reset(true);
         }
 
         private void LoadPictureFromFile(object sender, EventArgs e)
@@ -97,6 +90,16 @@
         private void SavePicture(object sender, EventArgs e)
         {
             
+        }
+        private void HalftoneOnPropertyChanged(object sender, EventArgs e)
+        {
+            this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview);
+            this.halftone.GenerateAsync((Bitmap)this.original, 500);
+        }
+
+        private void PictureBoxZoomChanged(object sender, EventArgs e)
+        {
+            this.labelZoom.Caption = $"ZOOM: {this.pictureBox.Scale:P0}";
         }
 
         private void BrightnessChanging(object sender, EventArgs e)
