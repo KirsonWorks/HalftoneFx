@@ -61,7 +61,7 @@
             builder.BeginPanel(45, 360)
                    .Label("HALFTONE").TextColor(Color.Gold)
                    .Label("SIZE").Stretch(90)
-                   .SliderInt(0, 25, 300, 1).Changing(this.HalftoneSizeChanging)
+                   .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
                    .EndPanel();
 
         }

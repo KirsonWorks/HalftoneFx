@@ -14,5 +14,20 @@
         {
             return $"{size.Width}x{size.Height}";
         }
+
+        public static float Aspect(this SizeF size)
+        {
+            if (size.Height > 0)
+            {
+                return size.Width / size.Height;
+            }
+            
+            if (size.Width > 0)
+            {
+                return size.Height / size.Width;
+            }
+
+            return 1.0f;
+        }
     }
 }

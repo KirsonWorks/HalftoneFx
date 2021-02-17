@@ -39,7 +39,7 @@
             this.DoubleBuffered = true;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Halftone Fx";
+            this.Text = "HalftoneFx";
             this.ResumeLayout(false);
 
         }
