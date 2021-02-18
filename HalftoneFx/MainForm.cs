@@ -39,9 +39,7 @@
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += PictureBoxZoomChanged;
 
-            this.statusBar.Name = "status-bar";
-            this.statusBar.Parent = this.ui;
-            this.statusBar.RenderOrder = 1000;
+            this.statusBar = this.ui.NewStatusBar("status-bar");
 
             this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
             this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
@@ -53,7 +51,7 @@
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
-            // LIke a bullshit.
+            // Like a bullshit.
             builder.BeginPanel(45, 45)
                    .Label("PICTURE").TextColor(Color.Gold)
                    .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
@@ -126,7 +124,6 @@
                     if (sender is UIControl control)
                     {
                         this.statusBar.Caption = control.HintText;
-                        Console.WriteLine(control.HintText);
                     }
 
                     break;
