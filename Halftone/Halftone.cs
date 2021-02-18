@@ -57,7 +57,8 @@
                         continue;
                     }
 
-                    var dotSize = brightness * cellSize;
+
+                    var dotSize = brightness * (cellSize - 1.0f);
                     var offset = (cellSize / 2.0f) - (dotSize / 2.0f);
 
                     using (var brush = new SolidBrush(color))

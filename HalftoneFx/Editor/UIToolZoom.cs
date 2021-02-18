@@ -1,12 +1,12 @@
-﻿using System;
-using System.Drawing;
-
-using GUI;
-using GUI.Common;
-using GUI.Helpers;
-
-namespace HalftoneFx.UI
+﻿namespace HalftoneFx.Editor
 {
+    using GUI;
+    using GUI.Common;
+    using GUI.Helpers;
+
+    using System;
+    using System.Drawing;
+
     public class UIToolZoom
     {
         private const float DefaultScale = 1.0f;

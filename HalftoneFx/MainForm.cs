@@ -3,7 +3,7 @@
     using GUI;
     using GUI.Controls;
 
-    using HalftoneFx.UI;
+    using HalftoneFx.Editor;
     using HalftoneFx.Helpers;
 
     using System;
@@ -12,11 +12,11 @@
 
     public partial class MainForm : Form
     {
-        private readonly HalftoneFacade halftone = new HalftoneFacade();
-
         private readonly UIWinForms ui = new UIWinForms();
 
         private readonly UIPictureBox pictureBox = new UIPictureBox();
+
+        private readonly HalftoneGenerator generator = new HalftoneGenerator();
 
         private readonly UILabel labelSize;
 
@@ -35,9 +35,13 @@
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += PictureBoxZoomChanged;
 
-            this.halftone.OnPropertyChanged += HalftoneOnPropertyChanged;
-            this.halftone.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
-            this.halftone.OnProgressChanged += (s, e) => { this.progress.Value = e.Percent; this.Invalidate(); };
+            this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
+            this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
+            this.generator.OnProgressChanged += (s, e) =>
+            { 
+                this.progress.Value = e.Percent; 
+                this.Invalidate(); 
+            };
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
@@ -63,7 +67,6 @@
                    .Label("SIZE").Stretch(90)
                    .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
                    .EndPanel();
-
         }
 
         private void LoadPicture(Image picture)
@@ -100,10 +103,10 @@
             
         }
 
-        private void HalftoneOnPropertyChanged(object sender, EventArgs e)
+        private void OnGeneratorPropertyChanged(object sender, EventArgs e)
         {
-            this.pictureBox.Image = this.halftone.Generate((Bitmap)this.preview, true);
-            this.halftone.GenerateAsync((Bitmap)this.original, 500);
+            this.pictureBox.Image = this.generator.Generate((Bitmap)this.preview, true);
+            this.generator.GenerateAsync((Bitmap)this.original, 500);
         }
 
         private void PictureBoxZoomChanged(object sender, EventArgs e)
@@ -114,37 +117,37 @@
         private void BrightnessChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.halftone.Brightness = (int)slider.Value;
+            this.generator.Brightness = (int)slider.Value;
         }
 
         private void ContrastChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.halftone.Contrast = (int)slider.Value;
+            this.generator.Contrast = (int)slider.Value;
         }
 
         private void QuantizationChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.halftone.Quantization = (int)slider.Value;
+            this.generator.Quantization = (int)slider.Value;
         }
 
         private void NegativeChanged(object sender, EventArgs e)
         {
             var checkbox = sender as UICheckBox;
-            this.halftone.Negative = checkbox.Checked;
+            this.generator.Negative = checkbox.Checked;
         }
 
         private void GrayscaleChanged(object sender, EventArgs e)
         {
             var checkbox = sender as UICheckBox;
-            this.halftone.Grayscale = checkbox.Checked;
+            this.generator.Grayscale = checkbox.Checked;
         }
 
         private void HalftoneSizeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.halftone.HalftoneSize = (int)slider.Value;
+            this.generator.HalftoneSize = (int)slider.Value;
         }
     }
 }
