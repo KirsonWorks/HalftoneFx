@@ -88,6 +88,7 @@
         private void ResizeHandler(object sender, EventArgs e)
         {
             this.Size = this.container.ClientSize;
+            this.container.Invalidate();
         }
 
         private void PaintHandler(object sender, PaintEventArgs e)
@@ -119,6 +120,7 @@
                 Button = UIMouseEventArgs.ParseButtonType(e.Button.ToString())
             };
 
+            this.CursorPosition = e.Location;
             HandleMouseMove(this, args);
         }
 

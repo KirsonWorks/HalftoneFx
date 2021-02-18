@@ -61,6 +61,12 @@
             return this;
         }
 
+        public UILayoutBuilder Hint(string text)
+        {
+            this.control.HintText = text;
+            return this;
+        }
+
         public UILayoutBuilder Indent(int count = 1)
         {
             this.positioner.Indent(count);
@@ -330,7 +336,7 @@
                     width = control.Width;
                     height = control.Height;
                 }
-
+                
                 this.nextX += this.indentCount * this.style.Indent;
                 var x = this.nextX + (width * this.align.X) - (control.Width * this.align.X);
                 var y = this.nextY + (height * this.align.Y) - (control.Height * this.align.Y);

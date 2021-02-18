@@ -11,6 +11,16 @@
 
         protected override void DoParentResize(SizeF deltaSize)
         {
+            this.UpdateSize();
+        }
+
+        protected override void DoParentChanged()
+        {
+            this.UpdateSize();
+        }
+
+        private void UpdateSize()
+        {
             if (this.Parent is UIManager parent)
             {
                 this.Size = parent.Size;

@@ -1,9 +1,11 @@
 ﻿namespace GUI
 {
+    using GUI.Helpers;
+    using System;
     using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Drawing2D;
-    
+
     public class UIManager : UIControl
     {
         private readonly Stopwatch fpsInterval;
@@ -19,9 +21,13 @@
             this.fpsInterval = Stopwatch.StartNew();
         }
 
+        public event EventHandler<UINotificationEventArgs> OnNotification = delegate { };
+
         public long FPS { get; private set; }
 
         public bool AntiAliasing { get; set; } = true;
+
+        public Point CursorPosition { get; protected set; }
 
         protected override void DoRender(Graphics graphics)
         {
@@ -41,6 +47,19 @@
             }
 
             this.fpsCounter++;
+#if DEBUG
+            graphics.DrawText(new RectangleF(10, 10, 30, 25), this.Style.Fonts.Default, this.Style.Colors.Text, this.FPS.ToString());
+#endif
         }
+
+        protected override void Notification(UINode sender, UINotification notification)
+        {
+            this.OnNotification?.Invoke(sender, new UINotificationEventArgs { What = notification });
+        }
+    }
+
+    public class UINotificationEventArgs : EventArgs
+    {
+        public UINotification What { get; set; }
     }
 }

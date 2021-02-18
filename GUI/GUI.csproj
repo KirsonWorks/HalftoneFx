@@ -47,7 +47,6 @@
     <Compile Include="Base Controls\UIOptionButtonControl.cs" />
     <Compile Include="Controls\UIButton.cs" />
     <Compile Include="Controls\UICheckBox.cs" />
-    <Compile Include="Controls\UIHintBox.cs" />
     <Compile Include="Controls\UILayer.cs" />
     <Compile Include="Controls\UIPanel.cs" />
     <Compile Include="Controls\UIImage.cs" />
@@ -57,6 +56,7 @@
     <Compile Include="Controls\UIRadioButton.cs" />
     <Compile Include="Base Controls\UIRangeControl.cs" />
     <Compile Include="Controls\UISlider.cs" />
+    <Compile Include="Controls\UIStatusBar.cs" />
     <Compile Include="Controls\UIWindow.cs" />
     <Compile Include="Helpers\GraphicsHelper.cs" />
     <Compile Include="Helpers\RectFHelper.cs" />
