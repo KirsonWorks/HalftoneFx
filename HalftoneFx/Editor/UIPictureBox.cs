@@ -92,7 +92,7 @@
             this.OnZoomChanged(this, EventArgs.Empty);
         }
 
-        protected override void DoParentResize(SizeF oldSize)
+        protected override void DoParentResize(SizeF deltaSize)
         {
             if (this.Parent is UIControl parent)
             {

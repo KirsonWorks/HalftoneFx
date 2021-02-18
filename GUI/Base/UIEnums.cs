@@ -2,6 +2,15 @@
 {
     using System.Drawing;
 
+    public enum UINotification
+    {
+        EnterTree,
+        ExitTree,
+        ParentChanged,
+        MouseOver,
+        MouseOut,
+    }
+
     public struct UIAlign
     {
         public static PointF None = PointF.Empty;

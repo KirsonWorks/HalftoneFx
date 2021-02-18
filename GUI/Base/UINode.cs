@@ -46,6 +46,24 @@
             }
         }
 
+        public UINode Root
+        {
+            get => this.root;
+
+            private set
+            {
+                if (this.root != value)
+                {
+                    this.root = value;
+
+                    foreach (var child in this.children)
+                    {
+                        child.Root = value;
+                    }
+                }
+            }
+        }
+
         public UINode Parent
         {
             get => this.parent;
@@ -54,11 +72,23 @@
             {
                 if (this.parent != value)
                 {
+                    if (this == value)
+                    {
+                        throw new Exception("Node can't be parent and child at the same time");
+                    }
+
                     this.parent?.RemoveNode(this);
                     this.parent = value;
-                    this.root = this.parent.root;
-                    this.parent?.AddChild(this);
+
+                    if (value != null)
+                    {
+                        this.Root = this.parent.Root;
+                        this.parent.AddChild(this);
+                    }
+
+                    this.DoParentChanged();
                     this.OnParentChanged(this, EventArgs.Empty);
+                    this.NotifyRoot(UINotification.ParentChanged);
                 }
             }
         }
@@ -83,13 +113,14 @@
             this.children.Add(node);
             this.DoAdded(node);
             this.OnAdded(node, EventArgs.Empty);
+            this.Root.Notification(node, UINotification.EnterTree);
         }
 
         public UINode AddNode(UINode node)
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
             }
 
             node.Parent = this;
@@ -100,13 +131,14 @@
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
             }
 
             node.Free();
             this.children.Remove(node);
             this.DoRemoved(node);
             this.OnRemoved(node, EventArgs.Empty);
+            this.Root.Notification(node, UINotification.ExitTree);
         }
 
         public void RemoveAll(Func<UIControl, bool> predicate)
@@ -172,6 +204,19 @@
         public void Sort(Comparison<UINode> comparison)
         {
             this.children.Sort(comparison);
+        }
+
+        protected void NotifyRoot(UINotification notification)
+        {
+            this.Root.Notification(this, notification);
+        }
+
+        protected virtual void Notification(UINode sender, UINotification notification)
+        {
+        }
+
+        protected virtual void DoParentChanged()
+        {
         }
 
         protected virtual void DoAdded(UINode node)

@@ -104,5 +104,10 @@
         {
             return NewNode<UISlider>(parent, name);
         }
+
+        public static UIStatusBar NewStatusBar(this UIControl parent, string name)
+        {
+            return NewNode<UIStatusBar>(parent, name);
+        }
     }
 }

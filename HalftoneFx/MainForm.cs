@@ -16,6 +16,8 @@
 
         private readonly UIPictureBox pictureBox = new UIPictureBox();
 
+        private readonly UIStatusBar statusBar = new UIStatusBar();
+
         private readonly HalftoneGenerator generator = new HalftoneGenerator();
 
         private readonly UILabel labelSize;
@@ -30,35 +32,46 @@
         {
             this.InitializeComponent();
             this.ui.Container = this;
+            this.ui.OnNotification += this.OnNotification;
 
+            this.pictureBox.Name = "picture-box";
             this.pictureBox.Parent = this.ui;
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += PictureBoxZoomChanged;
+
+            this.statusBar = this.ui.NewStatusBar("status-bar");
 
             this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
             this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
             this.generator.OnProgressChanged += (s, e) =>
             { 
                 this.progress.Value = e.Percent; 
-                this.Invalidate(); 
+                this.Invalidate();
             };
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
+            // Like a bullshit.
             builder.BeginPanel(45, 45)
                    .Label("PICTURE").TextColor(Color.Gold)
-                   .Button("LOAD").Click(this.LoadPictureFromFile).SameLine()
-                   .Button("SAVE").Click(this.SavePicture)
-                   .CheckBox("GRAYSCALE").Changed(this.GrayscaleChanged)
-                   .CheckBox("NEGATIVE").Changed(this.NegativeChanged)
-                   .Label("BRIGHTNESS").Stretch(90)
-                   .SliderInt(0, -150, 100, 1).Changing(this.BrightnessChanging)
-                   .Label("CONTRAST").Stretch(90)
-                   .SliderInt(0, -50, 100, 1).Changing(this.ContrastChanging)
-                   .Label("QUANTIZATION").Stretch(90)
-                   .Slider(1, 1, 255, 1).Changing(this.QuantizationChanging)
+                   .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
+                   .SameLine()
+                   .Button("SAVE").Hint("Save picture to a file").Click(this.SavePicture)
+                   .CheckBox("GRAYSCALE").Hint("Enable/Disable Grayscale filter").Changed(this.GrayscaleChanged)
+                   .CheckBox("NEGATIVE").Hint("Enable/Disable Negative filter").Changed(this.NegativeChanged)
+                   .Label("BRIGHTNESS")
+                   .Wide(90)
+                   .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.BrightnessChanging)
+                   .Label("CONTRAST")
+                   .Wide(90)
+                   .SliderInt(0, -50, 100, 1).Hint("Contrast filter").Changing(this.ContrastChanging)
+                   .Label("QUANTIZATION")
+                   .Wide(90)
+                   .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.QuantizationChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
-                   .Label("ZOOM: 100%").Ref(ref labelZoom).Click((s, e) => this.pictureBox.ResetZoom()).Stretch(90)
+                   .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
+                   .Click((s, e) => this.pictureBox.ResetZoom())
+                   .Wide(90)
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
@@ -101,6 +114,24 @@
         private void SavePicture(object sender, EventArgs e)
         {
             
+        }
+
+        private void OnNotification(object sender, UINotificationEventArgs e)
+        {
+            switch (e.What)
+            {
+                case UINotification.MouseOver:
+                    if (sender is UIControl control)
+                    {
+                        this.statusBar.Caption = control.HintText;
+                    }
+
+                    break;
+
+                case UINotification.MouseOut:
+                    this.statusBar.Caption = string.Empty;
+                    break;
+            }
         }
 
         private void OnGeneratorPropertyChanged(object sender, EventArgs e)

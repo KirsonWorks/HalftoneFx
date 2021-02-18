@@ -53,6 +53,8 @@ namespace GUI
 
         public Color Line { get; set; }
 
+        public Color StatusBar { get; set; }
+
         public void SetColor(string name, Color value)
         {
             var property = this.GetType().GetProperty(name);
@@ -171,6 +173,7 @@ namespace GUI
             this.Colors.SliderGrabActive = Color.Crimson;
 
             this.Colors.ProgressBar = Color.Crimson;
+            this.Colors.StatusBar = Color.Black;
             this.Colors.Line = Color.Orange;
         }
     }

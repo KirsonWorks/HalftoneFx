@@ -5,7 +5,6 @@
     using System;
     using System.Linq;
     using System.Drawing;
-    using System.ComponentModel;
     using System.Collections.Generic;
     using System.Drawing.Drawing2D;
 
@@ -29,7 +28,7 @@
 
         private Dictionary<string, Color> customColors = new Dictionary<string, Color>();
 
-        protected UIStyle Style => UIControl.style;
+        protected UIStyle Style => style;
 
         protected UIColors Colors => this.Style.Colors;
 
@@ -63,11 +62,15 @@
 
         public virtual string Caption { get; set; }
 
+        public virtual string HintText { get; set; }
+
         public virtual bool AutoSize { get; set; }
 
         public bool HandleEvents { get; set; } = true;
 
         public float ExtraSize { get; set; }
+
+        public int RenderOrder { get; set; }
 
         public float Left
         {
@@ -159,13 +162,10 @@
             }
         }
 
-        [Browsable(false)]
         protected PointF LocalPosition { get; private set; }
 
-        [Browsable(false)]
         public PointF ScreenPosition { get; private set; }
 
-        [Browsable(false)]
         public PointF ScreenPositionCenter
         {
             get
@@ -232,7 +232,6 @@
             }
 
             this.DoChangePosition();
-
             return this;
         }
 
@@ -288,8 +287,9 @@
                         graphics.SetClip(clipPath, CombineMode.Intersect);
                     }
                 }
-                
-                foreach (var child in this.GetChildren<UIControl>())
+
+                // Maybe I'll do z-index later.
+                foreach (var child in this.GetChildren<UIControl>().OrderBy(x => x.RenderOrder))
                 {
                     child.Render(graphics);
                 }
@@ -333,6 +333,16 @@
             return graphics.GetRectPath(rect, 0);
         }
 
+        protected virtual void DoResize(SizeF deltaSize)
+        {
+            this.OnResize(this, EventArgs.Empty);
+
+            foreach (var child in this.GetChildren<UIControl>())
+            {
+                child.DoParentResize(deltaSize);
+            }
+        }
+
         protected virtual void DoRender(Graphics graphics)
         {
         }
@@ -349,18 +359,8 @@
         {
         }
 
-        protected virtual void DoParentResize(SizeF oldSize)
+        protected virtual void DoParentResize(SizeF deltaSize)
         {
-        }
-
-        protected virtual void DoResize(SizeF deltaSize)
-        {
-            this.OnResize(this, EventArgs.Empty);
-
-            foreach (var child in this.GetChildren<UIControl>())
-            {
-                child.DoParentResize(deltaSize);
-            }
         }
 
         protected virtual void DoChangePosition()
@@ -567,10 +567,12 @@
             if (isOver)
             {
                 this.OnMouseOver(this, e);
+                this.NotifyRoot(UINotification.MouseOver);
             }
             else
             {
                 this.OnMouseOut(this, e);
+                this.NotifyRoot(UINotification.MouseOut);
             }
         }
     }
