@@ -80,6 +80,9 @@
                    .Label("SIZE").Stretch(90)
                    .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
                    .EndPanel();
+
+            this.LoadPicture(Properties.Resources.Logo);
+            this.pictureBox.Zoom(0.7f);
         }
 
         private void LoadPicture(Image picture)
