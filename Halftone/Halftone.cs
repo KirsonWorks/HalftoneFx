@@ -50,7 +50,7 @@
                     var yPixel = Math.Min(y + cellSize / 2, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
 
-                    var brightness = color.GetBrightness();
+                    var brightness = 1;//color.GetBrightness();
 
                     if (brightness == 0)
                     {

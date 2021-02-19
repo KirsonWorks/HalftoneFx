@@ -103,6 +103,8 @@
             return this.children.OfType<T>();
         }
 
+        public int GetChildrenCount() => this.children.Count;
+
         private void AddChild(UINode node)
         {
             if (this.children.Exists(x => !string.IsNullOrEmpty(node.Name) && x.Name == node.Name))
@@ -148,6 +150,17 @@
             for (int i = corpses.Length - 1; i >= 0; i--)
             {
                 this.RemoveNode(corpses[i]);
+            }
+        }
+
+        public void MoveNode(UINode node, int index)
+        {
+            var nodeIndex = this.children.IndexOf(node);
+
+            if (nodeIndex > -1 && nodeIndex != index)
+            {
+                this.children.RemoveAt(nodeIndex);
+                this.children.Insert(index, node);
             }
         }
 

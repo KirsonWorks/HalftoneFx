@@ -9,7 +9,6 @@
         public UIStatusBar() : base()
         {
             this.Height = 26;
-            this.RenderOrder = 1000;
             this.HandleEvents = false;
         }
 
