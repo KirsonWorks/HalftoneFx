@@ -52,21 +52,40 @@
 
                     Parallel.For(0, sourceBits.Height, options, (y) =>
                     {
-                        byte* sourceLine = sourcePointer + y * stride;
-                        byte* destLine = destPointer + y * stride;
+                        byte kernelSize = filter.GetKernelSize();
 
-                        for (var x = 0; x < widthInBytes; x += channels)
+                        if (kernelSize >= 3)
                         {
-                            destLine[x] = sourceLine[x];
-                            destLine[x + 1] = sourceLine[x + 1];
-                            destLine[x + 2] = sourceLine[x + 2];
+                            byte[] kernel = new byte[kernelSize * kernelSize * 3];
 
-                            if (channels == 4)
+                            for (var kx = 0; kx < kernelSize; kx++)
                             {
-                                destLine[x + 3] = sourceLine[x + 3];
-                            }
+                                byte* line = sourcePointer + y * stride;
 
-                            filter.RGB(ref destLine[x], ref destLine[x + 1], ref destLine[x + 2]);
+                                for (var ky = 0; ky < kernelSize; ky++)
+                                {
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            byte* sourceLine = sourcePointer + y * stride;
+                            byte* destLine = destPointer + y * stride;
+
+                            for (var x = 0; x < widthInBytes; x += channels)
+                            {
+                                destLine[x] = sourceLine[x];
+                                destLine[x + 1] = sourceLine[x + 1];
+                                destLine[x + 2] = sourceLine[x + 2];
+
+                                if (channels == 4)
+                                {
+                                    destLine[x + 3] = sourceLine[x + 3];
+                                }
+
+                                filter.RGB(ref destLine[x], ref destLine[x + 1], ref destLine[x + 2]);
+                            }
                         }
 
                         var part = sourceBits.Height / 10;

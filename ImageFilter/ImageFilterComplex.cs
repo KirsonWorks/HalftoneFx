@@ -8,6 +8,8 @@
     {
         private readonly Dictionary<int, IImageFilter> filters;
 
+        private byte maxKernelSize = 0;
+
         public event EventHandler OnValueChanged = delegate { };
 
         public ImageFilterComplex()
@@ -25,6 +27,7 @@
             if (!this.filters.ContainsKey(id))
             {
                 this.filters.Add(id, filter);
+                this.maxKernelSize = Math.Max(this.maxKernelSize, filter.GetKernelSize());
             }
         }
 
@@ -72,5 +75,7 @@
 
             throw new Exception("Jesus, Mary and Joseph!");
         }
+
+        public byte GetKernelSize() => this.maxKernelSize;
     }
 }

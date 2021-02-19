@@ -52,6 +52,7 @@
     <Compile Include="IImageFilter.cs" />
     <Compile Include="ImageFilterBase.cs" />
     <Compile Include="ImageFilterComplex.cs" />
+    <Compile Include="ImageFilterNoKernel.cs" />
     <Compile Include="ImageFilterPass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

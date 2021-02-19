@@ -16,7 +16,7 @@
             set => this.value = this.Clamp(value, this.MinValue, this.MaxValue);
         }
 
-        public int MinValue 
+        public int MinValue
         { 
             get => this.minValue;
             
@@ -69,7 +69,7 @@
                 return value;
             }
 
-            return (float)Math.Floor((value + 0.5F * step) / step) * step;
+            return (float)Math.Floor((value + 0.5f * step) / step) * step;
         }
     }
 }
