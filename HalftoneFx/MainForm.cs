@@ -41,14 +41,6 @@
 
             this.statusBar = this.ui.NewStatusBar("status-bar");
 
-            this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
-            this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
-            this.generator.OnProgressChanged += (s, e) =>
-            { 
-                this.progress.Value = e.Percent; 
-                this.Invalidate();
-            };
-
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
             // Like a bullshit.
@@ -80,6 +72,19 @@
                    .Label("SIZE").Stretch(90)
                    .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
                    .EndPanel();
+
+            this.statusBar.BringToFront();
+
+            this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
+            this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
+            this.generator.OnProgressChanged += (s, e) =>
+            {
+                this.progress.Value = e.Percent;
+                this.Invalidate();
+            };
+
+            this.LoadPicture(Properties.Resources.Logo);
+            this.pictureBox.Zoom(0.7f);
         }
 
         private void LoadPicture(Image picture)

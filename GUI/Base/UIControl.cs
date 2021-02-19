@@ -70,8 +70,6 @@
 
         public float ExtraSize { get; set; }
 
-        public int RenderOrder { get; set; }
-
         public float Left
         {
             get => this.LocalPosition.X;
@@ -242,11 +240,8 @@
 
         public RectangleF ScreenRect
         {
-            get
-            {
-                return new RectangleF(this.ScreenPosition - new SizeF(this.ExtraSize, this.ExtraSize),
-                                      this.Size + new SizeF(this.ExtraSize * 2, this.ExtraSize * 2));
-            }
+            get => new RectangleF(this.ScreenPosition - new SizeF(this.ExtraSize, this.ExtraSize),
+                                  this.Size + new SizeF(this.ExtraSize * 2, this.ExtraSize * 2));
         }
 
         public virtual void Show()
@@ -257,6 +252,23 @@
         public virtual void Hide()
         {
             this.Visible = false;
+        }
+
+        public void BringToFront()
+        {
+            if (this.Parent != null)
+            {
+                var count = this.Parent.GetChildrenCount();
+                this.Parent.MoveNode(this, count - 1);
+            }
+        }
+
+        public void SendToBack()
+        {
+            if (this.Parent != null)
+            {
+                this.Parent.MoveNode(this, 0);
+            }
         }
 
         public void Process()
@@ -288,8 +300,7 @@
                     }
                 }
 
-                // Maybe I'll do z-index later.
-                foreach (var child in this.GetChildren<UIControl>().OrderBy(x => x.RenderOrder))
+                foreach (var child in this.GetChildren<UIControl>())
                 {
                     child.Render(graphics);
                 }
