@@ -1,5 +1,6 @@
 ﻿namespace HalftoneFx.Helpers
 {
+    using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -52,6 +53,14 @@
             }
 
             return new Bitmap(image);
+        }
+
+        public static Bitmap Downsample(this Image image, int level)
+        {
+            var width = Math.Max(8, image.Width / level);
+            var height = Math.Max(8, image.Height / level);
+            var sample = image.Resize(width, height, InterpolationMode.Default);
+            return sample.Resize(image.Width, image.Height, InterpolationMode.Default);
         }
     }
 }

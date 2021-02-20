@@ -27,7 +27,7 @@
 
         private readonly UIProgressBar progress;
 
-        private Image original, preview;
+        private Image original, editable, preview;
 
         public MainForm()
         {
@@ -45,7 +45,7 @@
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
             // Like a bullshit.
-            builder.BeginPanel(45, 45)
+            builder.BeginPanel(20, 45)
                    .Label("PICTURE").TextColor(Color.Gold)
                    .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
                    .SameLine()
@@ -62,6 +62,9 @@
                    .Label("QUANTIZATION")
                    .Wide(90)
                    .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.QuantizationChanging)
+                   .Label("DOWNSAMPLING")
+                   .Wide(90)
+                   .SliderInt(1, 1, 32, 1).Hint("Downsampling").Changing(this.DownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -69,7 +72,7 @@
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
-            builder.BeginPanel(45, 385)
+            builder.BeginPanel(20, 430)
                    .Label("HALFTONE").TextColor(Color.Gold)
                    .Label("SIZE").Stretch(90)
                    .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
@@ -92,10 +95,12 @@
         private void LoadPicture(Image picture)
         {
             this.original?.Dispose();
+            this.editable?.Dispose();
             this.original = picture;
+            this.editable = new Bitmap(picture);
             this.preview = picture.Preview(300);
 
-            this.pictureBox.Image = new Bitmap(picture);
+            this.pictureBox.Image = editable;
             this.pictureBox.FullView();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
@@ -144,7 +149,7 @@
         private void OnGeneratorPropertyChanged(object sender, EventArgs e)
         {
             this.pictureBox.Image = this.generator.Generate((Bitmap)this.preview, true);
-            this.generator.GenerateAsync((Bitmap)this.original, 500);
+            this.generator.GenerateAsync((Bitmap)this.editable, 500);
         }
 
         private void PictureBoxZoomChanged(object sender, EventArgs e)
@@ -186,6 +191,14 @@
         {
             var checkbox = sender as UICheckBox;
             this.generator.Smoothing = checkbox.Checked;
+        }
+
+        private void DownsampleChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.editable = this.original.Downsample((int)slider.Value);
+            this.preview = this.editable.Preview(300);
+            this.OnGeneratorPropertyChanged(this, EventArgs.Empty);
         }
 
         private void HalftoneSizeChanging(object sender, EventArgs e)
