@@ -58,6 +58,8 @@
             return this.filters.Values.Count(f => f.HasEffect()) > 0;
         }
 
+        public byte GetKernelSize() => this.maxKernelSize;
+
         public void RGB(ref byte r, ref byte g, ref byte b)
         {
             foreach (var filter in this.filters.Values.Where(f => f.HasEffect()))
@@ -76,6 +78,11 @@
             throw new Exception("Jesus, Mary and Joseph!");
         }
 
-        public byte GetKernelSize() => this.maxKernelSize;
+        
+
+        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
+        {
+            
+        }
     }
 }

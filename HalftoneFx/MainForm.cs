@@ -3,6 +3,7 @@
     using GUI;
     using GUI.Controls;
 
+    using ImageFilter;
     using HalftoneFx.Editor;
     using HalftoneFx.Helpers;
 
@@ -83,8 +84,8 @@
                 this.Invalidate();
             };
 
-            this.LoadPicture(Properties.Resources.Logo);
-            this.pictureBox.Zoom(0.7f);
+            //this.LoadPicture(Properties.Resources.Logo);
+            //this.pictureBox.Zoom(0.7f);
         }
 
         private void LoadPicture(Image picture)
@@ -93,7 +94,9 @@
             this.original = picture;
             this.preview = picture.Preview(300);
 
-            this.pictureBox.Image = new Bitmap(picture);
+            var blur = new ImageFilterKernel();
+
+            this.pictureBox.Image = ImageFilterPass.GetFiltered(new Bitmap(picture), blur);
             this.pictureBox.FullView();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";

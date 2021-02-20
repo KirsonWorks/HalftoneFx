@@ -46,49 +46,54 @@
                 byte* sourcePointer = (byte*)sourceBits.Scan0;
                 byte* destPointer = (byte*)destBits.Scan0;
 
+                byte kernelSize = filter.GetKernelSize();
+                var kernelOffsets = GetKernelOffsets(kernelSize);
+
                 try
                 {
                     int rowsCompleted = 0;
 
                     Parallel.For(0, sourceBits.Height, options, (y) =>
                     {
-                        byte kernelSize = filter.GetKernelSize();
+                        byte* sourceLine = sourcePointer + y * stride;
+                        byte* destLine = destPointer + y * stride;
+                        byte[] kernel = new byte[kernelOffsets.Length * 3];
 
-                        if (kernelSize >= 3)
+                        for (var x = 0; x < widthInBytes; x += channels)
                         {
-                            byte[] kernel = new byte[kernelSize * kernelSize * 3];
-
-                            for (var kx = 0; kx < kernelSize; kx++)
+                            for (var i = 0; i < kernelOffsets.Length; i++)
                             {
-                                byte* line = sourcePointer + y * stride;
+                                var px = x + kernelOffsets[i].X * channels;
+                                var py = y + kernelOffsets[i].Y;
 
-                                for (var ky = 0; ky < kernelSize; ky++)
+                                if (px < 0 || px >= widthInBytes || py < 0 || py >= sourceBits.Height)
                                 {
-
-                                }
-                            }
-                        }
-                        else
-                        {
-                            byte* sourceLine = sourcePointer + y * stride;
-                            byte* destLine = destPointer + y * stride;
-
-                            for (var x = 0; x < widthInBytes; x += channels)
-                            {
-                                destLine[x] = sourceLine[x];
-                                destLine[x + 1] = sourceLine[x + 1];
-                                destLine[x + 2] = sourceLine[x + 2];
-
-                                if (channels == 4)
-                                {
-                                    destLine[x + 3] = sourceLine[x + 3];
+                                    kernel[i * 3] = 0;
+                                    kernel[i * 3 + 1] = 0;
+                                    kernel[i * 3 + 2] = 0;
+                                    continue;
                                 }
 
-                                filter.RGB(ref destLine[x], ref destLine[x + 1], ref destLine[x + 2]);
+                                byte* row = sourcePointer + py * stride;
+
+                                kernel[i * 3] = row[px + 2];
+                                kernel[i * 3 + 1] = row[px + 1];
+                                kernel[i * 3 + 2] = row[px];
                             }
+
+                            destLine[x] = sourceLine[x];
+                            destLine[x + 1] = sourceLine[x + 1];
+                            destLine[x + 2] = sourceLine[x + 2];
+
+                            if (channels == 4)
+                            {
+                                destLine[x + 3] = sourceLine[x + 3];
+                            }
+
+                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel);
                         }
 
-                        var part = sourceBits.Height / 10;
+                        var part =  Math.Max(1, sourceBits.Height / 10);
                         var count = Interlocked.Increment(ref rowsCompleted);
 
                         if (count % part == 0)
@@ -115,6 +120,21 @@
             };
 
             return GetFiltered(original, filter, null, options);
+        }
+
+        private static Point[] GetKernelOffsets(byte kernelSize)
+        {
+            var offset = new Point();
+            var offsets = new Point[kernelSize * kernelSize];
+            
+            for (var i = 0; i < offsets.Length; i++)
+            {
+                offset.X = i % kernelSize - kernelSize / 2;
+                offset.Y = i / kernelSize - kernelSize / 2;
+                offsets[i] = offset;
+            }
+
+            return offsets;
         }
     }
 }

@@ -9,5 +9,10 @@
         public virtual void RGB(ref byte r, ref byte g, ref byte b)
         {
         }
+
+        public virtual void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
+        {
+            this.RGB(ref r, ref g, ref b);
+        }
     }
 }

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\ImageFilterKernel.cs" />
     <Compile Include="Filters\ImageFilterBrightness.cs" />
     <Compile Include="Filters\ImageFilterContrast.cs" />
     <Compile Include="Filters\ImageFilterGrayscale.cs" />
