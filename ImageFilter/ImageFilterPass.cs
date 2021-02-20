@@ -41,22 +41,42 @@
                     throw new Exception("Pixel format not support");
                 }
 
+                var height = sourceBits.Height;
                 var stride = sourceBits.Stride;
                 var widthInBytes = sourceBits.Width * channels;
                 byte* sourcePointer = (byte*)sourceBits.Scan0;
                 byte* destPointer = (byte*)destBits.Scan0;
 
+                byte kernelSize = filter.GetKernelSize();
+                var kernelOffsets = MakeKernelOffsets(kernelSize);
+
                 try
                 {
-                    int rowsCompleted = 0;
+                    int linesCompleted = 0;
 
-                    Parallel.For(0, sourceBits.Height, options, (y) =>
+                    Parallel.For(0, height, options, (y) =>
                     {
                         byte* sourceLine = sourcePointer + y * stride;
                         byte* destLine = destPointer + y * stride;
+                        byte[] kernel = new byte[kernelOffsets.Length * 3];
 
                         for (var x = 0; x < widthInBytes; x += channels)
                         {
+                            for (var i = 0; i < kernelOffsets.Length; i++)
+                            {
+                                var px = x + kernelOffsets[i].X * channels;
+                                var py = y + kernelOffsets[i].Y;
+                                
+                                px = Math.Min(Math.Max(0, px), widthInBytes - channels);
+                                py = Math.Min(Math.Max(0, py), height - 1);
+
+                                byte* line = sourcePointer + py * stride;
+                               
+                                kernel[i * 3] = line[px + 2];
+                                kernel[i * 3 + 1] = line[px + 1];
+                                kernel[i * 3 + 2] = line[px];
+                            }
+
                             destLine[x] = sourceLine[x];
                             destLine[x + 1] = sourceLine[x + 1];
                             destLine[x + 2] = sourceLine[x + 2];
@@ -66,15 +86,15 @@
                                 destLine[x + 3] = sourceLine[x + 3];
                             }
 
-                            filter.RGB(ref destLine[x], ref destLine[x + 1], ref destLine[x + 2]);
+                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel);
                         }
 
-                        var part = sourceBits.Height / 10;
-                        var count = Interlocked.Increment(ref rowsCompleted);
+                        var part =  Math.Max(1, height / 10);
+                        var count = Interlocked.Increment(ref linesCompleted);
 
                         if (count % part == 0)
                         {
-                            progressChanged?.Invoke((float)count / sourceBits.Height);
+                            progressChanged?.Invoke((float)count / height);
                         }
                     });
                 }
@@ -96,6 +116,21 @@
             };
 
             return GetFiltered(original, filter, null, options);
+        }
+
+        private static Point[] MakeKernelOffsets(byte kernelSize)
+        {
+            var offset = new Point();
+            var offsets = new Point[kernelSize * kernelSize];
+            
+            for (var i = 0; i < offsets.Length; i++)
+            {
+                offset.X = i % kernelSize - kernelSize / 2;
+                offset.Y = i / kernelSize - kernelSize / 2;
+                offsets[i] = offset;
+            }
+
+            return offsets;
         }
     }
 }

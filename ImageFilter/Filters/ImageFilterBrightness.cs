@@ -1,10 +1,10 @@
 ﻿namespace ImageFilter
 {
-    public class ImageFilterBrightness : ImageFilterBase, IImageFilter
+    public class ImageFilterBrightness : ImageFilterNoKernel
     {
-        public static int Min = -150;
+        public const int Min = -150;
 
-        public static int Max = 100;
+        public const int Max = 100;
 
         public ImageFilterBrightness()
         {
@@ -12,9 +12,9 @@
             this.MaxValue = Max;
         }
 
-        public bool HasEffect() => this.Value != 0;
+        public override bool HasEffect() => this.Value != 0;
 
-        public void RGB(ref byte r, ref byte g, ref byte b)
+        public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             r = this.ClampByte(r + this.Value);
             g = this.ClampByte(g + this.Value);

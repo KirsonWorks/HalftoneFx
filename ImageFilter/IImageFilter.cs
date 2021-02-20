@@ -4,6 +4,8 @@
     {
         bool HasEffect();
 
-        void RGB(ref byte r, ref byte g, ref byte b);
+        byte GetKernelSize();
+
+        void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel);
     }
 }

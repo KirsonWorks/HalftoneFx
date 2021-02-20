@@ -1,10 +1,10 @@
 ﻿namespace ImageFilter
 {
-    public class ImageFilterQuantization : ImageFilterBase, IImageFilter
+    public class ImageFilterQuantization : ImageFilterNoKernel
     {
-        public static int Min = 1;
+        public const int Min = 1;
 
-        public static int Max = 255;
+        public const int Max = 255;
 
         public ImageFilterQuantization()
         {
@@ -12,9 +12,9 @@
             this.MaxValue = Max;
         }
 
-        public bool HasEffect() => this.Value > this.MinValue; 
+        public override bool HasEffect() => this.Value > this.MinValue;
 
-        public void RGB(ref byte r, ref byte g, ref byte b)
+        public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             r = this.ClampByte((int)this.Snap(r, this.Value));
             g = this.ClampByte((int)this.Snap(g, this.Value));

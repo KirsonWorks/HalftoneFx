@@ -3,6 +3,7 @@
     using GUI;
     using GUI.Controls;
 
+    using ImageFilter;
     using HalftoneFx.Editor;
     using HalftoneFx.Helpers;
 
@@ -49,8 +50,9 @@
                    .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
                    .SameLine()
                    .Button("SAVE").Hint("Save picture to a file").Click(this.SavePicture)
-                   .CheckBox("GRAYSCALE").Hint("Enable/Disable Grayscale filter").Changed(this.GrayscaleChanged)
-                   .CheckBox("NEGATIVE").Hint("Enable/Disable Negative filter").Changed(this.NegativeChanged)
+                   .CheckBox("SMOOTHING").Hint("On/Off Smoothing filter").Changed(this.SmoothingChanged)
+                   .CheckBox("GRAYSCALE").Hint("On/Off Grayscale filter").Changed(this.GrayscaleChanged)
+                   .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.NegativeChanged)
                    .Label("BRIGHTNESS")
                    .Wide(90)
                    .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.BrightnessChanging)
@@ -67,7 +69,7 @@
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
-            builder.BeginPanel(45, 360)
+            builder.BeginPanel(45, 385)
                    .Label("HALFTONE").TextColor(Color.Gold)
                    .Label("SIZE").Stretch(90)
                    .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
@@ -178,6 +180,12 @@
         {
             var checkbox = sender as UICheckBox;
             this.generator.Grayscale = checkbox.Checked;
+        }
+
+        private void SmoothingChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as UICheckBox;
+            this.generator.Smoothing = checkbox.Checked;
         }
 
         private void HalftoneSizeChanging(object sender, EventArgs e)

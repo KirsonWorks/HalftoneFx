@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\ImageFilterGaussian5x5.cs" />
+    <Compile Include="Filters\ImageFilterKernel.cs" />
     <Compile Include="Filters\ImageFilterBrightness.cs" />
     <Compile Include="Filters\ImageFilterContrast.cs" />
     <Compile Include="Filters\ImageFilterGrayscale.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="IImageFilter.cs" />
     <Compile Include="ImageFilterBase.cs" />
     <Compile Include="ImageFilterComplex.cs" />
+    <Compile Include="ImageFilterNoKernel.cs" />
     <Compile Include="ImageFilterPass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

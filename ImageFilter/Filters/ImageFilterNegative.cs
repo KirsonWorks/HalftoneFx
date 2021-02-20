@@ -1,15 +1,15 @@
 ﻿namespace ImageFilter
 {
-    public class ImageFilterNegative : ImageFilterBase, IImageFilter
+    public class ImageFilterNegative : ImageFilterNoKernel
     {
         public ImageFilterNegative()
         {
             this.MaxValue = 1;
         }
 
-        public bool HasEffect() => this.Value != 0;
+        public override bool HasEffect() => this.Value != 0;
 
-        public void RGB(ref byte r, ref byte g, ref byte b)
+        public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             r = (byte)(255 - r);
             g = (byte)(255 - g);
