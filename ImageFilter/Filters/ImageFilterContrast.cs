@@ -28,7 +28,7 @@
 
         public override bool HasEffect() => this.Value != 0;
 
-        public override void RGB(ref byte r, ref byte g, ref byte b)
+        public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             r = this.ClampByte((int)(this.factor * (r - 128) + 128));
             g = this.ClampByte((int)(this.factor * (g - 128) + 128));

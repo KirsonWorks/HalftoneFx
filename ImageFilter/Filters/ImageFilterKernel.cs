@@ -4,12 +4,20 @@ namespace ImageFilter
 {
     public class ImageFilterKernel : ImageFilterBase, IImageFilter
     {
-        private byte kernelSize;
+        private byte kernelSize = 3;
 
-        private float[] matrix;
-        
-        public float[] Matrix 
-        { 
+        private float[] matrix = new float[] { 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+
+        public ImageFilterKernel(float[] matrix, float factor, byte bias)
+        {
+            this.MaxValue = 1;
+            this.Matrix = matrix;
+            this.Factor = factor;
+            this.Bias = bias;
+        }
+
+        public float[] Matrix
+        {
             get => this.matrix;
 
             set
@@ -25,11 +33,7 @@ namespace ImageFilter
 
         public byte GetKernelSize() => this.kernelSize;
 
-        public bool HasEffect() => true;
-
-        public void RGB(ref byte r, ref byte g, ref byte b)
-        {
-        }
+        public bool HasEffect() => this.Value != 0;
 
         public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
@@ -37,7 +41,7 @@ namespace ImageFilter
             var green = 0;
             var blue = 0;
 
-            // todo offset
+            // todo offset center
 
             for (var i = 0; i < this.matrix.Length; i++)
             {
@@ -46,9 +50,9 @@ namespace ImageFilter
                 blue += (int)(kernel[i * 3 + 2] * this.matrix[i]);
             }
 
-            r = this.ClampByte(red);
-            g = this.ClampByte(green);
-            b = this.ClampByte(blue);
+            r = this.ClampByte((int)(this.Factor * red + this.Bias));
+            g = this.ClampByte((int)(this.Factor * green + this.Bias));
+            b = this.ClampByte((int)(this.Factor * blue + this.Bias));
         }
     }
 }

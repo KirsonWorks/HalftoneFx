@@ -14,7 +14,7 @@
 
         public override bool HasEffect() => this.Value > this.MinValue;
 
-        public override void RGB(ref byte r, ref byte g, ref byte b)
+        public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             r = this.ClampByte((int)this.Snap(r, this.Value));
             g = this.ClampByte((int)this.Snap(g, this.Value));

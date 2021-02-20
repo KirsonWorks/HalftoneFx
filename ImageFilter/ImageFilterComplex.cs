@@ -60,11 +60,11 @@
 
         public byte GetKernelSize() => this.maxKernelSize;
 
-        public void RGB(ref byte r, ref byte g, ref byte b)
+        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
         {
             foreach (var filter in this.filters.Values.Where(f => f.HasEffect()))
             {
-                filter.RGB(ref r, ref g, ref b);
+                filter.RGB(ref r, ref g, ref b, kernel);
             }
         }
 
@@ -76,13 +76,6 @@
             }
 
             throw new Exception("Jesus, Mary and Joseph!");
-        }
-
-        
-
-        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
-        {
-            
         }
     }
 }

@@ -31,12 +31,13 @@
 
         public HalftoneGenerator()
         {
+            this.filter.Add(Filter.Smoothing, new ImageFilterGaussian5x5());
             this.filter.Add(Filter.Grayscale, new ImageFilterGrayscale());
             this.filter.Add(Filter.Negative, new ImageFilterNegative());
             this.filter.Add(Filter.Brightness, new ImageFilterBrightness());
             this.filter.Add(Filter.Contrast, new ImageFilterContrast());
             this.filter.Add(Filter.Quantization, new ImageFilterQuantization());
-
+            
             this.filter.OnValueChanged += (s, e) => this.OnPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnPropertyChanged(s, e);
         }
@@ -75,6 +76,12 @@
         {
             get => this.filter[Filter.Quantization];
             set => this.filter[Filter.Quantization] = value;
+        }
+
+        public bool Smoothing
+        {
+            get => this.filter[Filter.Smoothing] == 1;
+            set => this.filter[Filter.Smoothing] = Convert.ToInt32(value);
         }
 
         public int HalftoneSize
@@ -144,14 +151,16 @@
 
     public static class Filter
     {
-        public const int Grayscale = 1;
+        public const int Smoothing = 1;
 
-        public const int Negative = 2;
+        public const int Grayscale = 2;
 
-        public const int Brightness = 3;
+        public const int Negative = 3;
 
-        public const int Contrast = 4;
+        public const int Brightness = 4;
 
-        public const int Quantization = 5;
+        public const int Contrast = 5;
+
+        public const int Quantization = 6;
     }
 }
