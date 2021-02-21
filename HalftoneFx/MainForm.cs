@@ -3,7 +3,6 @@
     using GUI;
     using GUI.Controls;
 
-    using ImageFilter;
     using HalftoneFx.Editor;
     using HalftoneFx.Helpers;
 
@@ -101,9 +100,9 @@
             this.preview = picture.Preview(300);
 
             this.pictureBox.Image = editable;
-            this.pictureBox.FullView();
+            this.pictureBox.FitToScreen();
 
-            this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
+            this.labelSize.Caption = $"SIZE: {this.original.Width}x{this.original.Height}";
             this.ui.Reset(true);
         }
 

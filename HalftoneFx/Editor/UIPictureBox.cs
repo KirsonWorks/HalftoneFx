@@ -50,8 +50,6 @@
             }
         }
 
-        public SizeF ImageSize => this.imageControl.Size;
-
         public float Scale => this.toolZoom.Scale;
 
         public float ScaleMin => this.toolZoom.ScaleMin;
@@ -72,24 +70,28 @@
             this.OnZoomChanged(this, EventArgs.Empty);
         }
 
+        public void FullView()
+        {
+            this.imageControl.Size = this.toolZoom.OriginalSize = this.imageControl.Image.Size;
+            this.Zoom(this.imageControl.Size);
+        }
+
+        public void FitToScreen()
+        {
+            this.imageControl.Size = this.toolZoom.OriginalSize = this.imageControl.Image.Size;
+            this.Zoom(this.Size - new Size(30, 30));
+        }
+
         public void ResetZoom()
         {
             if (this.Scale == 1.0f)
             {
-                this.Zoom(this.Size - new Size(25, 25));
+                this.FitToScreen();
             }
             else
             {
-                this.Zoom(1.0f);
+                this.FullView();
             }
-        }
-
-        public void FullView()
-        {
-            this.imageControl.Size = this.toolZoom.OriginalSize = this.imageControl.Image.Size;
-            this.toolZoom.Reset();
-            this.toolPan.Reset(this.ScreenPositionCenter);
-            this.OnZoomChanged(this, EventArgs.Empty);
         }
 
         protected override void DoParentResize(SizeF deltaSize)
