@@ -37,9 +37,9 @@
             return image.Resize((int)(image.Width * percent), (int)(image.Height * percent), interpolation);
         }
 
-        public static Bitmap Preview(this Image image, int size)
+        public static Bitmap Thumbnail(this Image image, int size)
         {
-            if (image.Width > size || image.Height > size)
+            if ((image.Width > size || image.Height > size) && size > 0)
             {
                 var mode = InterpolationMode.Default;
                 var aspect = (float)image.Width / image.Height;
@@ -55,7 +55,7 @@
             return new Bitmap(image);
         }
 
-        public static Bitmap Downsample(this Image image, int level)
+        public static Bitmap Downsampling(this Image image, int level)
         {
             var width = Math.Max(8, image.Width / level);
             var height = Math.Max(8, image.Height / level);
