@@ -3,7 +3,6 @@
     using GUI;
     using GUI.Controls;
 
-    using ImageFilter;
     using HalftoneFx.Editor;
     using HalftoneFx.Helpers;
 
@@ -19,7 +18,7 @@
 
         private readonly UIStatusBar statusBar = new UIStatusBar();
 
-        private readonly HalftoneGenerator generator = new HalftoneGenerator();
+        private readonly HalftoneImage image = new HalftoneImage { HasThumbnail = true, ThumbnailSize = 300 };
 
         private readonly UILabel labelSize;
 
@@ -27,41 +26,42 @@
 
         private readonly UIProgressBar progress;
 
-        private Image original, preview;
-
         public MainForm()
         {
             this.InitializeComponent();
             this.ui.Container = this;
-            this.ui.OnNotification += this.OnNotification;
+            this.ui.OnNotification += this.UINotification;
 
             this.pictureBox.Name = "picture-box";
             this.pictureBox.Parent = this.ui;
             this.pictureBox.Size = this.ClientSize;
-            this.pictureBox.OnZoomChanged += PictureBoxZoomChanged;
+            this.pictureBox.OnZoomChanged += OnPictureBoxZoomChanged;
 
             this.statusBar = this.ui.NewStatusBar("status-bar");
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
             // Like a bullshit.
-            builder.BeginPanel(45, 45)
+            builder.BeginPanel(20, 45)
                    .Label("PICTURE").TextColor(Color.Gold)
                    .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
                    .SameLine()
                    .Button("SAVE").Hint("Save picture to a file").Click(this.SavePicture)
-                   .CheckBox("SMOOTHING").Hint("On/Off Smoothing filter").Changed(this.SmoothingChanged)
-                   .CheckBox("GRAYSCALE").Hint("On/Off Grayscale filter").Changed(this.GrayscaleChanged)
-                   .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.NegativeChanged)
+                   .CheckBox("SMOOTHING").Hint("On/Off Smoothing filter").Changed(this.OnSmoothingChanged)
+                   .CheckBox("GRAYSCALE").Hint("On/Off Grayscale filter").Changed(this.OnGrayscaleChanged)
+                   .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.OnNegativeChanged)
                    .Label("BRIGHTNESS")
                    .Wide(90)
-                   .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.BrightnessChanging)
+                   .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.OnBrightnessChanging)
                    .Label("CONTRAST")
                    .Wide(90)
-                   .SliderInt(0, -50, 100, 1).Hint("Contrast filter").Changing(this.ContrastChanging)
+                   .SliderInt(0, -50, 100, 1).Hint("Contrast filter").Changing(this.OnContrastChanging)
                    .Label("QUANTIZATION")
                    .Wide(90)
-                   .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.QuantizationChanging)
+                   .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
+                   .Label("DOWNSAMPLING")
+                   .Wide(90)
+                   .SliderInt(1, 1, 32, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -69,17 +69,26 @@
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
-            builder.BeginPanel(45, 385)
+            builder.BeginPanel(20, 430)
                    .Label("HALFTONE").TextColor(Color.Gold)
                    .Label("SIZE").Stretch(90)
-                   .SliderInt(200, 25, 300, 1).Changing(this.HalftoneSizeChanging)
+                   .SliderInt(200, 25, 300, 1).Changing(this.OnHalftoneSizeChanging)
                    .EndPanel();
 
             this.statusBar.BringToFront();
 
-            this.generator.OnPropertyChanged += OnGeneratorPropertyChanged;
-            this.generator.OnImageAvailable += (s, e) => this.pictureBox.Image = e.Image;
-            this.generator.OnProgressChanged += (s, e) =>
+            this.image.OnImageAvailable += (s, e) =>
+            {
+                this.pictureBox.Image = e.Image;
+                this.Invalidate();
+            };
+
+            this.image.OnThumbnailAvailable += (s, e) =>
+            {
+
+            };
+
+            this.image.OnProgress += (s, e) =>
             {
                 this.progress.Value = e.Percent;
                 this.Invalidate();
@@ -91,12 +100,8 @@
 
         private void LoadPicture(Image picture)
         {
-            this.original?.Dispose();
-            this.original = picture;
-            this.preview = picture.Preview(300);
-
-            this.pictureBox.Image = new Bitmap(picture);
-            this.pictureBox.FullView();
+            this.image.Image = this.pictureBox.Image = picture;
+            this.pictureBox.FitToScreen();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
             this.ui.Reset(true);
@@ -123,11 +128,11 @@
             
         }
 
-        private void OnNotification(object sender, UINotificationEventArgs e)
+        private void UINotification(object sender, UINotificationEventArgs e)
         {
             switch (e.What)
             {
-                case UINotification.MouseOver:
+                case GUI.UINotification.MouseOver:
                     if (sender is UIControl control)
                     {
                         this.statusBar.Caption = control.HintText;
@@ -135,63 +140,74 @@
 
                     break;
 
-                case UINotification.MouseOut:
+                case GUI.UINotification.MouseOut:
                     this.statusBar.Caption = string.Empty;
                     break;
             }
         }
 
-        private void OnGeneratorPropertyChanged(object sender, EventArgs e)
+        private void OnImageAvailable(object sender, GenerateDoneEventArgs e)
         {
-            this.pictureBox.Image = this.generator.Generate((Bitmap)this.preview, true);
-            this.generator.GenerateAsync((Bitmap)this.original, 500);
+            this.pictureBox.Image = e.Image;
+            this.Invalidate();
         }
 
-        private void PictureBoxZoomChanged(object sender, EventArgs e)
+        private void OnPictureBoxZoomChanged(object sender, EventArgs e)
         {
             this.labelZoom.Caption = $"ZOOM: {this.pictureBox.Scale:P0}";
         }
 
-        private void BrightnessChanging(object sender, EventArgs e)
+        private void OnBrightnessChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.generator.Brightness = (int)slider.Value;
+            this.image.Brightness = (int)slider.Value;
         }
 
-        private void ContrastChanging(object sender, EventArgs e)
+        private void OnContrastChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.generator.Contrast = (int)slider.Value;
+            this.image.Contrast = (int)slider.Value;
         }
 
-        private void QuantizationChanging(object sender, EventArgs e)
+        private void OnQuantizationChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.generator.Quantization = (int)slider.Value;
+            this.image.Quantization = (int)slider.Value;
         }
 
-        private void NegativeChanged(object sender, EventArgs e)
+        private void OnNegativeChanged(object sender, EventArgs e)
         {
             var checkbox = sender as UICheckBox;
-            this.generator.Negative = checkbox.Checked;
+            this.image.Negative = checkbox.Checked;
         }
 
-        private void GrayscaleChanged(object sender, EventArgs e)
+        private void OnGrayscaleChanged(object sender, EventArgs e)
         {
             var checkbox = sender as UICheckBox;
-            this.generator.Grayscale = checkbox.Checked;
+            this.image.Grayscale = checkbox.Checked;
         }
 
-        private void SmoothingChanged(object sender, EventArgs e)
+        private void OnSmoothingChanged(object sender, EventArgs e)
         {
             var checkbox = sender as UICheckBox;
-            this.generator.Smoothing = checkbox.Checked;
+            this.image.Smoothing = checkbox.Checked;
         }
 
-        private void HalftoneSizeChanging(object sender, EventArgs e)
+        private void OnDownsampleChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.generator.HalftoneSize = (int)slider.Value;
+            this.image.DownsamplingLevel = (int)slider.Value;
+
+            /*this.editable = this.original.Downsampling((int)slider.Value);
+            this.preview = this.editable.Thumbnail(300);
+            this.OnGeneratorPropertyChanged(this, EventArgs.Empty);
+            */
+        }
+
+        private void OnHalftoneSizeChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.image.HalftoneSize = (int)slider.Value;
         }
     }
 }

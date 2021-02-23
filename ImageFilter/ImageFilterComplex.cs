@@ -6,56 +6,56 @@
 
     public class ImageFilterComplex: IImageFilter
     {
-        private readonly Dictionary<int, IImageFilter> filters;
+        private readonly Dictionary<string, IImageFilter> filters;
 
         private byte maxKernelSize = 0;
 
-        public event EventHandler OnValueChanged = delegate { };
+        public event EventHandler OnPropertyChanged = delegate { };
 
         public ImageFilterComplex()
         {
-            this.filters = new Dictionary<int, IImageFilter>();
+            this.filters = new Dictionary<string, IImageFilter>();
         }
 
-        public void Add(int id, IImageFilter filter)
+        public void Add(string name, IImageFilter filter)
         {
             if (filter == null)
             {
                 throw new ArgumentNullException(nameof(filter));
             }
 
-            if (!this.filters.ContainsKey(id))
+            if (!this.filters.ContainsKey(name))
             {
-                this.filters.Add(id, filter);
+                this.filters.Add(name, filter);
                 this.maxKernelSize = Math.Max(this.maxKernelSize, filter.GetKernelSize());
             }
         }
 
-        public void SetValue(int id, int value)
+        public void SetValue(string name, int value)
         {
-            var filter = this.GetFilter(id);
+            var filter = this.GetFilter(name);
 
             if (filter != null && filter.Value != value)
             {
                 filter.Value = value;
-                this.OnValueChanged(this, EventArgs.Empty);
+                this.OnPropertyChanged(this, EventArgs.Empty);
             }
         }
 
-        public int GetValue(int id)
+        public int GetValue(string name)
         {
-            return this.GetFilter(id).Value;
+            return this.GetFilter(name).Value;
         }
 
-        public int this[int id]
+        public int this[string name]
         {
-            get => this.GetValue(id);
-            set => this.SetValue(id, value);
+            get => this.GetValue(name);
+            set => this.SetValue(name, value);
         }
 
         public bool HasEffect()
         {
-            return this.filters.Values.Count(f => f.HasEffect()) > 0;
+            return this.filters.Values.Any(f => f.HasEffect());
         }
 
         public byte GetKernelSize() => this.maxKernelSize;
@@ -68,9 +68,9 @@
             }
         }
 
-        private ImageFilterBase GetFilter(int id)
+        private ImageFilterBase GetFilter(string name)
         {
-            if (this.filters.ContainsKey(id) && this.filters[id] is ImageFilterBase filter)
+            if (this.filters.ContainsKey(name) && this.filters[name] is ImageFilterBase filter)
             {
                 return filter;
             }

@@ -1,7 +1,7 @@
 ﻿namespace HalftoneFx
 {
+    using Helpers;
     using Halftone;
-
     using ImageFilter;
 
     using System;
@@ -18,70 +18,95 @@
     {
         public float Percent { get; set; }
     }
+    
+    [Flags]
+    public enum ImageGenerationFlags
+    {
+        Downsampling = 1,
+        Filtering = 2,
+        Halftoning = 4
+    }
 
     public class HalftoneGenerator
     {
-        private readonly Halftone halftone = new Halftone();
-
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
 
+        private readonly Halftone halftone = new Halftone();
+
         private CancellationTokenSource cancelationToken = null;
+
+        private int downsamplingLevel = 1;
 
         private Task task = null;
 
         public HalftoneGenerator()
         {
-            this.filter.Add(Filter.Smoothing, new ImageFilterGaussian5x5());
-            this.filter.Add(Filter.Grayscale, new ImageFilterGrayscale());
-            this.filter.Add(Filter.Negative, new ImageFilterNegative());
-            this.filter.Add(Filter.Brightness, new ImageFilterBrightness());
-            this.filter.Add(Filter.Contrast, new ImageFilterContrast());
-            this.filter.Add(Filter.Quantization, new ImageFilterQuantization());
+            this.filter.Add(nameof(Smoothing), new ImageFilterGaussian5x5());
+            this.filter.Add(nameof(Grayscale), new ImageFilterGrayscale());
+            this.filter.Add(nameof(Negative), new ImageFilterNegative());
+            this.filter.Add(nameof(Brightness), new ImageFilterBrightness());
+            this.filter.Add(nameof(Contrast), new ImageFilterContrast());
+            this.filter.Add(nameof(Quantization), new ImageFilterQuantization());
             
-            this.filter.OnValueChanged += (s, e) => this.OnPropertyChanged(s, e);
-            this.halftone.OnPropertyChanged += (s, e) => this.OnPropertyChanged(s, e);
+            this.filter.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
+            this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
         }
 
-        public event EventHandler OnPropertyChanged = delegate { };
+        public event EventHandler OnFilterPropertyChanged = delegate { };
+
+        public event EventHandler OnHalftonePropertyChanged = delegate { };
+
+        public event EventHandler OnDownsamplingPropertyChanged = delegate { };
 
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
 
-        public event EventHandler<ProgressChangedEventArgs> OnProgressChanged = delegate { };
+        public event EventHandler<ProgressChangedEventArgs> OnProgress = delegate { };
 
         public bool Grayscale
         {
-            get => this.filter[Filter.Grayscale] == 1;
-            set => this.filter[Filter.Grayscale] = Convert.ToInt32(value);
+            get => this.filter[nameof(Grayscale)] == 1;
+            set => this.filter[nameof(Grayscale)] = Convert.ToInt32(value);
         }
 
         public bool Negative
         {
-            get => this.filter[Filter.Negative] == 1;
-            set => this.filter[Filter.Negative] = Convert.ToInt32(value);
+            get => this.filter[nameof(Negative)] == 1;
+            set => this.filter[nameof(Negative)] = Convert.ToInt32(value);
         }
 
         public int Brightness
         {
-            get => this.filter[Filter.Brightness];
-            set => this.filter[Filter.Brightness] = value;
+            get => this.filter[nameof(Brightness)];
+            set => this.filter[nameof(Brightness)] = value;
         }
 
         public int Contrast
         {
-            get => this.filter[Filter.Contrast];
-            set => this.filter[Filter.Contrast] = value;
+            get => this.filter[nameof(Contrast)];
+            set => this.filter[nameof(Contrast)] = value;
         }
 
         public int Quantization
         {
-            get => this.filter[Filter.Quantization];
-            set => this.filter[Filter.Quantization] = value;
+            get => this.filter[nameof(Quantization)];
+            set => this.filter[nameof(Quantization)] = value;
         }
 
         public bool Smoothing
         {
-            get => this.filter[Filter.Smoothing] == 1;
-            set => this.filter[Filter.Smoothing] = Convert.ToInt32(value);
+            get => this.filter[nameof(Smoothing)] == 1;
+            set => this.filter[nameof(Smoothing)] = Convert.ToInt32(value);
+        }
+
+        public int DownsamplingLevel
+        {
+            get => this.downsamplingLevel;
+
+            set
+            {
+                this.downsamplingLevel = Math.Min(Math.Max(0, value), 32);
+                this.OnDownsamplingPropertyChanged(this, EventArgs.Empty);
+            }
         }
 
         public int HalftoneSize
@@ -90,29 +115,44 @@
             set => this.halftone.Size = value;
         }
 
-        public Bitmap Generate(Bitmap source, bool ignoreHalftone, CancellationToken token)
+        public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
         {
-            var options = new ParallelOptions
+            var parallelOpt = new ParallelOptions
             {
                 CancellationToken = token,
                 MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
-            var img = ImageFilterPass.GetFiltered(source, this.filter, 
+            var img = source;
+
+            if (flags.HasFlag(ImageGenerationFlags.Downsampling) && this.DownsamplingLevel > 1)
+            {
+                img = img.Downsampling(this.DownsamplingLevel);
+            }
+
+            if (flags.HasFlag(ImageGenerationFlags.Filtering))
+            {
+                img = ImageFilterPass.GetFiltered(img, this.filter,
                 (percent) =>
                 {
-                    this.OnProgressChanged.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
-                }, options);
+                    this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
+                }, parallelOpt);
+            }
 
-            return ignoreHalftone ? img : this.halftone.Generate(img);
+            if (flags.HasFlag(ImageGenerationFlags.Halftoning))
+            {
+                img = this.halftone.Generate(img);
+            }
+
+            return img;
         }
 
-        public Bitmap Generate(Bitmap source, bool ignoreHalftone)
+        public Bitmap Generate(Bitmap source, ImageGenerationFlags flags)
         {
-            return this.Generate(source, ignoreHalftone, CancellationToken.None);
+            return this.Generate(source, flags, CancellationToken.None);
         }
 
-        public async void GenerateAsync(Bitmap source, int delay = 10)
+        public async Task GenerateAsync(Bitmap source, ImageGenerationFlags flags, int delay = 10)
         {
             if (this.task != null && !this.task.IsCompleted)
             {
@@ -129,7 +169,7 @@
                     {
                         await Task.Delay(delay, token);
 
-                        var result = this.Generate(source, false, token);
+                        var result = this.Generate(source, flags, token);
 
                         if (!token.IsCancellationRequested)
                         {
@@ -147,20 +187,5 @@
 
             await task;
         }
-    }
-
-    public static class Filter
-    {
-        public const int Smoothing = 1;
-
-        public const int Grayscale = 2;
-
-        public const int Negative = 3;
-
-        public const int Brightness = 4;
-
-        public const int Contrast = 5;
-
-        public const int Quantization = 6;
     }
 }

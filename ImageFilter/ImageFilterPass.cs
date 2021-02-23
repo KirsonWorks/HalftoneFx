@@ -8,7 +8,7 @@
 
     public class ImageFilterPass
     {
-        public static Bitmap GetFiltered(Bitmap original, IImageFilter filter, Action<float> progressChanged, ParallelOptions options)
+        public static Bitmap GetFiltered(Bitmap original, IImageFilter filter, Action<float> progress, ParallelOptions options)
         {
             if (original == null)
             {
@@ -22,7 +22,7 @@
 
             if (!filter.HasEffect())
             {
-                progressChanged?.Invoke(1.0f);
+                progress?.Invoke(1.0f);
                 return new Bitmap(original);
             }
 
@@ -94,7 +94,7 @@
 
                         if (count % part == 0)
                         {
-                            progressChanged?.Invoke((float)count / height);
+                            progress?.Invoke((float)count / height);
                         }
                     });
                 }
