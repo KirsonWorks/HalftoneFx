@@ -108,7 +108,7 @@
 
             using (var graphics = Graphics.FromImage(result))
             {
-                graphics.SmoothingMode = SmoothingMode.AntiAlias; // need option.
+                graphics.SmoothingMode = SmoothingMode.HighSpeed; // need option.
                 
                 while (grid.MoveNext())
                 {
@@ -116,6 +116,12 @@
                     var xPixel = Math.Min(cell.X + half, width - 1);
                     var yPixel = Math.Min(cell.Y + half, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
+
+                    if (color.A == 0)
+                    {
+                        continue;
+                    }
+
                     var rect = new Rectangle(cell.X + offset, cell.Y + offset, size, size);
                     pattern.Draw(graphics, rect, color);
                 }

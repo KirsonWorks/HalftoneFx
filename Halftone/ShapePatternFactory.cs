@@ -6,6 +6,7 @@ namespace Halftone
     {
         Square = 0,
         Circle,
+        Test,
     }
 
     public static class ShapePatternFactory
@@ -19,6 +20,9 @@ namespace Halftone
 
                 case ShapePatternType.Circle:
                     return new ShapePatternCircle();
+
+                case ShapePatternType.Test:
+                    return new ShapePatternTest();
 
                 default:
                     throw new NotSupportedException();

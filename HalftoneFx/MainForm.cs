@@ -75,7 +75,7 @@
                    .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
                    .Label("PATTERN")
                    .Wide(90)
-                   .SliderInt(0, 0, 1, 1).Changed(this.OnPatternTypeChanged)
+                   .SliderInt(0, 0, 2, 1).Changed(this.OnPatternTypeChanged)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 4, 64, 1).Changing(this.OnCellSizeChanging)
