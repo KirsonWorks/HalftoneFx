@@ -8,6 +8,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Drawing.Imaging;
 
     public partial class MainForm : Form
     {
@@ -101,13 +102,12 @@
 
         private void LoadPicture(Image picture)
         {
-            this.ui.Reset(true);
+            // this.ui.Reset(true);
 
             this.image.Image = this.pictureBox.Image = picture;
             this.pictureBox.FitToScreen();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
-            
         }
 
         private void LoadPictureFromFile(object sender, EventArgs e)
@@ -128,7 +128,17 @@
 
         private void SavePicture(object sender, EventArgs e)
         {
-            
+            if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    this.pictureBox.Image.Save(this.saveFileDialog.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Can't save the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
         }
 
         private void UINotification(object sender, UINotificationEventArgs e)

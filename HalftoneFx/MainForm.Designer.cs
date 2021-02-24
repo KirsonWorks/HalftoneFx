@@ -18,7 +18,16 @@
         private void InitializeComponent()
         {
             this.openPictureDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
+            // 
+            // openPictureDialog
+            // 
+            this.openPictureDialog.Filter = "PNG files|*.png|JPG files|*.jpg";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.Filter = "PNG files|*.png|JPG files|*.jpg";
             // 
             // MainForm
             // 
@@ -35,6 +44,7 @@
 
         #endregion
         private System.Windows.Forms.OpenFileDialog openPictureDialog;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 
