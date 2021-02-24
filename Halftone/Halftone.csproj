@@ -37,8 +37,16 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Grid Patterns\GridPatternEnumeratorBase.cs" />
+    <Compile Include="Grid Patterns\GridPatternSquareEnumerator.cs" />
+    <Compile Include="GridPatternFactory.cs" />
     <Compile Include="Halftone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shape Patterns\IShapePattern.cs" />
+    <Compile Include="Shape Patterns\ShapePatternCircle.cs" />
+    <Compile Include="Shape Patterns\ShapePatternSquare.cs" />
+    <Compile Include="ShapePatternFactory.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
