@@ -4,7 +4,6 @@
     using GUI.Controls;
 
     using HalftoneFx.Editor;
-    using HalftoneFx.Helpers;
 
     using System;
     using System.Drawing;
@@ -69,24 +68,26 @@
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
-            builder.BeginPanel(20, 430)
-                   .Label("HALFTONE").TextColor(Color.Gold)
-                   .Label("SIZE").Stretch(90)
-                   .SliderInt(200, 25, 300, 1).Changing(this.OnHalftoneSizeChanging)
+            builder.BeginPanel(140, 45)
+                   .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
+                   .Label("GRID TYPE")
+                   .Wide(90)
+                   .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
+                   .Label("PATTERN")
+                   .Wide(90)
+                   .SliderInt(0, 0, 1, 1).Changed(this.OnPatternTypeChanged)
+                   .Label("CELL SIZE")
+                   .Wide(90)
+                   .SliderInt(this.image.CellSize, 4, 64, 1).Changing(this.OnCellSizeChanging)
+                   .Label("CELL SCALE")
+                   .Wide(90)
+                   .Slider(this.image.CellScale, 0, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
                    .EndPanel();
 
             this.statusBar.BringToFront();
 
-            this.image.OnImageAvailable += (s, e) =>
-            {
-                this.pictureBox.Image = e.Image;
-                this.Invalidate();
-            };
-
-            this.image.OnThumbnailAvailable += (s, e) =>
-            {
-
-            };
+            this.image.OnImageAvailable += this.OnImageAvailable;
+            this.image.OnThumbnailAvailable += this.OnImageAvailable;
 
             this.image.OnProgress += (s, e) =>
             {
@@ -100,11 +101,13 @@
 
         private void LoadPicture(Image picture)
         {
+            this.ui.Reset(true);
+
             this.image.Image = this.pictureBox.Image = picture;
             this.pictureBox.FitToScreen();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
-            this.ui.Reset(true);
+            
         }
 
         private void LoadPictureFromFile(object sender, EventArgs e)
@@ -197,17 +200,36 @@
         {
             var slider = sender as UISlider;
             this.image.DownsamplingLevel = (int)slider.Value;
-
-            /*this.editable = this.original.Downsampling((int)slider.Value);
-            this.preview = this.editable.Thumbnail(300);
-            this.OnGeneratorPropertyChanged(this, EventArgs.Empty);
-            */
         }
 
-        private void OnHalftoneSizeChanging(object sender, EventArgs e)
+        private void OnHalftoneEnabledChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as UICheckBox;
+            this.image.HalftoneEnabled = checkbox.Checked;
+        }
+
+        private void OnCellSizeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.image.HalftoneSize = (int)slider.Value;
+            this.image.CellSize = (int)slider.Value;
+        }
+
+        private void OnCellScaleChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.image.CellScale = slider.Value;
+        }
+
+        private void OnPatternTypeChanged(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.image.PatternType = (int)slider.Value;
+        }
+
+        private void OnGridTypeChanged(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.image.GridType = (int)slider.Value;
         }
     }
 }

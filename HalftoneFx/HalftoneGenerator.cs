@@ -109,10 +109,34 @@
             }
         }
 
-        public int HalftoneSize
+        public int GridType
         {
-            get => this.halftone.Size;
-            set => this.halftone.Size = value;
+            get => this.halftone.GridType;
+            set => this.halftone.GridType = value;
+        }
+
+        public int PatternType
+        {
+            get => this.halftone.PatternType;
+            set => this.halftone.PatternType = value;
+        }
+
+        public int CellSize
+        {
+            get => this.halftone.CellSize;
+            set => this.halftone.CellSize = value;
+        }
+
+        public float CellScale
+        {
+            get => this.halftone.CellScale;
+            set => this.halftone.CellScale = value;
+        }
+
+        public bool HalftoneEnabled
+        {
+            get => this.halftone.Enabled;
+            set => this.halftone.Enabled = value;
         }
 
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)

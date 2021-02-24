@@ -172,10 +172,11 @@
             return this;
         }
 
-        public UILayoutBuilder CheckBox(string caption)
+        public UILayoutBuilder CheckBox(string caption, bool value = false)
         {
-            this.Control = this.Container.NewCheckBox(string.Empty, caption);
-            //this.CurrentControl.AutoSize = true;
+            var checkbox = this.Container.NewCheckBox(string.Empty, caption);
+            checkbox.Checked = value;
+            this.Control = checkbox;
             return this;
         }
 
