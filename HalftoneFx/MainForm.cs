@@ -77,16 +77,8 @@
 
             this.statusBar.BringToFront();
 
-            this.image.OnImageAvailable += (s, e) =>
-            {
-                this.pictureBox.Image = e.Image;
-                this.Invalidate();
-            };
-
-            this.image.OnThumbnailAvailable += (s, e) =>
-            {
-
-            };
+            this.image.OnImageAvailable += this.OnImageAvailable;
+            this.image.OnThumbnailAvailable += this.OnImageAvailable;
 
             this.image.OnProgress += (s, e) =>
             {
@@ -197,11 +189,6 @@
         {
             var slider = sender as UISlider;
             this.image.DownsamplingLevel = (int)slider.Value;
-
-            /*this.editable = this.original.Downsampling((int)slider.Value);
-            this.preview = this.editable.Thumbnail(300);
-            this.OnGeneratorPropertyChanged(this, EventArgs.Empty);
-            */
         }
 
         private void OnHalftoneSizeChanging(object sender, EventArgs e)
