@@ -11,6 +11,8 @@
 
         private int[] table = new int[TableSize] { 0, 10, 2, 8, 5, 15, 7, 13, 1, 11, 3, 9, 4, 14, 6, 12 };
 
+        public bool AntialiasingRequired() => false;
+
         public void Draw(Graphics graphics, Rectangle rect, Color color)
         {
             var brightness = (int)Math.Round(color.GetBrightness() * TableSize);

@@ -108,7 +108,14 @@
 
             using (var graphics = Graphics.FromImage(result))
             {
-                graphics.SmoothingMode = SmoothingMode.HighSpeed; // need option.
+                if (pattern.AntialiasingRequired())
+                {
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                }
+                else
+                {
+                    graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                }
                 
                 while (grid.MoveNext())
                 {
