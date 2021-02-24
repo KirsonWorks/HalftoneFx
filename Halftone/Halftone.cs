@@ -10,7 +10,7 @@
 
         private int patternType = 0;
 
-        private int cellSize = 10;
+        private int cellSize = 8;
 
         private float cellScale = 1.0f;
 
@@ -108,7 +108,14 @@
 
             using (var graphics = Graphics.FromImage(result))
             {
-                graphics.SmoothingMode = SmoothingMode.AntiAlias; // need option.
+                if (pattern.AntialiasingRequired())
+                {
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                }
+                else
+                {
+                    graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                }
                 
                 while (grid.MoveNext())
                 {
@@ -116,6 +123,12 @@
                     var xPixel = Math.Min(cell.X + half, width - 1);
                     var yPixel = Math.Min(cell.Y + half, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
+
+                    if (color.A == 0)
+                    {
+                        continue;
+                    }
+
                     var rect = new Rectangle(cell.X + offset, cell.Y + offset, size, size);
                     pattern.Draw(graphics, rect, color);
                 }

@@ -6,6 +6,7 @@ namespace Halftone
     {
         Square = 0,
         Circle,
+        Dithering4x4,
     }
 
     public static class ShapePatternFactory
@@ -19,6 +20,9 @@ namespace Halftone
 
                 case ShapePatternType.Circle:
                     return new ShapePatternCircle();
+
+                case ShapePatternType.Dithering4x4:
+                    return new ShapePatternDithering4x4();
 
                 default:
                     throw new NotSupportedException();

@@ -46,6 +46,7 @@
     <Compile Include="Shape Patterns\IShapePattern.cs" />
     <Compile Include="Shape Patterns\ShapePatternCircle.cs" />
     <Compile Include="Shape Patterns\ShapePatternSquare.cs" />
+    <Compile Include="Shape Patterns\ShapePatternDithering4x4.cs" />
     <Compile Include="ShapePatternFactory.cs" />
   </ItemGroup>
   <ItemGroup />

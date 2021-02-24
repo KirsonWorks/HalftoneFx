@@ -8,6 +8,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Drawing.Imaging;
 
     public partial class MainForm : Form
     {
@@ -60,7 +61,7 @@
                    .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
                    .Label("DOWNSAMPLING")
                    .Wide(90)
-                   .SliderInt(1, 1, 32, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
+                   .SliderInt(1, 1, 16, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -75,7 +76,7 @@
                    .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
                    .Label("PATTERN")
                    .Wide(90)
-                   .SliderInt(0, 0, 1, 1).Changed(this.OnPatternTypeChanged)
+                   .SliderInt(0, 0, 2, 1).Changed(this.OnPatternTypeChanged)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 4, 64, 1).Changing(this.OnCellSizeChanging)
@@ -101,13 +102,12 @@
 
         private void LoadPicture(Image picture)
         {
-            this.ui.Reset(true);
+            // this.ui.Reset(true);
 
             this.image.Image = this.pictureBox.Image = picture;
             this.pictureBox.FitToScreen();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
-            
         }
 
         private void LoadPictureFromFile(object sender, EventArgs e)
@@ -128,7 +128,17 @@
 
         private void SavePicture(object sender, EventArgs e)
         {
-            
+            if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    this.pictureBox.Image.Save(this.saveFileDialog.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Can't save the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
         }
 
         private void UINotification(object sender, UINotificationEventArgs e)
