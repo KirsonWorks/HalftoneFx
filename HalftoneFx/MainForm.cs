@@ -72,7 +72,7 @@
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
-                   .SliderInt(0, 0, 0, 1).Changed(this.OnGridTypeChanged)
+                   .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
                    .Label("PATTERN")
                    .Wide(90)
                    .SliderInt(0, 0, 1, 1).Changed(this.OnPatternTypeChanged)

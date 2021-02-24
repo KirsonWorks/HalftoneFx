@@ -20,6 +20,8 @@
 
         protected int CellSize { get; set; }
 
+        protected int CellCount { get; set; }
+
         protected int Position { get; set; } = -1;
 
         object IEnumerator.Current => throw new NotImplementedException();
@@ -32,7 +34,13 @@
 
         public virtual bool MoveNext()
         {
-            throw new NotImplementedException();
+            if (this.Position < this.CellCount - 1)
+            {
+                this.Position++;
+                return true;
+            }
+
+            return false;
         }
 
         public virtual void Reset()

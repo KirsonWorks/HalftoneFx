@@ -4,7 +4,8 @@
 
     public enum GridPatternType
     {
-        Grid = 0,
+        Square = 0,
+        Hexagon,
     }
 
     public static class GridPatternFactory
@@ -13,8 +14,11 @@
         {
             switch (type)
             {
-                case GridPatternType.Grid:
+                case GridPatternType.Square:
                     return new GridPatternSquareEnumerator(width, height, cellSize);
+
+                case GridPatternType.Hexagon:
+                    return new GridPatternHexagonEnumerator(width, height, cellSize);
 
                 default:
                     throw new NotSupportedException();
