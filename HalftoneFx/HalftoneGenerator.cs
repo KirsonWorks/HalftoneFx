@@ -104,7 +104,7 @@
 
             set
             {
-                this.downsamplingLevel = Math.Min(Math.Max(0, value), 32);
+                this.downsamplingLevel = Math.Min(Math.Max(0, value), 16);
                 this.OnDownsamplingPropertyChanged(this, EventArgs.Empty);
             }
         }

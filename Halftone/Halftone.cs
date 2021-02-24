@@ -10,7 +10,7 @@
 
         private int patternType = 0;
 
-        private int cellSize = 10;
+        private int cellSize = 8;
 
         private float cellScale = 1.0f;
 

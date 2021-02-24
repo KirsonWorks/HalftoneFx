@@ -60,7 +60,7 @@
                    .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
                    .Label("DOWNSAMPLING")
                    .Wide(90)
-                   .SliderInt(1, 1, 32, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
+                   .SliderInt(1, 1, 16, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
