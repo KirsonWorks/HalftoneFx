@@ -60,11 +60,11 @@
 
         public byte GetKernelSize() => this.maxKernelSize;
 
-        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
+        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             foreach (var filter in this.filters.Values.Where(f => f.HasEffect()))
             {
-                filter.RGB(ref r, ref g, ref b, kernel);
+                filter.RGB(ref r, ref g, ref b, kernel, x, y);
             }
         }
 

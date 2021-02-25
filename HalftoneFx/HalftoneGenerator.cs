@@ -47,6 +47,7 @@
             this.filter.Add(nameof(Brightness), new ImageFilterBrightness());
             this.filter.Add(nameof(Contrast), new ImageFilterContrast());
             this.filter.Add(nameof(Quantization), new ImageFilterQuantization());
+            this.filter.Add("Bayer", new ImageFilterBayer());
             
             this.filter.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);

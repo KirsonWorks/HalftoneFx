@@ -86,7 +86,7 @@
                                 destLine[x + 3] = sourceLine[x + 3];
                             }
 
-                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel);
+                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel, x, y);
                         }
 
                         var part =  Math.Max(1, height / 10);
