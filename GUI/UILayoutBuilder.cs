@@ -57,13 +57,19 @@
         public UILayoutBuilder Ref<T>(ref T control) 
             where T: UIControl
         {
-            control = this.control as T;
+            control = this.Control as T;
+            return this;
+        }
+
+        public UILayoutBuilder Caption(string text)
+        {
+            this.Control.Caption = text;
             return this;
         }
 
         public UILayoutBuilder Hint(string text)
         {
-            this.control.HintText = text;
+            this.Control.HintText = text;
             return this;
         }
 
@@ -180,20 +186,33 @@
             return this;
         }
 
-        public UILayoutBuilder Slider(float value, float min, float max, float step)
+        public UILayoutBuilder Slider(int value, int min, int max)
         {
             var slider = this.Container.NewSlider(string.Empty);
-            slider.Setup(min, max, step, value);
+            slider.Setup(min, max, 1, value);
+            slider.TextType = UIRangeTextType.Caption;
             this.Control = slider;
             return this;
         }
 
-        public UILayoutBuilder SliderInt(int value, int min, int max, int step)
+        public UILayoutBuilder SliderFloat(float value, float min, float max, float step,
+            UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
             var slider = this.Container.NewSlider(string.Empty);
             slider.Setup(min, max, step, value);
             slider.TextType = UIRangeTextType.Value;
-            slider.TextFlags = UIRangeTextFlags.Decimal | UIRangeTextFlags.PlusSign;
+            slider.TextFlags = flags;
+            this.Control = slider;
+            return this;
+        }
+
+        public UILayoutBuilder SliderInt(int value, int min, int max, int step,
+            UIRangeTextFlags flags = UIRangeTextFlags.None)
+        {
+            var slider = this.Container.NewSlider(string.Empty);
+            slider.Setup(min, max, step, value);
+            slider.TextType = UIRangeTextType.Value;
+            slider.TextFlags = UIRangeTextFlags.Decimal | flags;
             this.Control = slider;
             return this;
         }
@@ -214,6 +233,16 @@
             var progress = this.Container.NewProgressBar(string.Empty);
             progress.Setup(min, max, step, 0.0f);
             this.Control = progress;
+            return this;
+        }
+
+        public UILayoutBuilder TextFormat(string value)
+        {
+            if (this.Control is UIRangeControl range)
+            {
+                range.TextFormat = value;
+            }
+
             return this;
         }
     }

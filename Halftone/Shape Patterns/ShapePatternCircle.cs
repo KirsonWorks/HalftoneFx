@@ -6,7 +6,7 @@ namespace Halftone
     {
         public bool AntialiasingRequired() => true;
 
-        public void Draw(Graphics graphics, Rectangle rect, Color color)
+        public void Draw(Graphics graphics, RectangleF rect, Color color)
         {
             using (var brush = new SolidBrush(color))
             {

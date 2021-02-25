@@ -121,6 +121,12 @@
             set => this.halftone.PatternType = value;
         }
 
+        public int ShapeSizing
+        {
+            get => this.halftone.ShapeSizing;
+            set => this.halftone.ShapeSizing = value;
+        }
+            
         public int CellSize
         {
             get => this.halftone.CellSize;
@@ -137,6 +143,12 @@
         {
             get => this.halftone.Enabled;
             set => this.halftone.Enabled = value;
+        }
+
+        public bool TransparentBg
+        {
+            get => this.halftone.TransparentBg;
+            set => this.halftone.TransparentBg = value;
         }
 
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)

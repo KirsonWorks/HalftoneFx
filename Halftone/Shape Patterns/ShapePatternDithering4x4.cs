@@ -9,11 +9,11 @@
 
         private const int TableSize = TableCols * TableCols;
 
-        private int[] table = new int[TableSize] { 0, 10, 2, 8, 5, 15, 7, 13, 1, 11, 3, 9, 4, 14, 6, 12 };
+        private readonly int[] table = new int[TableSize] { 0, 10, 2, 8, 5, 15, 7, 13, 1, 11, 3, 9, 4, 14, 6, 12 };
 
         public bool AntialiasingRequired() => false;
 
-        public void Draw(Graphics graphics, Rectangle rect, Color color)
+        public void Draw(Graphics graphics, RectangleF rect, Color color)
         {
             var brightness = (int)Math.Round(color.GetBrightness() * TableSize);
            

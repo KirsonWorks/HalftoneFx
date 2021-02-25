@@ -4,17 +4,29 @@
     using System.Drawing;
     using System.Drawing.Drawing2D;
 
+    public enum HalftoneShapeSizing
+    {
+        Full,
+        Brightness,
+        BrightnessInverted,
+        AlphaChannel,
+    }
+
     public class Halftone
     {
         private int gridType = 0;
 
         private int patternType = 0;
+        
+        private int shapeSizing = 0;
 
         private int cellSize = 8;
 
         private float cellScale = 1.0f;
 
         private bool enabled = true;
+
+        private bool transparentBg = true;
 
         public event EventHandler OnPropertyChanged = delegate { };
 
@@ -90,6 +102,34 @@
             }
         }
 
+        public bool TransparentBg
+        {
+            get => this.transparentBg;
+
+            set
+            {
+                if (this.transparentBg != value)
+                {
+                    this.transparentBg = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+
+        public int ShapeSizing
+        {
+            get => this.shapeSizing;
+
+            set
+            {
+                if (this.shapeSizing != value)
+                {
+                    this.shapeSizing = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+
         public Bitmap Generate(Bitmap image)
         {
             if (!this.Enabled)
@@ -99,8 +139,7 @@
 
             var width = image.Width;
             var height = image.Height;
-            int size = (int)(this.CellSize * this.CellScale);
-            int offset = this.CellSize - size;
+            int shapeSize = (int)(this.CellSize * this.CellScale);
             var half = this.cellSize / 2;
             var result = new Bitmap(width, height);
             var pattern = ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
@@ -108,6 +147,11 @@
 
             using (var graphics = Graphics.FromImage(result))
             {
+                if (!this.transparentBg)
+                {
+                    graphics.Clear(Color.White);
+                }
+
                 if (pattern.AntialiasingRequired())
                 {
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -129,7 +173,27 @@
                         continue;
                     }
 
-                    var rect = new Rectangle(cell.X + offset, cell.Y + offset, size, size);
+                    var scale = 1.0f;
+
+                    switch ((HalftoneShapeSizing)this.ShapeSizing)
+                    {
+                        case HalftoneShapeSizing.Brightness:
+                            scale = color.GetBrightness();
+                            break;
+
+                        case HalftoneShapeSizing.BrightnessInverted:
+                            scale = 1.0f - color.GetBrightness();
+                            break;
+
+                        case HalftoneShapeSizing.AlphaChannel:
+                            scale = (float)color.A / 255.0f;
+                            break;
+                    }
+
+                    var sz = shapeSize * scale;
+                    var offset = ((float)cellSize / 2) - (sz / 2);
+                    var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
+
                     pattern.Draw(graphics, rect, color);
                 }
             }

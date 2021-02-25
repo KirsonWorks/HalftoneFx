@@ -2,13 +2,14 @@
 {
     using GUI;
     using GUI.Controls;
+    using GUI.BaseControls;
 
     using HalftoneFx.Editor;
 
     using System;
     using System.Drawing;
     using System.Windows.Forms;
-    using System.Drawing.Imaging;
+    using HalftoneFx.Helpers;
 
     public partial class MainForm : Form
     {
@@ -18,7 +19,7 @@
 
         private readonly UIStatusBar statusBar = new UIStatusBar();
 
-        private readonly HalftoneImage image = new HalftoneImage { HasThumbnail = true, ThumbnailSize = 300 };
+        private readonly HalftoneImage image = new HalftoneImage { ThumbnailSize = 300 };
 
         private readonly UILabel labelSize;
 
@@ -30,7 +31,7 @@
         {
             this.InitializeComponent();
             this.ui.Container = this;
-            this.ui.OnNotification += this.UINotification;
+            this.ui.OnNotification += this.OnUINotification;
 
             this.pictureBox.Name = "picture-box";
             this.pictureBox.Parent = this.ui;
@@ -52,16 +53,16 @@
                    .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.OnNegativeChanged)
                    .Label("BRIGHTNESS")
                    .Wide(90)
-                   .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.OnBrightnessChanging)
+                   .SliderInt(0, -150, 100, 1, UIRangeTextFlags.PlusSign).Hint("Brightness filter").Changing(this.OnBrightnessChanging)
                    .Label("CONTRAST")
                    .Wide(90)
-                   .SliderInt(0, -50, 100, 1).Hint("Contrast filter").Changing(this.OnContrastChanging)
+                   .SliderInt(0, -50, 100, 1, UIRangeTextFlags.PlusSign).Hint("Contrast filter").Changing(this.OnContrastChanging)
                    .Label("QUANTIZATION")
                    .Wide(90)
-                   .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
+                   .SliderInt(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
                    .Label("DOWNSAMPLING")
                    .Wide(90)
-                   .SliderInt(1, 1, 16, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
+                   .SliderInt(1, 1, 16, 1).TextFormat("x{0}").Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -73,22 +74,26 @@
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
-                   .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
+                   .Slider(0, 0, 2).Caption("Square").Changing(this.OnGridTypeChanging)
                    .Label("PATTERN")
                    .Wide(90)
-                   .SliderInt(0, 0, 2, 1).Changed(this.OnPatternTypeChanged)
+                   .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
+                   .Label("SIZE BY")
+                   .Wide(90)
+                   .Slider(0, 0, 3).Caption("Full").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
-                   .SliderInt(this.image.CellSize, 4, 64, 1).Changing(this.OnCellSizeChanging)
+                   .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
                    .Label("CELL SCALE")
                    .Wide(90)
-                   .Slider(this.image.CellScale, 0, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
+                   .SliderFloat(this.image.CellScale, 0.5f, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
+                   .CheckBox("TRANSP. BG", this.image.TransparentBg).Changed(this.OnTransparentBgChanged)
                    .EndPanel();
 
             this.statusBar.BringToFront();
 
             this.image.OnImageAvailable += this.OnImageAvailable;
-            this.image.OnThumbnailAvailable += this.OnImageAvailable;
+            this.image.OnThumbnailAvailable += this.OnThumbnailAvailable;
 
             this.image.OnProgress += (s, e) =>
             {
@@ -132,7 +137,7 @@
             {
                 try
                 {
-                    this.pictureBox.Image.Save(this.saveFileDialog.FileName);
+                    this.pictureBox.Image.SaveAs(this.saveFileDialog.FileName);
                 }
                 catch
                 {
@@ -141,11 +146,11 @@
             }
         }
 
-        private void UINotification(object sender, UINotificationEventArgs e)
+        private void OnUINotification(object sender, UINotificationEventArgs e)
         {
             switch (e.What)
             {
-                case GUI.UINotification.MouseOver:
+                case UINotification.MouseOver:
                     if (sender is UIControl control)
                     {
                         this.statusBar.Caption = control.HintText;
@@ -153,13 +158,20 @@
 
                     break;
 
-                case GUI.UINotification.MouseOut:
+                case UINotification.MouseOut:
                     this.statusBar.Caption = string.Empty;
                     break;
             }
         }
 
         private void OnImageAvailable(object sender, GenerateDoneEventArgs e)
+        {
+            this.pictureBox.Image = e.Image;
+            this.statusBar.Caption = "Done.";
+            this.Invalidate();
+        }
+
+        private void OnThumbnailAvailable(object sender, GenerateDoneEventArgs e)
         {
             this.pictureBox.Image = e.Image;
             this.Invalidate();
@@ -230,16 +242,37 @@
             this.image.CellScale = slider.Value;
         }
 
-        private void OnPatternTypeChanged(object sender, EventArgs e)
+        private void OnGridTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.image.PatternType = (int)slider.Value;
+            var types = new string[3] { "Square", "Hexagon", "Noise" };
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.GridType = value;
         }
 
-        private void OnGridTypeChanged(object sender, EventArgs e)
+        private void OnPatternTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.image.GridType = (int)slider.Value;
+            var types = new string[3] { "Square", "Circle", "Dithering4x4" };
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.PatternType = value;
+        }
+
+        private void OnShapeSizingChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            var types = new string[4] { "Full", "Brightness", "Brightness Inv", "Alpha Channel" };
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.ShapeSizing = value;
+        }
+
+        private void OnTransparentBgChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as UICheckBox;
+            this.image.TransparentBg = checkbox.Checked;
         }
     }
 }
