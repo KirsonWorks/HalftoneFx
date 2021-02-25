@@ -19,7 +19,7 @@
 
         private readonly UIStatusBar statusBar = new UIStatusBar();
 
-        private readonly HalftoneImage image = new HalftoneImage { HasThumbnail = true, ThumbnailSize = 300 };
+        private readonly HalftoneImage image = new HalftoneImage { ThumbnailSize = 300 };
 
         private readonly UILabel labelSize;
 
@@ -31,7 +31,7 @@
         {
             this.InitializeComponent();
             this.ui.Container = this;
-            this.ui.OnNotification += this.UINotification;
+            this.ui.OnNotification += this.OnUINotification;
 
             this.pictureBox.Name = "picture-box";
             this.pictureBox.Parent = this.ui;
@@ -90,7 +90,7 @@
             this.statusBar.BringToFront();
 
             this.image.OnImageAvailable += this.OnImageAvailable;
-            this.image.OnThumbnailAvailable += this.OnImageAvailable;
+            this.image.OnThumbnailAvailable += this.OnThumbnailAvailable;
 
             this.image.OnProgress += (s, e) =>
             {
@@ -143,11 +143,11 @@
             }
         }
 
-        private void UINotification(object sender, UINotificationEventArgs e)
+        private void OnUINotification(object sender, UINotificationEventArgs e)
         {
             switch (e.What)
             {
-                case GUI.UINotification.MouseOver:
+                case UINotification.MouseOver:
                     if (sender is UIControl control)
                     {
                         this.statusBar.Caption = control.HintText;
@@ -155,13 +155,20 @@
 
                     break;
 
-                case GUI.UINotification.MouseOut:
+                case UINotification.MouseOut:
                     this.statusBar.Caption = string.Empty;
                     break;
             }
         }
 
         private void OnImageAvailable(object sender, GenerateDoneEventArgs e)
+        {
+            this.pictureBox.Image = e.Image;
+            this.statusBar.Caption = "Done.";
+            this.Invalidate();
+        }
+
+        private void OnThumbnailAvailable(object sender, GenerateDoneEventArgs e)
         {
             this.pictureBox.Image = e.Image;
             this.Invalidate();

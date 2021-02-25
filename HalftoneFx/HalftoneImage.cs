@@ -15,13 +15,13 @@ namespace HalftoneFx
 
         public HalftoneImage()
         {
-            this.OnFilterPropertyChanged += (s, e) => this.Generate();
-            this.OnHalftonePropertyChanged += (s, e) => this.Generate();
+            this.OnFilterPropertyChanged += (s, e) => this.GenerateAsync();
+            this.OnHalftonePropertyChanged += (s, e) => this.GenerateAsync();
             this.OnDownsamplingPropertyChanged += (s, e) =>
             {
                 this.editable = this.original.Downsampling(this.DownsamplingLevel);
                 this.thumbnail = this.editable.Thumbnail(this.ThumbnailSize);
-                this.Generate();
+                this.GenerateAsync();
             };
         }
 
@@ -40,20 +40,19 @@ namespace HalftoneFx
                 this.original = value;
                 this.editable = new Bitmap(value);
 
-                if (this.HasThumbnail)
+                if (this.ThumbnailSize > 0)
                 {
                     this.thumbnail = this.editable.Thumbnail(this.ThumbnailSize);
                 }
             }
         }
 
-        public bool HasThumbnail { get; set; }
 
         public int ThumbnailSize { get; set; } = 200;
 
-        public async Task Generate()
+        public async Task GenerateAsync()
         {
-            if (this.HasThumbnail)
+            if (this.ThumbnailSize > 0)
             {
                 var newThumbnail = this.Generate(this.thumbnail, ImageGenerationFlags.Filtering);
                 this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs { Image = newThumbnail });
