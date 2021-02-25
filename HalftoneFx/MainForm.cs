@@ -83,6 +83,7 @@
                    .Label("CELL SCALE")
                    .Wide(90)
                    .SliderFloat(this.image.CellScale, 0.5f, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
+                   .CheckBox("TRANSP. BG", this.image.TransparentBg).Changed(this.OnTransparentBgChanged)
                    .EndPanel();
 
             this.statusBar.BringToFront();
@@ -254,6 +255,12 @@
             var slider = sender as UISlider;
             var types = new string[3] { "Square", "Circle", "Dithering4x4" };
             slider.Caption = types[(int)slider.Value];
+        }
+
+        private void OnTransparentBgChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as UICheckBox;
+            this.image.TransparentBg = checkbox.Checked;
         }
     }
 }

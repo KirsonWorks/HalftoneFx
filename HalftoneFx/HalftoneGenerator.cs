@@ -139,6 +139,12 @@
             set => this.halftone.Enabled = value;
         }
 
+        public bool TransparentBg
+        {
+            get => this.halftone.TransparentBg;
+            set => this.halftone.TransparentBg = value;
+        }
+
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
         {
             var parallelOpt = new ParallelOptions

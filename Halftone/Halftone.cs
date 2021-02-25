@@ -16,6 +16,8 @@
 
         private bool enabled = true;
 
+        private bool transparentBg = true;
+
         public event EventHandler OnPropertyChanged = delegate { };
 
         public int GridType
@@ -90,6 +92,20 @@
             }
         }
 
+        public bool TransparentBg
+        {
+            get => this.transparentBg;
+
+            set
+            {
+                if (this.transparentBg != value)
+                {
+                    this.transparentBg = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+
         public Bitmap Generate(Bitmap image)
         {
             if (!this.Enabled)
@@ -108,6 +124,11 @@
 
             using (var graphics = Graphics.FromImage(result))
             {
+                if (!this.transparentBg)
+                {
+                    graphics.Clear(Color.Black);
+                }
+
                 if (pattern.AntialiasingRequired())
                 {
                     graphics.SmoothingMode = SmoothingMode.AntiAlias;
