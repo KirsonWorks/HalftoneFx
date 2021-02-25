@@ -17,17 +17,19 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.openPictureDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // openPictureDialog
             // 
-            this.openPictureDialog.Filter = "PNG files|*.png|JPG files|*.jpg";
+            this.openPictureDialog.Filter = resources.GetString("openPictureDialog.Filter");
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "PNG files|*.png|JPG files|*.jpg";
+            this.saveFileDialog.DefaultExt = "png";
+            this.saveFileDialog.Filter = resources.GetString("saveFileDialog.Filter");
             // 
             // MainForm
             // 

@@ -1,9 +1,11 @@
 ﻿namespace HalftoneFx.Helpers
 {
     using System;
+    using System.IO;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
+    using System.Collections.Generic;
 
     public static class ImageHelper
     {
@@ -66,6 +68,31 @@
             }
 
             return new Bitmap(image);
+        }
+
+        public static void SaveAs(this Image image, string path)
+        {
+            var formats = new Dictionary<string, ImageFormat>
+            { 
+                { ".png", ImageFormat.Png },
+                { ".jpg", ImageFormat.Jpeg },
+                { ".jpeg", ImageFormat.Jpeg },
+                { ".bmp", ImageFormat.Bmp },
+                { ".gif", ImageFormat.Gif },
+                { ".tif", ImageFormat.Tiff },
+                { ".wmf", ImageFormat.Wmf }
+            };
+
+            var ext = Path.GetExtension(path).ToLower();
+
+            if (formats.ContainsKey(ext))
+            {
+                image.Save(path, formats[ext]);
+            }
+            else
+            {
+                throw new Exception("File format not support");
+            }
         }
     }
 }

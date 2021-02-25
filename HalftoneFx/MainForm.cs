@@ -9,6 +9,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using HalftoneFx.Helpers;
 
     public partial class MainForm : Form
     {
@@ -133,7 +134,7 @@
             {
                 try
                 {
-                    this.pictureBox.Image.Save(this.saveFileDialog.FileName);
+                    this.pictureBox.Image.SaveAs(this.saveFileDialog.FileName);
                 }
                 catch
                 {
