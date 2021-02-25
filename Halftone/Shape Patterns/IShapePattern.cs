@@ -6,6 +6,6 @@
     {
         bool AntialiasingRequired();
 
-        void Draw(Graphics graphics, Rectangle rect, Color color);
+        void Draw(Graphics graphics, RectangleF rect, Color color);
     }
 }

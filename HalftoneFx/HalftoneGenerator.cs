@@ -121,6 +121,12 @@
             set => this.halftone.PatternType = value;
         }
 
+        public int ShapeSizing
+        {
+            get => this.halftone.ShapeSizing;
+            set => this.halftone.ShapeSizing = value;
+        }
+            
         public int CellSize
         {
             get => this.halftone.CellSize;

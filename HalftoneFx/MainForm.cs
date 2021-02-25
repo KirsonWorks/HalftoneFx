@@ -74,10 +74,13 @@
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
-                   .Slider(0, 0, 2).Caption("Square").Changed(this.OnGridTypeChanged).Changing(this.OnGridTypeChanging)
+                   .Slider(0, 0, 2).Caption("Square").Changing(this.OnGridTypeChanging)
                    .Label("PATTERN")
                    .Wide(90)
-                   .Slider(0, 0, 2).Caption("Square").Changed(this.OnPatternTypeChanged).Changing(this.OnPatternTypeChanging)
+                   .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
+                   .Label("SIZE BY")
+                   .Wide(90)
+                   .Slider(0, 0, 3).Caption("Full").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
@@ -239,30 +242,31 @@
             this.image.CellScale = slider.Value;
         }
 
-        private void OnGridTypeChanged(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.image.GridType = (int)slider.Value;
-        }
-
         private void OnGridTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
             var types = new string[3] { "Square", "Hexagon", "Noise" };
-            slider.Caption = types[(int)slider.Value];
-        }
-
-        private void OnPatternTypeChanged(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.image.PatternType = (int)slider.Value;
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.GridType = value;
         }
 
         private void OnPatternTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
             var types = new string[3] { "Square", "Circle", "Dithering4x4" };
-            slider.Caption = types[(int)slider.Value];
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.PatternType = value;
+        }
+
+        private void OnShapeSizingChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            var types = new string[4] { "Full", "Brightness", "Brightness Inv", "Alpha Channel" };
+            var value = (int)slider.Value;
+            slider.Caption = types[value];
+            this.image.ShapeSizing = value;
         }
 
         private void OnTransparentBgChanged(object sender, EventArgs e)
