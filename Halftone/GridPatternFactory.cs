@@ -6,6 +6,7 @@
     {
         Square = 0,
         Hexagon,
+        Noise,
     }
 
     public static class GridPatternFactory
@@ -19,6 +20,9 @@
 
                 case GridPatternType.Hexagon:
                     return new GridPatternHexagonEnumerator(width, height, cellSize);
+
+                case GridPatternType.Noise:
+                    return new GridPatternNoiseEnumerator(width, height, cellSize);
 
                 default:
                     throw new NotSupportedException();

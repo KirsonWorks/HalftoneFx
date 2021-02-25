@@ -3,9 +3,11 @@
     using System;
     using System.Drawing;
 
-    public class GridPatternSquareEnumerator : GridPatternEnumeratorBase
+    public class GridPatternNoiseEnumerator : GridPatternEnumeratorBase
     {
-        public GridPatternSquareEnumerator(int width, int height, int cellSize)
+        private readonly Random rand = new Random();
+
+        public GridPatternNoiseEnumerator(int width, int height, int cellSize) 
             : base(width, height, cellSize)
         {
         }
@@ -14,7 +16,9 @@
         {
             var x = (this.Position % this.CellsX) * this.CellSize;
             var y = (this.Position / this.CellsX) * this.CellSize;
-            return new Point(x, y);
+            var n = this.CellSize / 4;
+            
+            return new Point(x + rand.Next(-n, n), y + rand.Next(-n, n));
         }
     }
 }

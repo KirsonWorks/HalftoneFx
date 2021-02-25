@@ -12,11 +12,18 @@
             this.Width = width;
             this.Height = height;
             this.CellSize = cellSize;
+            this.CellsX = Math.Max(1, (int)Math.Ceiling((float)width / cellSize));
+            this.CellsY = Math.Max(1, (int)Math.Ceiling((float)height / cellSize));
+            this.CellCount = this.CellsX * this.CellsY;
         }
 
         protected int Width { get; set; }
 
         protected int Height { get; set; }
+
+        protected int CellsX { get; set; }
+
+        protected int CellsY { get; set; }
 
         protected int CellSize { get; set; }
 

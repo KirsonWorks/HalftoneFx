@@ -74,7 +74,7 @@
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
-                   .Slider(0, 0, 1).Caption("Square").Changed(this.OnGridTypeChanged).Changing(this.OnGridTypeChanging)
+                   .Slider(0, 0, 2).Caption("Square").Changed(this.OnGridTypeChanged).Changing(this.OnGridTypeChanging)
                    .Label("PATTERN")
                    .Wide(90)
                    .Slider(0, 0, 2).Caption("Square").Changed(this.OnPatternTypeChanged).Changing(this.OnPatternTypeChanging)
@@ -248,7 +248,7 @@
         private void OnGridTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[2] { "Square", "Hexagon" };
+            var types = new string[3] { "Square", "Hexagon", "Noise" };
             slider.Caption = types[(int)slider.Value];
         }
 
