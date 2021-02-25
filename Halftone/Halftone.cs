@@ -6,7 +6,7 @@
 
     public enum HalftoneShapeSizing
     {
-        Full,
+        None,
         Brightness,
         BrightnessInverted,
         AlphaChannel,
@@ -142,14 +142,22 @@
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var half = this.cellSize / 2;
             var result = new Bitmap(width, height);
+            var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
             var pattern = ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
             var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
-
+            
             using (var graphics = Graphics.FromImage(result))
             {
                 if (!this.transparentBg)
                 {
-                    graphics.Clear(Color.White);
+                    if (shapeSizing == HalftoneShapeSizing.BrightnessInverted)
+                    {
+                        graphics.Clear(Color.White);
+                    }
+                    else
+                    {
+                        graphics.Clear(Color.Black);
+                    }
                 }
 
                 if (pattern.AntialiasingRequired())
@@ -175,7 +183,7 @@
 
                     var scale = 1.0f;
 
-                    switch ((HalftoneShapeSizing)this.ShapeSizing)
+                    switch (shapeSizing)
                     {
                         case HalftoneShapeSizing.Brightness:
                             scale = color.GetBrightness();

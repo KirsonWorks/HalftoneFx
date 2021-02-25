@@ -80,7 +80,7 @@
                    .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("SIZE BY")
                    .Wide(90)
-                   .Slider(0, 0, 3).Caption("Full").Changing(this.OnShapeSizingChanging)
+                   .Slider(0, 0, 3).Caption("None").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
@@ -263,7 +263,7 @@
         private void OnShapeSizingChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[4] { "Full", "Brightness", "Brightness Inv", "Alpha Channel" };
+            var types = new string[4] { "None", "Brightness", "Brightness Inv", "Alpha Channel" };
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.ShapeSizing = value;
