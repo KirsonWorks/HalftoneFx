@@ -11,7 +11,7 @@
     {
         None,
         Decimal,
-        PlusSign
+        PlusSign,
     }
 
     public enum UIRangeTextType
@@ -20,7 +20,7 @@
         Caption,
         Value,
         Percent,
-        Range
+        Range,
     }
 
     public class UIRangeControl : UIControl
@@ -38,6 +38,10 @@
         }
 
         private float Interval => this.Max - this.Min;
+
+        public event EventHandler OnChanging = delegate { };
+
+        public event EventHandler OnChanged = delegate { };
 
         public float Value
         {
@@ -103,9 +107,7 @@
 
         public PointF TextAlign { get; set; } = UIAlign.Center;
 
-        public event EventHandler OnChanging = delegate { };
-
-        public event EventHandler OnChanged = delegate { };
+        public string TextFormat { get; set; }
 
         public bool Vertical { get; set; }
 
@@ -119,7 +121,7 @@
 
         protected void SetValueByPoint(PointF point)
         {
-            float diff; 
+            float diff;
             float divider;
 
             var r = this.ScreenRect.Inflate(-this.Style.InnerShrink);
@@ -225,7 +227,8 @@
         protected override void DoRender(Graphics graphics)
         {
             var text = string.Empty;
-            var sign = this.TextFlags.HasFlag(UIRangeTextFlags.PlusSign) && this.Value >= 0.01 ? "+" : string.Empty;
+            var isDecimal = this.TextFlags.HasFlag(UIRangeTextFlags.Decimal);
+            var sign = this.TextFlags.HasFlag(UIRangeTextFlags.PlusSign) && this.Value >= float.Epsilon ? "+" : string.Empty;
 
             switch (this.TextType)
             {
@@ -237,39 +240,28 @@
                     break;
 
                 case UIRangeTextType.Value:
-                    if (this.TextFlags.HasFlag(UIRangeTextFlags.Decimal))
-                    {
-                        text = $"{sign}{(int)this.Value:D}";
-                    }
-                    else
-                    {
-                        text = $"{sign}{this.Value:F}";
-                    }
-
+                    text = isDecimal ?
+                           $"{sign}{(int)this.Value:D}" :
+                           $"{sign}{this.Value:F}";
                     break;
 
                 case UIRangeTextType.Percent:
-                    if (this.TextFlags.HasFlag(UIRangeTextFlags.Decimal))
-                    {
-                        text = $"{sign}{(int)(this.Percent * 100):D}%";
-                    }
-                    else
-                    {
-                        text = $"{sign}{this.Percent, 0:P}";
-                    }
+                    text = isDecimal ?
+                           $"{sign}{(int)(this.Percent * 100):D}%" :
+                           $"{sign}{this.Percent,0:P}";
                     
                     break;
 
                 case UIRangeTextType.Range:
-                    if (this.TextFlags.HasFlag(UIRangeTextFlags.Decimal))
-                    {
-                        text = $"{sign}{(int)this.Value:D}/{(int)this.Max:D}";
-                    }
-                    else
-                    {
-                        text = $"{sign}{this.Value:F}/{this.Max:F}";
-                    }
+                    text = isDecimal ?
+                            $"{sign}{(int)this.Value:D}/{(int)this.Max:D}" :
+                            $"{sign}{this.Value:F}/{this.Max:F}";
                     break;
+            }
+
+            if (!string.IsNullOrEmpty(this.TextFormat))
+            {
+                text = string.Format(this.TextFormat, text);
             }
 
             var textColor = this.Enabled ? this.Colors.Text : this.Colors.TextDisabled;

@@ -2,13 +2,13 @@
 {
     using GUI;
     using GUI.Controls;
+    using GUI.BaseControls;
 
     using HalftoneFx.Editor;
 
     using System;
     using System.Drawing;
     using System.Windows.Forms;
-    using System.Drawing.Imaging;
 
     public partial class MainForm : Form
     {
@@ -52,16 +52,16 @@
                    .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.OnNegativeChanged)
                    .Label("BRIGHTNESS")
                    .Wide(90)
-                   .SliderInt(0, -150, 100, 1).Hint("Brightness filter").Changing(this.OnBrightnessChanging)
+                   .SliderInt(0, -150, 100, 1, UIRangeTextFlags.PlusSign).Hint("Brightness filter").Changing(this.OnBrightnessChanging)
                    .Label("CONTRAST")
                    .Wide(90)
-                   .SliderInt(0, -50, 100, 1).Hint("Contrast filter").Changing(this.OnContrastChanging)
+                   .SliderInt(0, -50, 100, 1, UIRangeTextFlags.PlusSign).Hint("Contrast filter").Changing(this.OnContrastChanging)
                    .Label("QUANTIZATION")
                    .Wide(90)
-                   .Slider(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
+                   .SliderInt(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
                    .Label("DOWNSAMPLING")
                    .Wide(90)
-                   .SliderInt(1, 1, 16, 1).Hint("Downsampling").Changing(this.OnDownsampleChanging)
+                   .SliderInt(1, 1, 16, 1).TextFormat("x{0}").Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -73,16 +73,16 @@
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
-                   .SliderInt(0, 0, 1, 1).Changed(this.OnGridTypeChanged)
+                   .Slider(0, 0, 1).Caption("Square").Changed(this.OnGridTypeChanged).Changing(this.OnGridTypeChanging)
                    .Label("PATTERN")
                    .Wide(90)
-                   .SliderInt(0, 0, 2, 1).Changed(this.OnPatternTypeChanged)
+                   .Slider(0, 0, 2).Caption("Square").Changed(this.OnPatternTypeChanged).Changing(this.OnPatternTypeChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
-                   .SliderInt(this.image.CellSize, 4, 64, 1).Changing(this.OnCellSizeChanging)
+                   .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
                    .Label("CELL SCALE")
                    .Wide(90)
-                   .Slider(this.image.CellScale, 0, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
+                   .SliderFloat(this.image.CellScale, 0.5f, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
                    .EndPanel();
 
             this.statusBar.BringToFront();
@@ -230,16 +230,30 @@
             this.image.CellScale = slider.Value;
         }
 
+        private void OnGridTypeChanged(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            this.image.GridType = (int)slider.Value;
+        }
+
+        private void OnGridTypeChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            var types = new string[2] { "Square", "Hexagon" };
+            slider.Caption = types[(int)slider.Value];
+        }
+
         private void OnPatternTypeChanged(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
             this.image.PatternType = (int)slider.Value;
         }
 
-        private void OnGridTypeChanged(object sender, EventArgs e)
+        private void OnPatternTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.image.GridType = (int)slider.Value;
+            var types = new string[3] { "Square", "Circle", "Dithering4x4" };
+            slider.Caption = types[(int)slider.Value];
         }
     }
 }
