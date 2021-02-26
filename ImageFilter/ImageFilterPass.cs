@@ -36,11 +36,6 @@
                 var sourceBits = original.LockBits(rect, ImageLockMode.ReadOnly, pixelFormat);
                 var destBits = destImage.LockBits(rect, ImageLockMode.WriteOnly, pixelFormat);
 
-                if (channels < 3)
-                {
-                    throw new Exception("Pixel format not support");
-                }
-
                 var height = sourceBits.Height;
                 var stride = sourceBits.Stride;
                 var widthInBytes = sourceBits.Width * channels;
@@ -52,6 +47,9 @@
 
                 try
                 {
+                    filter.Lock();
+                    filter.Prepare();
+
                     int linesCompleted = 0;
 
                     Parallel.For(0, height, options, (y) =>
@@ -86,7 +84,7 @@
                                 destLine[x + 3] = sourceLine[x + 3];
                             }
 
-                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel, x, y);
+                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel, x / channels, y);
                         }
 
                         var part =  Math.Max(1, height / 10);
@@ -102,6 +100,7 @@
                 {
                     original?.UnlockBits(sourceBits);
                     destImage?.UnlockBits(destBits);
+                    filter.Unlock();
                 }
 
                 return destImage;

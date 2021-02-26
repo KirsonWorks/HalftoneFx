@@ -35,6 +35,10 @@ namespace ImageFilter
 
         public bool HasEffect() => this.Value != 0;
 
+        public void Prepare()
+        {
+        }
+
         public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             var red = 0;
@@ -53,6 +57,14 @@ namespace ImageFilter
             r = this.ClampByte((int)(this.Factor * red + this.Bias));
             g = this.ClampByte((int)(this.Factor * green + this.Bias));
             b = this.ClampByte((int)(this.Factor * blue + this.Bias));
+        }
+
+        public void Lock()
+        {
+        }
+
+        public void Unlock()
+        {
         }
     }
 }

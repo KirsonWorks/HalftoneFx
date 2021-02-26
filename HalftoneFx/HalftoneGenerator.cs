@@ -47,7 +47,7 @@
             this.filter.Add(nameof(Brightness), new ImageFilterBrightness());
             this.filter.Add(nameof(Contrast), new ImageFilterContrast());
             this.filter.Add(nameof(Quantization), new ImageFilterQuantization());
-            this.filter.Add("Bayer", new ImageFilterBayer());
+            this.filter.Add(nameof(Dithering), new ImageFilterDithering());
             
             this.filter.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
@@ -99,15 +99,10 @@
             set => this.filter[nameof(Smoothing)] = Convert.ToInt32(value);
         }
 
-        public int DownsamplingLevel
+        public int Dithering
         {
-            get => this.downsamplingLevel;
-
-            set
-            {
-                this.downsamplingLevel = Math.Min(Math.Max(0, value), 16);
-                this.OnDownsamplingPropertyChanged(this, EventArgs.Empty);
-            }
+            get => this.filter[nameof(Dithering)];
+            set => this.filter[nameof(Dithering)] = value;
         }
 
         public int GridType
@@ -150,6 +145,17 @@
         {
             get => this.halftone.TransparentBg;
             set => this.halftone.TransparentBg = value;
+        }
+
+        public int DownsamplingLevel
+        {
+            get => this.downsamplingLevel;
+
+            set
+            {
+                this.downsamplingLevel = Math.Min(Math.Max(0, value), 16);
+                this.OnDownsamplingPropertyChanged(this, EventArgs.Empty);
+            }
         }
 
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)

@@ -1,14 +1,16 @@
 ﻿namespace ImageFilter
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
+    using System.Collections.Generic;
 
     public class ImageFilterComplex: IImageFilter
     {
         private readonly Dictionary<string, IImageFilter> filters;
 
         private byte maxKernelSize = 0;
+
+        private IList<IImageFilter> activeFilters = new List<IImageFilter>();
 
         public event EventHandler OnPropertyChanged = delegate { };
 
@@ -60,11 +62,36 @@
 
         public byte GetKernelSize() => this.maxKernelSize;
 
+        public void Prepare()
+        {
+            this.activeFilters = this.filters.Values.Where(f => f.HasEffect()).ToList();
+
+            foreach (var filter in this.activeFilters)
+            {
+                filter.Prepare();
+            }
+        }
+
         public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
-            foreach (var filter in this.filters.Values.Where(f => f.HasEffect()))
+            foreach (var filter in this.activeFilters)
             {
                 filter.RGB(ref r, ref g, ref b, kernel, x, y);
+            }
+        }
+        public void Lock()
+        {
+            foreach (var filter in this.filters.Values)
+            {
+                filter.Lock();
+            }
+        }
+
+        public void Unlock()
+        {
+            foreach (var filter in this.filters.Values)
+            {
+                filter.Unlock();
             }
         }
 

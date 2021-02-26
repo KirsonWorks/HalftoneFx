@@ -60,6 +60,9 @@
                    .Label("QUANTIZATION")
                    .Wide(90)
                    .SliderInt(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
+                   .Label("DITHERING")
+                   .Wide(90)
+                   .Slider(0, 0, 3).Caption("None").Hint("Dithering").Changing(this.OnDitheringChanging)
                    .Label("DOWNSAMPLING")
                    .Wide(90)
                    .SliderInt(1, 1, 16, 1).TextFormat("x{0}").Hint("Downsampling").Changing(this.OnDownsampleChanging)
@@ -216,6 +219,15 @@
         {
             var checkbox = sender as UICheckBox;
             this.image.Smoothing = checkbox.Checked;
+        }
+
+        private void OnDitheringChanging(object sender, EventArgs e)
+        {
+            var slider = sender as UISlider;
+            var value = (int)slider.Value;
+            var dimension = 1 << value;
+            slider.Caption = dimension > 1 ? $"{dimension}x{dimension}" : "None";
+            this.image.Dithering = value;
         }
 
         private void OnDownsampleChanging(object sender, EventArgs e)

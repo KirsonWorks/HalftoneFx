@@ -6,7 +6,19 @@
 
         public virtual bool HasEffect() => false;
 
+        public virtual void Prepare()
+        {
+        }
+
         public virtual void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
+        {
+        }
+
+        public virtual void Lock()
+        {
+        }
+
+        public virtual void Unlock()
         {
         }
     }

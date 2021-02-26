@@ -15,11 +15,11 @@
 
         public void Draw(Graphics graphics, RectangleF rect, Color color)
         {
-            var brightness = (int)Math.Round(color.GetBrightness() * TableSize);
+            var shade = (int)Math.Round(color.GetBrightness() * TableSize);
            
             using (var brush = new SolidBrush(color))
             {
-                for (var i = 0; i < brightness; i++)
+                for (var i = 0; i < shade; i++)
                 {
                     var pos = table[i];
                     var size = (float)rect.Width / Columns;
