@@ -3,6 +3,7 @@
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
+    using System.Threading;
 
     public enum HalftoneShapeSizing
     {
@@ -130,7 +131,7 @@
             }
         }
 
-        public Bitmap Generate(Bitmap image)
+        public Bitmap Generate(Bitmap image, Action<float> progress, CancellationToken token)
         {
             if (!this.Enabled)
             {
@@ -171,6 +172,8 @@
                 
                 while (grid.MoveNext())
                 {
+                    token.ThrowIfCancellationRequested();
+
                     var cell = grid.Current;
                     var xPixel = Math.Min(cell.X + half, width - 1);
                     var yPixel = Math.Min(cell.Y + half, height - 1);
@@ -203,6 +206,13 @@
                     var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
 
                     pattern.Draw(graphics, rect, color);
+
+                    var part = Math.Max(1, grid.CellCount / 10);
+
+                    if (grid.Position % part == 0)
+                    {
+                        progress?.Invoke((float)grid.Position / grid.CellCount);
+                    }
                 }
             }
 

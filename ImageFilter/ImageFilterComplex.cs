@@ -8,8 +8,6 @@
     {
         private readonly Dictionary<string, IImageFilter> filters;
 
-        private byte maxKernelSize = 0;
-
         private IList<IImageFilter> activeFilters = new List<IImageFilter>();
 
         public event EventHandler OnPropertyChanged = delegate { };
@@ -29,7 +27,6 @@
             if (!this.filters.ContainsKey(name))
             {
                 this.filters.Add(name, filter);
-                this.maxKernelSize = Math.Max(this.maxKernelSize, filter.GetKernelSize());
             }
         }
 
@@ -60,7 +57,10 @@
             return this.filters.Values.Any(f => f.HasEffect());
         }
 
-        public byte GetKernelSize() => this.maxKernelSize;
+        public byte GetKernelSize()
+        {
+            return this.filters.Values.Where(x => x.HasEffect()).Max(x => x.GetKernelSize());
+        }
 
         public void Prepare()
         {

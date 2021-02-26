@@ -9,22 +9,24 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    [Flags]
+    public enum ImageGenerationFlags
+    {
+        Filtering = 1,
+        Downsampling = 2,
+        Halftoning = 4
+    }
+
     public class GenerateDoneEventArgs : EventArgs
     {
+        public ImageGenerationFlags Flags { get; set; }
+
         public Bitmap Image { get; set; }
     }
 
     public class ProgressChangedEventArgs : EventArgs
     {
         public float Percent { get; set; }
-    }
-    
-    [Flags]
-    public enum ImageGenerationFlags
-    {
-        Downsampling = 1,
-        Filtering = 2,
-        Halftoning = 4
     }
 
     public class HalftoneGenerator
@@ -166,12 +168,7 @@
                 MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
-            var img = source;
-
-            if (flags.HasFlag(ImageGenerationFlags.Downsampling) && this.DownsamplingLevel > 1)
-            {
-                img = img.Downsampling(this.DownsamplingLevel);
-            }
+            var img = new Bitmap(source);
 
             if (flags.HasFlag(ImageGenerationFlags.Filtering))
             {
@@ -182,9 +179,17 @@
                 }, parallelOpt);
             }
 
+            if (flags.HasFlag(ImageGenerationFlags.Downsampling) && this.DownsamplingLevel > 1)
+            {
+                img = img.Downsampling(this.DownsamplingLevel);
+            }
+
             if (flags.HasFlag(ImageGenerationFlags.Halftoning))
             {
-                img = this.halftone.Generate(img);
+                img = this.halftone.Generate(img, (percent) =>
+                {
+                    this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
+                }, token);
             }
 
             return img;
@@ -216,7 +221,11 @@
 
                         if (!token.IsCancellationRequested)
                         {
-                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs { Image = result });
+                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs 
+                            { 
+                                Flags = flags, 
+                                Image = result,
+                            });
                         }
                     }
                     catch (OperationCanceledException)
@@ -226,7 +235,7 @@
                     {
                         throw;
                     }
-                });
+                }, token);
 
             await task;
         }

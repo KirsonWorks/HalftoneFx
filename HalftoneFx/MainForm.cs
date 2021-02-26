@@ -172,6 +172,7 @@
             this.pictureBox.Image = e.Image;
             this.statusBar.Caption = "Done.";
             this.Invalidate();
+            GC.Collect();
         }
 
         private void OnThumbnailAvailable(object sender, GenerateDoneEventArgs e)
