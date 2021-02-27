@@ -35,12 +35,12 @@ namespace ImageFilter
 
         public override void Lock()
         {
-            this.mutex.WaitOne();
+            //this.mutex.WaitOne();
         }
 
         public override void Unlock()
         {
-            this.mutex.ReleaseMutex();
+            //this.mutex.ReleaseMutex();
         }
 
         private byte[] GenerateTable(int n)

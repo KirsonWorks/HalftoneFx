@@ -39,7 +39,7 @@
 
         private int downsamplingLevel = 1;
 
-        private Task task = null;
+        private Task<Bitmap> task = null;
 
         public HalftoneGenerator()
         {
@@ -165,7 +165,7 @@
             var parallelOpt = new ParallelOptions
             {
                 CancellationToken = token,
-                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1),
             };
 
             var img = new Bitmap(source);
@@ -200,7 +200,7 @@
             return this.Generate(source, flags, CancellationToken.None);
         }
 
-        public async Task GenerateAsync(Bitmap source, ImageGenerationFlags flags, int delay = 10)
+        public async Task<Bitmap> GenerateAsync(Bitmap source, ImageGenerationFlags flags, int delay = 10)
         {
             if (this.task != null && !this.task.IsCompleted)
             {
@@ -221,23 +221,28 @@
 
                         if (!token.IsCancellationRequested)
                         {
-                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs 
+                            this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs
                             { 
-                                Flags = flags, 
-                                Image = result,
+                                Flags = flags,
+                                Image = new Bitmap(result),
                             });
                         }
+
+                        return result;
                     }
                     catch (OperationCanceledException)
                     {
+                        return null;
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Console.WriteLine(e.Message);
                         throw;
                     }
                 }, token);
 
-            await task;
+            var val = await task;
+            return val;
         }
     }
 }

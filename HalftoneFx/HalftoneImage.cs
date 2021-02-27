@@ -11,34 +11,40 @@ namespace HalftoneFx
     {
         private Image original;
 
-        private Bitmap editable, thumbnail;
+        private Bitmap editable, filtered, thumbnail;
 
         public HalftoneImage()
         {
-            this.OnFilterPropertyChanged += (s, e) => this.GenerateAsync((Bitmap)this.original, ImageGenerationFlags.Filtering, 500);
-            this.OnHalftonePropertyChanged += (s, e) => this.GenerateAsync(this.editable, ImageGenerationFlags.Halftoning, 100);
+            this.OnFilterPropertyChanged += async (s, e) =>
+            {
+                var newThumbnail = this.Generate(this.thumbnail, ImageGenerationFlags.Filtering);
+                this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs
+                { 
+                    Flags = ImageGenerationFlags.Filtering,
+                    Image = newThumbnail,
+                });
+
+                await this.GenerateAsync(this.editable, ImageGenerationFlags.Filtering, 200)
+                          .ContinueWith((task) =>
+                          {
+                                if (task.Result != null)
+                                {
+                                    this.filtered = task.Result;
+                                }
+                          },
+                          TaskContinuationOptions.OnlyOnRanToCompletion |
+                          TaskContinuationOptions.ExecuteSynchronously);
+            };
+
+            this.OnHalftonePropertyChanged += async (s, e) =>
+            {
+                await this.GenerateAsync(this.filtered, ImageGenerationFlags.Halftoning, 100);
+            };
             
             this.OnDownsamplingPropertyChanged += (s, e) =>
             {
-                //this.editable = this.original.Downsampling(this.DownsamplingLevel);
-                //this.thumbnail = this.editable.Thumbnail(this.ThumbnailSize);
-                //this.GenerateAsync(false, 500);
+                this.GenerateAsync(this.filtered, ImageGenerationFlags.Downsampling, 200);
             };
-
-            this.OnImageAvailable += DoImageAvailable;
-        }
-
-        private void DoImageAvailable(object sender, GenerateDoneEventArgs e)
-        {
-            if (e.Flags.HasFlag(ImageGenerationFlags.Filtering))
-            {
-                this.editable = e.Image;
-
-                if (this.HalftoneEnabled)
-                {
-                    this.GenerateAsync(this.editable, ImageGenerationFlags.Halftoning);
-                }
-            }
         }
 
         public event EventHandler<GenerateDoneEventArgs> OnThumbnailAvailable = delegate { };
@@ -51,9 +57,11 @@ namespace HalftoneFx
             {
                 this.original?.Dispose();
                 this.editable?.Dispose();
+                this.filtered?.Dispose();
                 this.thumbnail?.Dispose();
 
-                this.original = value;
+                this.original = new Bitmap(value);
+                this.filtered = new Bitmap(value);
                 this.editable = new Bitmap(value);
 
                 if (this.ThumbnailSize > 0)
@@ -64,18 +72,5 @@ namespace HalftoneFx
         }
 
         public int ThumbnailSize { get; set; } = 200;
-
-        /*
-        public async Task GenerateAsync(bool genThumbnail, int delay)
-        {   
-            if (this.ThumbnailSize > 0 && genThumbnail)
-            {
-                var newThumbnail = this.Generate(this.thumbnail, ImageGenerationFlags.Filtering);
-                this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs { Image = newThumbnail });
-            }
-            
-            await this.GenerateAsync(this.editable, flags, delay);
-        }
-        */
     }
 }
