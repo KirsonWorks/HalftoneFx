@@ -13,8 +13,7 @@
     public enum ImageGenerationFlags
     {
         Filtering = 1,
-        Downsampling = 2,
-        Halftoning = 4
+        Halftoning = 2
     }
 
     public class GenerateDoneEventArgs : EventArgs
@@ -37,8 +36,6 @@
 
         private CancellationTokenSource cancelationToken = null;
 
-        private int downsamplingLevel = 1;
-
         private Task<Bitmap> task = null;
 
         public HalftoneGenerator()
@@ -58,8 +55,6 @@
         public event EventHandler OnFilterPropertyChanged = delegate { };
 
         public event EventHandler OnHalftonePropertyChanged = delegate { };
-
-        public event EventHandler OnDownsamplingPropertyChanged = delegate { };
 
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
 
@@ -149,23 +144,12 @@
             set => this.halftone.TransparentBg = value;
         }
 
-        public int DownsamplingLevel
-        {
-            get => this.downsamplingLevel;
-
-            set
-            {
-                this.downsamplingLevel = Math.Min(Math.Max(0, value), 16);
-                this.OnDownsamplingPropertyChanged(this, EventArgs.Empty);
-            }
-        }
-
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
         {
             var parallelOpt = new ParallelOptions
             {
                 CancellationToken = token,
-                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1),
+                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount),
             };
 
             var img = new Bitmap(source);
@@ -177,11 +161,6 @@
                 {
                     this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
                 }, parallelOpt);
-            }
-
-            if (flags.HasFlag(ImageGenerationFlags.Downsampling) && this.DownsamplingLevel > 1)
-            {
-                img = img.Downsampling(this.DownsamplingLevel);
             }
 
             if (flags.HasFlag(ImageGenerationFlags.Halftoning))
@@ -241,8 +220,7 @@
                     }
                 }, token);
 
-            var val = await task;
-            return val;
+            return await task;
         }
     }
 }

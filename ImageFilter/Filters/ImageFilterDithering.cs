@@ -1,10 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace ImageFilter
 {
     public class ImageFilterDithering : ImageFilterNoKernel
     {
-        private readonly Mutex mutex = new Mutex();  
+        private readonly Mutex mutex = new Mutex();
 
         private int dimension = 0;
 
@@ -26,21 +27,15 @@ namespace ImageFilter
         public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             var i = (x % this.dimension) + (y % this.dimension * this.dimension);
-            var val = this.table[i];
 
-            r = this.StepByte(r, val);
-            g = this.StepByte(g, val);
-            b = this.StepByte(b, val);
-        }
+            if (i < this.table.Length)
+            {
+                var val = this.table[i];
 
-        public override void Lock()
-        {
-            //this.mutex.WaitOne();
-        }
-
-        public override void Unlock()
-        {
-            //this.mutex.ReleaseMutex();
+                r = this.StepByte(r, val);
+                g = this.StepByte(g, val);
+                b = this.StepByte(b, val);
+            }
         }
 
         private byte[] GenerateTable(int n)

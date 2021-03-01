@@ -58,13 +58,5 @@ namespace ImageFilter
             g = this.ClampByte((int)(this.Factor * green + this.Bias));
             b = this.ClampByte((int)(this.Factor * blue + this.Bias));
         }
-
-        public void Lock()
-        {
-        }
-
-        public void Unlock()
-        {
-        }
     }
 }

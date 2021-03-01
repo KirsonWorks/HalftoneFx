@@ -47,7 +47,6 @@
 
                 try
                 {
-                    filter.Lock();
                     filter.Prepare();
 
                     int linesCompleted = 0;
@@ -100,7 +99,6 @@
                 {
                     image?.UnlockBits(sourceBits);
                     result?.UnlockBits(destBits);
-                    filter.Unlock();
                 }
 
                 return result;

@@ -79,21 +79,6 @@
                 filter.RGB(ref r, ref g, ref b, kernel, x, y);
             }
         }
-        public void Lock()
-        {
-            foreach (var filter in this.filters.Values)
-            {
-                filter.Lock();
-            }
-        }
-
-        public void Unlock()
-        {
-            foreach (var filter in this.filters.Values)
-            {
-                filter.Unlock();
-            }
-        }
 
         private ImageFilterBase GetFilter(string name)
         {

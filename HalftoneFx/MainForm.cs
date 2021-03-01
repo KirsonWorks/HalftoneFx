@@ -63,9 +63,6 @@
                    .Label("DITHERING")
                    .Wide(90)
                    .Slider(0, 0, 3).Caption("None").Hint("Dithering").Changing(this.OnDitheringChanging)
-                   .Label("DOWNSAMPLING")
-                   .Wide(90)
-                   .SliderInt(1, 1, 16, 1).TextFormat("x{0}").Hint("Downsampling").Changing(this.OnDownsampleChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -105,7 +102,7 @@
             };
 
             this.LoadPicture(Properties.Resources.Logo);
-            this.pictureBox.Zoom(0.7f);
+            this.pictureBox.Zoom(0.5f);
         }
 
         private void LoadPicture(Image picture)
@@ -229,12 +226,6 @@
             var dimension = 1 << value;
             slider.Caption = dimension > 1 ? $"{dimension}x{dimension}" : "None";
             this.image.Dithering = value;
-        }
-
-        private void OnDownsampleChanging(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.image.DownsamplingLevel = (int)slider.Value;
         }
 
         private void OnHalftoneEnabledChanged(object sender, EventArgs e)
