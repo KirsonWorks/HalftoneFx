@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Icon.ico" />
+    <Content Include="Resources\Imageholder.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Logo.png">

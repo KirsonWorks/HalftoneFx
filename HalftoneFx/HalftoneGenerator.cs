@@ -144,6 +144,12 @@
             set => this.halftone.TransparentBg = value;
         }
 
+        public Image CustomPattern
+        {
+            get => this.halftone.CustomPattern;
+            set => this.halftone.CustomPattern = value;
+        }
+
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
         {
             var parallelOpt = new ParallelOptions
@@ -201,7 +207,7 @@
                         if (!token.IsCancellationRequested)
                         {
                             this.OnImageAvailable.Invoke(this, new GenerateDoneEventArgs
-                            { 
+                            {
                                 Flags = flags,
                                 Image = new Bitmap(result),
                             });

@@ -17,6 +17,7 @@
         {
             this.AutoSize = true;
             this.Size = new SizeF(20, 20);
+            this.BorderColor = this.Style.Colors.Border;
         }
 
         public Image Image
