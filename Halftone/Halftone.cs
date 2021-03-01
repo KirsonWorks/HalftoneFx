@@ -29,6 +29,8 @@
 
         private bool transparentBg = true;
 
+        private Image customPattern;
+
         public event EventHandler OnPropertyChanged = delegate { };
 
         public int GridType
@@ -131,6 +133,18 @@
             }
         }
 
+        public Image CustomPattern
+        {
+            get => this.customPattern;
+
+            set
+            {
+                // Need locker.
+                this.customPattern = value;
+                this.DoPropertyChanged();
+            }
+        }
+
         public Bitmap Generate(Bitmap image, Action<float> progress, CancellationToken token)
         {
             if (!this.Enabled)
@@ -145,8 +159,11 @@
             var half = this.cellSize / 2;
             var result = new Bitmap(width, height);
             var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
-            var pattern = ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
-            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
+            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);            
+
+            IShapePattern pattern = this.customPattern != null ? 
+                    new ShapePatternCustom(this.CustomPattern) :
+                    ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
             
             using (var graphics = Graphics.FromImage(result))
             {

@@ -221,6 +221,8 @@
         {
             var image = this.Container.NewImage(string.Empty, img);
             image.Center = center;
+            image.Stretch = true;
+            image.BorderSize = 1;
 
             this.positioner.Stretch(width);
             this.positioner.Tall(height);

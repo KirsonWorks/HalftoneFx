@@ -1,7 +1,7 @@
-﻿using System.Drawing;
-
-namespace Halftone
+﻿namespace Halftone
 {
+    using System.Drawing;
+
     public class ShapePatternCircle : IShapePattern
     {
         public bool AntialiasingRequired() => true;

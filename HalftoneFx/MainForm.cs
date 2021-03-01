@@ -8,6 +8,7 @@
 
     using System;
     using System.Drawing;
+    using System.Drawing.Drawing2D;
     using System.Windows.Forms;
     using HalftoneFx.Helpers;
 
@@ -27,9 +28,13 @@
 
         private readonly UIProgressBar progress;
 
+        private readonly UIImage customPattern;
+
         public MainForm()
         {
             this.InitializeComponent();
+            this.Text = $"{Application.ProductName} v{Application.ProductVersion}";
+
             this.ui.Container = this;
             this.ui.OnNotification += this.OnUINotification;
 
@@ -78,6 +83,11 @@
                    .Label("PATTERN")
                    .Wide(90)
                    .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
+                   .Label("CUSTOM")
+                   .Button("LOAD").Click(this.LoadPatternFromFile)
+                   .SameLine()
+                   .Button("CLEAR").Click(this.ClearPattern)
+                   .Image(90, 90, Properties.Resources.Imageholder, true).Ref(ref customPattern)
                    .Label("SIZE BY")
                    .Wide(90)
                    .Slider(0, 0, 3).Caption("None").Changing(this.OnShapeSizingChanging)
@@ -129,6 +139,31 @@
                     MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
+        }
+
+        private void LoadPatternFromFile(object sender, EventArgs e)
+        {
+            if (this.openPictureDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var pattern = Image.FromFile(this.openPictureDialog.FileName)
+                                       .Resize(64, 64, InterpolationMode.Default);
+
+                    this.customPattern.Image = pattern;
+                    this.image.CustomPattern = new Bitmap(pattern);
+                }
+                catch
+                {
+                    MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+        }
+
+        private void ClearPattern(object sender, EventArgs e)
+        {
+            this.customPattern.Image = Properties.Resources.Imageholder;
+            this.image.CustomPattern = null;
         }
 
         private void SavePicture(object sender, EventArgs e)
