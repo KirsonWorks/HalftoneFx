@@ -30,6 +30,8 @@
         public MainForm()
         {
             this.InitializeComponent();
+            this.Text = $"{Application.ProductName} v{Application.ProductVersion}";
+
             this.ui.Container = this;
             this.ui.OnNotification += this.OnUINotification;
 
