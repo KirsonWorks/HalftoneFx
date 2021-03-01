@@ -8,11 +8,11 @@
 
     public class ImageFilterPass
     {
-        public static Bitmap GetFiltered(Bitmap original, IImageFilter filter, Action<float> progress, ParallelOptions options)
+        public static Bitmap GetFiltered(Bitmap image, IImageFilter filter, Action<float> progress, ParallelOptions options)
         {
-            if (original == null)
+            if (image == null)
             {
-                throw new ArgumentNullException(nameof(original));
+                throw new ArgumentNullException(nameof(image));
             }
 
             if (filter == null)
@@ -22,24 +22,19 @@
 
             if (!filter.HasEffect())
             {
-                progress?.Invoke(1.0f);
-                return new Bitmap(original);
+                progress?.Invoke(0.0f);
+                return new Bitmap(image);
             }
 
             unsafe
             {
-                var pixelFormat = original.PixelFormat;
+                var pixelFormat = image.PixelFormat;
                 var channels = Image.GetPixelFormatSize(pixelFormat) / 8;
-                var rect = new Rectangle(0, 0, original.Width, original.Height);
+                var rect = new Rectangle(0, 0, image.Width, image.Height);
                 
-                var destImage = new Bitmap(original.Width, original.Height, pixelFormat);
-                var sourceBits = original.LockBits(rect, ImageLockMode.ReadOnly, pixelFormat);
-                var destBits = destImage.LockBits(rect, ImageLockMode.WriteOnly, pixelFormat);
-
-                if (channels < 3)
-                {
-                    throw new Exception("Pixel format not support");
-                }
+                var result = new Bitmap(image.Width, image.Height, pixelFormat);
+                var sourceBits = image.LockBits(rect, ImageLockMode.ReadOnly, pixelFormat);
+                var destBits = result.LockBits(rect, ImageLockMode.WriteOnly, pixelFormat);
 
                 var height = sourceBits.Height;
                 var stride = sourceBits.Stride;
@@ -52,6 +47,8 @@
 
                 try
                 {
+                    filter.Prepare();
+
                     int linesCompleted = 0;
 
                     Parallel.For(0, height, options, (y) =>
@@ -86,7 +83,7 @@
                                 destLine[x + 3] = sourceLine[x + 3];
                             }
 
-                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel);
+                            filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel, x / channels, y);
                         }
 
                         var part =  Math.Max(1, height / 10);
@@ -100,11 +97,11 @@
                 }
                 finally
                 {
-                    original?.UnlockBits(sourceBits);
-                    destImage?.UnlockBits(destBits);
+                    image?.UnlockBits(sourceBits);
+                    result?.UnlockBits(destBits);
                 }
 
-                return destImage;
+                return result;
             }
         }
 

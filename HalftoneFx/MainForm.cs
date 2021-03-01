@@ -60,9 +60,9 @@
                    .Label("QUANTIZATION")
                    .Wide(90)
                    .SliderInt(1, 1, 255, 1).Hint("Quantization filter").Changing(this.OnQuantizationChanging)
-                   .Label("DOWNSAMPLING")
+                   .Label("DITHERING")
                    .Wide(90)
-                   .SliderInt(1, 1, 16, 1).TextFormat("x{0}").Hint("Downsampling").Changing(this.OnDownsampleChanging)
+                   .Slider(0, 0, 3).Caption("None").Hint("Dithering").Changing(this.OnDitheringChanging)
                    .Label("SIZE: 0x0").Ref(ref labelSize)
                    .Label("ZOOM: 100%").Hint("Click for reset zoom or fit to screen").Ref(ref labelZoom)
                    .Click((s, e) => this.pictureBox.ResetZoom())
@@ -80,7 +80,7 @@
                    .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("SIZE BY")
                    .Wide(90)
-                   .Slider(0, 0, 3).Caption("Full").Changing(this.OnShapeSizingChanging)
+                   .Slider(0, 0, 3).Caption("None").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
@@ -102,7 +102,7 @@
             };
 
             this.LoadPicture(Properties.Resources.Logo);
-            this.pictureBox.Zoom(0.7f);
+            this.pictureBox.Zoom(0.5f);
         }
 
         private void LoadPicture(Image picture)
@@ -169,6 +169,7 @@
             this.pictureBox.Image = e.Image;
             this.statusBar.Caption = "Done.";
             this.Invalidate();
+            GC.Collect();
         }
 
         private void OnThumbnailAvailable(object sender, GenerateDoneEventArgs e)
@@ -218,10 +219,13 @@
             this.image.Smoothing = checkbox.Checked;
         }
 
-        private void OnDownsampleChanging(object sender, EventArgs e)
+        private void OnDitheringChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            this.image.DownsamplingLevel = (int)slider.Value;
+            var value = (int)slider.Value;
+            var dimension = 1 << value;
+            slider.Caption = dimension > 1 ? $"{dimension}x{dimension}" : "None";
+            this.image.Dithering = value;
         }
 
         private void OnHalftoneEnabledChanged(object sender, EventArgs e)
@@ -263,7 +267,7 @@
         private void OnShapeSizingChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[4] { "Full", "Brightness", "Brightness Inv", "Alpha Channel" };
+            var types = new string[4] { "None", "Brightness", "Brightness Inv", "Alpha Channel" };
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.ShapeSizing = value;

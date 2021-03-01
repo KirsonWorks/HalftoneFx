@@ -71,5 +71,10 @@
 
             return (float)Math.Floor((value + 0.5f * step) / step) * step;
         }
+
+        protected byte StepByte(byte a, byte b)
+        {
+            return (byte)(a > b ? 255 : 0);
+        }
     }
 }

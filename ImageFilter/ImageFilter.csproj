@@ -39,6 +39,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\ImageFilterDithering.cs" />
     <Compile Include="Filters\ImageFilterGaussian5x5.cs" />
     <Compile Include="Filters\ImageFilterBrightness.cs" />
     <Compile Include="Filters\ImageFilterContrast.cs" />

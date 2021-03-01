@@ -1,14 +1,14 @@
 ﻿namespace ImageFilter
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
+    using System.Collections.Generic;
 
     public class ImageFilterComplex: IImageFilter
     {
         private readonly Dictionary<string, IImageFilter> filters;
 
-        private byte maxKernelSize = 0;
+        private IList<IImageFilter> activeFilters = new List<IImageFilter>();
 
         public event EventHandler OnPropertyChanged = delegate { };
 
@@ -27,7 +27,6 @@
             if (!this.filters.ContainsKey(name))
             {
                 this.filters.Add(name, filter);
-                this.maxKernelSize = Math.Max(this.maxKernelSize, filter.GetKernelSize());
             }
         }
 
@@ -58,13 +57,26 @@
             return this.filters.Values.Any(f => f.HasEffect());
         }
 
-        public byte GetKernelSize() => this.maxKernelSize;
-
-        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
+        public byte GetKernelSize()
         {
-            foreach (var filter in this.filters.Values.Where(f => f.HasEffect()))
+            return this.filters.Values.Where(x => x.HasEffect()).Max(x => x.GetKernelSize());
+        }
+
+        public void Prepare()
+        {
+            this.activeFilters = this.filters.Values.Where(f => f.HasEffect()).ToList();
+
+            foreach (var filter in this.activeFilters)
             {
-                filter.RGB(ref r, ref g, ref b, kernel);
+                filter.Prepare();
+            }
+        }
+
+        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
+        {
+            foreach (var filter in this.activeFilters)
+            {
+                filter.RGB(ref r, ref g, ref b, kernel, x, y);
             }
         }
 

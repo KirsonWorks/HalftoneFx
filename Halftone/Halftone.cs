@@ -3,10 +3,11 @@
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
+    using System.Threading;
 
     public enum HalftoneShapeSizing
     {
-        Full,
+        None,
         Brightness,
         BrightnessInverted,
         AlphaChannel,
@@ -130,10 +131,11 @@
             }
         }
 
-        public Bitmap Generate(Bitmap image)
+        public Bitmap Generate(Bitmap image, Action<float> progress, CancellationToken token)
         {
             if (!this.Enabled)
             {
+                progress?.Invoke(0.0f);
                 return new Bitmap(image);
             }
 
@@ -142,14 +144,22 @@
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var half = this.cellSize / 2;
             var result = new Bitmap(width, height);
+            var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
             var pattern = ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
             var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
-
+            
             using (var graphics = Graphics.FromImage(result))
             {
                 if (!this.transparentBg)
                 {
-                    graphics.Clear(Color.White);
+                    if (shapeSizing == HalftoneShapeSizing.BrightnessInverted)
+                    {
+                        graphics.Clear(Color.White);
+                    }
+                    else
+                    {
+                        graphics.Clear(Color.Black);
+                    }
                 }
 
                 if (pattern.AntialiasingRequired())
@@ -163,38 +173,45 @@
                 
                 while (grid.MoveNext())
                 {
+                    token.ThrowIfCancellationRequested();
+
                     var cell = grid.Current;
                     var xPixel = Math.Min(cell.X + half, width - 1);
                     var yPixel = Math.Min(cell.Y + half, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
 
-                    if (color.A == 0)
+                    if (color.A != 0)
                     {
-                        continue;
+                        var scale = 1.0f;
+
+                        switch (shapeSizing)
+                        {
+                            case HalftoneShapeSizing.Brightness:
+                                scale = color.GetBrightness();
+                                break;
+
+                            case HalftoneShapeSizing.BrightnessInverted:
+                                scale = 1.0f - color.GetBrightness();
+                                break;
+
+                            case HalftoneShapeSizing.AlphaChannel:
+                                scale = (float)color.A / 255.0f;
+                                break;
+                        }
+
+                        var sz = shapeSize * scale;
+                        var offset = ((float)cellSize / 2) - (sz / 2);
+                        var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
+
+                        pattern.Draw(graphics, rect, color);
                     }
 
-                    var scale = 1.0f;
+                    var part = Math.Max(1, (grid.CellCount - 1) / 10);
 
-                    switch ((HalftoneShapeSizing)this.ShapeSizing)
+                    if (grid.Position % part == 0)
                     {
-                        case HalftoneShapeSizing.Brightness:
-                            scale = color.GetBrightness();
-                            break;
-
-                        case HalftoneShapeSizing.BrightnessInverted:
-                            scale = 1.0f - color.GetBrightness();
-                            break;
-
-                        case HalftoneShapeSizing.AlphaChannel:
-                            scale = (float)color.A / 255.0f;
-                            break;
+                        progress?.Invoke((float)grid.Position / grid.CellCount);
                     }
-
-                    var sz = shapeSize * scale;
-                    var offset = ((float)cellSize / 2) - (sz / 2);
-                    var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
-
-                    pattern.Draw(graphics, rect, color);
                 }
             }
 

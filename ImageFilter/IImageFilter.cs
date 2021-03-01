@@ -6,6 +6,8 @@
 
         byte GetKernelSize();
 
-        void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel);
+        void Prepare();
+
+        void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y);
     }
 }

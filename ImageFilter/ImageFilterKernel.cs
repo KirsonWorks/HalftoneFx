@@ -35,7 +35,11 @@ namespace ImageFilter
 
         public bool HasEffect() => this.Value != 0;
 
-        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel)
+        public void Prepare()
+        {
+        }
+
+        public void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             var red = 0;
             var green = 0;

@@ -16,6 +16,9 @@
             this.CellsY = Math.Max(1, (int)Math.Ceiling((float)height / cellSize));
             this.CellCount = this.CellsX * this.CellsY;
         }
+        public int CellCount { get; protected set; }
+
+        public int Position { get; private set; } = -1;
 
         protected int Width { get; set; }
 
@@ -26,10 +29,6 @@
         protected int CellsY { get; set; }
 
         protected int CellSize { get; set; }
-
-        protected int CellCount { get; set; }
-
-        protected int Position { get; set; } = -1;
 
         object IEnumerator.Current => throw new NotImplementedException();
 
