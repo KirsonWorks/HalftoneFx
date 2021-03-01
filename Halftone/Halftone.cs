@@ -135,6 +135,7 @@
         {
             if (!this.Enabled)
             {
+                progress?.Invoke(0.0f);
                 return new Bitmap(image);
             }
 
@@ -179,35 +180,33 @@
                     var yPixel = Math.Min(cell.Y + half, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
 
-                    if (color.A == 0)
+                    if (color.A != 0)
                     {
-                        continue;
+                        var scale = 1.0f;
+
+                        switch (shapeSizing)
+                        {
+                            case HalftoneShapeSizing.Brightness:
+                                scale = color.GetBrightness();
+                                break;
+
+                            case HalftoneShapeSizing.BrightnessInverted:
+                                scale = 1.0f - color.GetBrightness();
+                                break;
+
+                            case HalftoneShapeSizing.AlphaChannel:
+                                scale = (float)color.A / 255.0f;
+                                break;
+                        }
+
+                        var sz = shapeSize * scale;
+                        var offset = ((float)cellSize / 2) - (sz / 2);
+                        var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
+
+                        pattern.Draw(graphics, rect, color);
                     }
 
-                    var scale = 1.0f;
-
-                    switch (shapeSizing)
-                    {
-                        case HalftoneShapeSizing.Brightness:
-                            scale = color.GetBrightness();
-                            break;
-
-                        case HalftoneShapeSizing.BrightnessInverted:
-                            scale = 1.0f - color.GetBrightness();
-                            break;
-
-                        case HalftoneShapeSizing.AlphaChannel:
-                            scale = (float)color.A / 255.0f;
-                            break;
-                    }
-
-                    var sz = shapeSize * scale;
-                    var offset = ((float)cellSize / 2) - (sz / 2);
-                    var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
-
-                    pattern.Draw(graphics, rect, color);
-
-                    var part = Math.Max(1, grid.CellCount / 10);
+                    var part = Math.Max(1, (grid.CellCount - 1) / 10);
 
                     if (grid.Position % part == 0)
                     {

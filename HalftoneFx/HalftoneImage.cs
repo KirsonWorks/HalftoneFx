@@ -17,33 +17,18 @@ namespace HalftoneFx
         {
             this.OnFilterPropertyChanged += async (s, e) =>
             {
-                var newThumbnail = this.Generate(this.thumbnail, ImageGenerationFlags.Filtering);
-                this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs
-                { 
-                    Flags = ImageGenerationFlags.Filtering,
-                    Image = newThumbnail,
-                });
-
-                await this.GenerateAsync(this.editable, ImageGenerationFlags.Filtering, 200)
-                          .ContinueWith((task) =>
-                          {
-                                if (task.Result != null)
-                                {
-                                    this.filtered = task.Result;
-                                }
-                          },
-                          TaskContinuationOptions.OnlyOnRanToCompletion |
-                          TaskContinuationOptions.ExecuteSynchronously);
+                await this.GenerateFilteredAsync();
             };
 
             this.OnHalftonePropertyChanged += async (s, e) =>
             {
-                await this.GenerateAsync(this.filtered, ImageGenerationFlags.Halftoning, 100);
+                await this.GenerateHalftoneAsync();
             };
-            
-            this.OnDownsamplingPropertyChanged += (s, e) =>
+
+            this.OnDownsamplingPropertyChanged += async (s, e) =>
             {
-                this.GenerateAsync(this.filtered, ImageGenerationFlags.Downsampling, 200);
+                //this.editable = 
+                await this.GenerateAsync((Bitmap)this.original, ImageGenerationFlags.Downsampling, 200);
             };
         }
 
@@ -61,16 +46,50 @@ namespace HalftoneFx
                 this.thumbnail?.Dispose();
 
                 this.original = new Bitmap(value);
-                this.filtered = new Bitmap(value);
                 this.editable = new Bitmap(value);
+                this.filtered = new Bitmap(value);
 
                 if (this.ThumbnailSize > 0)
                 {
                     this.thumbnail = this.editable.Thumbnail(this.ThumbnailSize);
                 }
+
+                this.GenerateFilteredAsync();
             }
         }
 
         public int ThumbnailSize { get; set; } = 200;
+
+        private void GenerateThumbnail(ImageGenerationFlags flags)
+        {
+            var newThumbnail = this.Generate(this.thumbnail, flags);
+
+            this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs
+            {
+                Flags = ImageGenerationFlags.Filtering,
+                Image = newThumbnail,
+            });
+        }
+
+        private async Task GenerateFilteredAsync()
+        {
+            this.GenerateThumbnail(ImageGenerationFlags.Filtering);
+
+            await this.GenerateAsync(this.editable, ImageGenerationFlags.Filtering, 200)
+                    .ContinueWith(async (task) =>
+                    {
+                        if (task.Result != null)
+                        {
+                            this.filtered = task.Result;
+                            await this.GenerateHalftoneAsync();
+                        }
+                    },
+                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
+        }
+
+        private async Task GenerateHalftoneAsync()
+        {
+            await this.GenerateAsync(this.filtered, ImageGenerationFlags.Halftoning, 100);
+        }
     }
 }
