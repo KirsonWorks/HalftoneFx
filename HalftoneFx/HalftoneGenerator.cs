@@ -1,6 +1,6 @@
 ﻿namespace HalftoneFx
 {
-    using Helpers;
+    using Common;
     using Halftone;
     using ImageFilter;
 
@@ -200,7 +200,7 @@
                 {
                     try
                     {
-                        await Task.Delay(delay, token);
+                        await Task.Delay(delay, token).ConfigureAwait(false);
 
                         var result = this.Generate(source, flags, token);
 
@@ -226,7 +226,7 @@
                     }
                 }, token);
 
-            return await task;
+            return await task.ConfigureAwait(false);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿namespace Halftone
 {
+    using Common;
+
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -11,6 +13,9 @@
         Brightness,
         BrightnessInverted,
         AlphaChannel,
+        Dithering2x2,
+        Dithering4x4,
+        Dithering8x8,
     }
 
     public class Halftone
@@ -139,7 +144,6 @@
 
             set
             {
-                // Need locker.
                 this.customPattern = value;
                 this.DoPropertyChanged();
             }
@@ -155,11 +159,12 @@
 
             var width = image.Width;
             var height = image.Height;
-            int shapeSize = (int)(this.CellSize * this.CellScale);
-            var half = this.cellSize / 2;
+            var bayer = CreateBayerMatrix();
             var result = new Bitmap(width, height);
+            var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
+            int shapeSize = (int)(this.CellSize * this.CellScale);
             var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
-            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);            
+            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
 
             IShapePattern pattern = this.customPattern != null ? 
                     new ShapePatternCustom(this.CustomPattern) :
@@ -179,22 +184,17 @@
                     }
                 }
 
-                if (pattern.AntialiasingRequired())
-                {
-                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                }
-                else
-                {
-                    graphics.SmoothingMode = SmoothingMode.HighSpeed;
-                }
+                graphics.SmoothingMode = pattern.AntialiasingRequired() ? 
+                                            SmoothingMode.AntiAlias :
+                                            SmoothingMode.HighSpeed;
                 
                 while (grid.MoveNext())
                 {
                     token.ThrowIfCancellationRequested();
 
                     var cell = grid.Current;
-                    var xPixel = Math.Min(cell.X + half, width - 1);
-                    var yPixel = Math.Min(cell.Y + half, height - 1);
+                    var xPixel = Math.Min(cell.X + halfSize, width - 1);
+                    var yPixel = Math.Min(cell.Y + halfSize, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
 
                     if (color.A != 0)
@@ -214,13 +214,23 @@
                             case HalftoneShapeSizing.AlphaChannel:
                                 scale = (float)color.A / 255.0f;
                                 break;
+
+                            case HalftoneShapeSizing.Dithering2x2:
+                            case HalftoneShapeSizing.Dithering4x4:
+                            case HalftoneShapeSizing.Dithering8x8:
+                                var mid = (color.R + color.B + color.G) / 3;
+                                scale = mid > bayer[cell.X, cell.Y] ? mid / 255.0f : 0.0f;
+                                break;
                         }
 
-                        var sz = shapeSize * scale;
-                        var offset = ((float)cellSize / 2) - (sz / 2);
-                        var rect = new RectangleF(cell.X + offset, cell.Y + offset, sz, sz);
+                        if (scale > float.Epsilon)
+                        {
+                            var size = shapeSize * scale;
+                            var offset = ((float)cellSize / 2) - (size / 2);
+                            var rect = new RectangleF(cell.X + offset, cell.Y + offset, size, size);
 
-                        pattern.Draw(graphics, rect, color);
+                            pattern.Draw(graphics, rect, color);
+                        }
                     }
 
                     var part = Math.Max(1, (grid.CellCount - 1) / 10);
@@ -238,6 +248,24 @@
         private void DoPropertyChanged()
         {
             this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private BayerMatrix CreateBayerMatrix()
+        {
+            switch ((HalftoneShapeSizing)this.ShapeSizing)
+            {
+                case HalftoneShapeSizing.Dithering2x2:
+                    return new BayerMatrix(1);
+
+                case HalftoneShapeSizing.Dithering4x4:
+                    return new BayerMatrix(2);
+  
+                case HalftoneShapeSizing.Dithering8x8:
+                    return new BayerMatrix(3);
+
+                default:
+                    return new BayerMatrix(0);
+            }
         }
     }
 }

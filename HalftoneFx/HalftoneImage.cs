@@ -1,7 +1,7 @@
 ﻿
 namespace HalftoneFx
 {
-    using Helpers;
+    using Common;
 
     using System;
     using System.Drawing;
@@ -42,7 +42,7 @@ namespace HalftoneFx
 
                 this.Thumbnail = this.original;
 
-                Task.Run(async () => await this.GenerateFilteredAsync(200));
+                Task.Run(async () => await this.GenerateFilteredAsync(200)).ConfigureAwait(false);
             }
         }
         public Image Filtered
@@ -91,7 +91,8 @@ namespace HalftoneFx
                             await this.GenerateHalftoneAsync(100);
                         }
                     },
-                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
+                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously)
+                    .ConfigureAwait(false);
         }
 
         private async Task GenerateHalftoneAsync(int delay)

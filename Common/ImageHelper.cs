@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.Helpers
+﻿namespace Common
 {
     using System;
     using System.IO;

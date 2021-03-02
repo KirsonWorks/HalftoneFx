@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageFilter", "ImageFilter\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halftone", "Halftone\Halftone.csproj", "{AAFC6719-D20D-4D17-9771-9470E90FBE3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{AAFC6719-D20D-4D17-9771-9470E90FBE3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAFC6719-D20D-4D17-9771-9470E90FBE3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAFC6719-D20D-4D17-9771-9470E90FBE3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{827D0C49-D29B-4918-AA9C-53BE70C3342B} = {9D0865C8-0CCE-42B8-B8F1-05EE9C5E5ED5}
 		{7AE1F799-DE3E-4E3F-829E-73CEC8923216} = {9D0865C8-0CCE-42B8-B8F1-05EE9C5E5ED5}
 		{AAFC6719-D20D-4D17-9771-9470E90FBE3F} = {9D0865C8-0CCE-42B8-B8F1-05EE9C5E5ED5}
+		{1DE79F0D-0E2C-4A76-AFD5-EB9A05DFB051} = {9D0865C8-0CCE-42B8-B8F1-05EE9C5E5ED5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EAD6247C-E756-43DD-BD48-8BF3DCA6E1F2}
