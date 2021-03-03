@@ -14,7 +14,7 @@
 
             if (this.Checked)
             {
-                graphics.DrawRect(markRect, this.Colors.CheckMark, this.Style.Rounding, this.Style.InnerShrink);
+                graphics.DrawCheckMark(markRect, this.Colors.CheckMark);
             }
 
             graphics.DrawBorderVolume(markRect, this.Colors.BorderVolume, this.Style.Rounding);
