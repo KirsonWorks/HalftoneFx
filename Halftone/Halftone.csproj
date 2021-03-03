@@ -37,6 +37,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Grid Patterns\GridPatternCheckerboardEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternEnumeratorBase.cs" />
     <Compile Include="Grid Patterns\GridPatternHexagonEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternNoiseEnumerator.cs" />

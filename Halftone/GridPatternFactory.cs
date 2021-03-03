@@ -1,11 +1,13 @@
 ﻿namespace Halftone
 {
     using System;
+    using System.Collections.Generic;
 
     public enum GridPatternType
     {
         Square = 0,
         Hexagon,
+        Checkerboard,
         Noise,
     }
 
@@ -13,20 +15,15 @@
     {
         public static GridPatternEnumeratorBase GetPattern(GridPatternType type, int width, int height, int cellSize)
         {
-            switch (type)
+            var patterns = new Dictionary<GridPatternType, Type>
             {
-                case GridPatternType.Square:
-                    return new GridPatternSquareEnumerator(width, height, cellSize);
+                { GridPatternType.Square, typeof(GridPatternSquareEnumerator) },
+                { GridPatternType.Hexagon, typeof(GridPatternHexagonEnumerator) },
+                { GridPatternType.Noise, typeof(GridPatternNoiseEnumerator) },
+                { GridPatternType.Checkerboard, typeof(GridPatternCheckerboardEnumerator) },
+            };
 
-                case GridPatternType.Hexagon:
-                    return new GridPatternHexagonEnumerator(width, height, cellSize);
-
-                case GridPatternType.Noise:
-                    return new GridPatternNoiseEnumerator(width, height, cellSize);
-
-                default:
-                    throw new NotSupportedException();
-            }
+            return (GridPatternEnumeratorBase)Activator.CreateInstance(patterns[type], width, height, cellSize);
         }
     }
 }
