@@ -1,6 +1,5 @@
 ﻿namespace HalftoneFx
 {
-    using Common;
     using Halftone;
     using ImageFilter;
 
@@ -190,6 +189,7 @@
             if (this.task != null && !this.task.IsCompleted)
             {
                 this.cancelationToken.Cancel();
+                this.task.Wait();
             }
 
             this.cancelationToken = new CancellationTokenSource();

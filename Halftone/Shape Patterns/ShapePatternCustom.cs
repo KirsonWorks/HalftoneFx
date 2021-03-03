@@ -11,7 +11,7 @@
 
         public ShapePatternCustom(Image pattern)
         {
-            this.pattern = pattern;
+            this.pattern = new Bitmap(pattern);
             this.attribs = new ImageAttributes();
         }
 
@@ -21,11 +21,14 @@
         {
             if (this.pattern != null)
             {
-                var matrix = new ColorMatrix();
-                matrix.Matrix00 = color.R / 255.0f;
-                matrix.Matrix11 = color.G / 255.0f;
-                matrix.Matrix22 = color.B / 255.0f;
-                matrix.Matrix33 = color.A / 255.0f;
+                var matrix = new ColorMatrix
+                {
+                    Matrix00 = color.R / 255.0f,
+                    Matrix11 = color.G / 255.0f,
+                    Matrix22 = color.B / 255.0f,
+                    Matrix33 = color.A / 255.0f
+                };
+
                 this.attribs.SetColorMatrix(matrix);
 
                 graphics.DrawImage(this.pattern, Rectangle.Round(rect), 0, 0, pattern.Width, pattern.Height, GraphicsUnit.Pixel, this.attribs);
