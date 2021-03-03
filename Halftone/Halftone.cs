@@ -164,7 +164,7 @@
             var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
-            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
+            var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
             IShapePattern pattern = this.customPattern != null ? 
                     new ShapePatternCustom(this.CustomPattern) :

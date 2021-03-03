@@ -40,6 +40,7 @@
     <Compile Include="Grid Patterns\GridPatternCheckerboardEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternEnumeratorBase.cs" />
     <Compile Include="Grid Patterns\GridPatternHexagonEnumerator.cs" />
+    <Compile Include="Grid Patterns\GridPatternLinesEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternNoiseEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternSquareEnumerator.cs" />
     <Compile Include="GridPatternFactory.cs" />

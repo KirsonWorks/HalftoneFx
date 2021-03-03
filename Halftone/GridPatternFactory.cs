@@ -3,27 +3,31 @@
     using System;
     using System.Collections.Generic;
 
-    public enum GridPatternType
+    public enum HalftoneGridType
     {
         Square = 0,
         Hexagon,
         Checkerboard,
+        Lines,
         Noise,
+        Max
     }
 
     public static class GridPatternFactory
     {
-        public static GridPatternEnumeratorBase GetPattern(GridPatternType type, int width, int height, int cellSize)
+        public static GridPatternEnumeratorBase GetPattern(HalftoneGridType type, int width, int height, int cellSize)
         {
-            var patterns = new Dictionary<GridPatternType, Type>
+            var patterns = new Dictionary<HalftoneGridType, Type>
             {
-                { GridPatternType.Square, typeof(GridPatternSquareEnumerator) },
-                { GridPatternType.Hexagon, typeof(GridPatternHexagonEnumerator) },
-                { GridPatternType.Noise, typeof(GridPatternNoiseEnumerator) },
-                { GridPatternType.Checkerboard, typeof(GridPatternCheckerboardEnumerator) },
+                { HalftoneGridType.Square, typeof(GridPatternSquareEnumerator) },
+                { HalftoneGridType.Hexagon, typeof(GridPatternHexagonEnumerator) },
+                { HalftoneGridType.Noise, typeof(GridPatternNoiseEnumerator) },
+                { HalftoneGridType.Checkerboard, typeof(GridPatternCheckerboardEnumerator) },
+                { HalftoneGridType.Lines, typeof(GridPatternLinesEnumerator) },
             };
 
-            return (GridPatternEnumeratorBase)Activator.CreateInstance(patterns[type], width, height, cellSize);
+            var pattern = patterns.ContainsKey(type) ? patterns[type] : patterns[HalftoneGridType.Square];
+            return (GridPatternEnumeratorBase)Activator.CreateInstance(pattern, width, height, cellSize);
         }
     }
 }
