@@ -1,6 +1,5 @@
 ﻿namespace HalftoneFx
 {
-    using Helpers;
     using Halftone;
     using ImageFilter;
 
@@ -190,6 +189,7 @@
             if (this.task != null && !this.task.IsCompleted)
             {
                 this.cancelationToken.Cancel();
+                this.task.Wait();
             }
 
             this.cancelationToken = new CancellationTokenSource();
@@ -200,7 +200,7 @@
                 {
                     try
                     {
-                        await Task.Delay(delay, token);
+                        await Task.Delay(delay, token).ConfigureAwait(false);
 
                         var result = this.Generate(source, flags, token);
 
@@ -226,7 +226,7 @@
                     }
                 }, token);
 
-            return await task;
+            return await task.ConfigureAwait(false);
         }
     }
 }

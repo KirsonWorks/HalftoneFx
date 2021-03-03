@@ -6,11 +6,12 @@
 
     using HalftoneFx.Editor;
 
+    using Common;
+
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Windows.Forms;
-    using HalftoneFx.Helpers;
 
     public partial class MainForm : Form
     {
@@ -90,10 +91,10 @@
                    .Image(90, 90, Properties.Resources.Imageholder, true).Ref(ref customPattern)
                    .Label("SIZE BY")
                    .Wide(90)
-                   .Slider(0, 0, 3).Caption("None").Changing(this.OnShapeSizingChanging)
+                   .Slider(0, 0, 6).Caption("None").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
-                   .SliderInt(this.image.CellSize, 4, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
+                   .SliderInt(this.image.CellSize, 2, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
                    .Label("CELL SCALE")
                    .Wide(90)
                    .SliderFloat(this.image.CellScale, 0.5f, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
@@ -284,7 +285,7 @@
         private void OnGridTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[3] { "Square", "Hexagon", "Noise" };
+            var types = new string[] { "Square", "Hexagon", "Noise" };
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.GridType = value;
@@ -293,7 +294,7 @@
         private void OnPatternTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[3] { "Square", "Circle", "Dithering4x4" };
+            var types = new string[] { "Square", "Circle", "Dithering 4x4" };
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.PatternType = value;
@@ -302,7 +303,9 @@
         private void OnShapeSizingChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[4] { "None", "Brightness", "Brightness Inv", "Alpha Channel" };
+            var types = new string[] { "None", "Brightness", "Brightness Inv",
+                                       "Alpha Channel", "Dithering 2x2", "Dithering 4x4",
+                                       "Dithering 8x8"};
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.ShapeSizing = value;
