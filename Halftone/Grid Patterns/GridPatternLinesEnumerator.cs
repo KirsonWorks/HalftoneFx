@@ -12,7 +12,7 @@
         protected override Point GetCurrent()
         {
             var x = (this.Position % this.CellsX) * this.CellSize;
-            var y = (this.Position / this.CellsX * 2) * this.CellSize;
+            var y = (this.Position / this.CellsX * 2) * this.CellSize + (this.CellSize / 2);
 
             return new Point(x, y);
         }

@@ -9,6 +9,7 @@
         Hexagon,
         Checkerboard,
         Lines,
+        Columns,
         Noise,
         Max
     }
@@ -24,6 +25,7 @@
                 { HalftoneGridType.Noise, typeof(GridPatternNoiseEnumerator) },
                 { HalftoneGridType.Checkerboard, typeof(GridPatternCheckerboardEnumerator) },
                 { HalftoneGridType.Lines, typeof(GridPatternLinesEnumerator) },
+                { HalftoneGridType.Columns, typeof(GridPatternColumnsEnumerator) },
             };
 
             var pattern = patterns.ContainsKey(type) ? patterns[type] : patterns[HalftoneGridType.Square];

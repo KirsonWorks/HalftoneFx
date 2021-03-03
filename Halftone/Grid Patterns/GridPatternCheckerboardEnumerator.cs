@@ -6,7 +6,7 @@
     public class GridPatternCheckerboardEnumerator : GridPatternEnumeratorBase
     {
         public GridPatternCheckerboardEnumerator(int width, int height, int cellSize) 
-            : base((int)Math.Ceiling((float)width / 2), height, cellSize)
+            : base(width / 2, height, cellSize)
         {
         }
 
