@@ -83,7 +83,7 @@
                    .Slider(0, 0, (int)HalftoneGridType.Max - 1).Caption("Square").Changing(this.OnGridTypeChanging)
                    .Label("PATTERN")
                    .Wide(90)
-                   .Slider(0, 0, 2).Caption("Square").Changing(this.OnPatternTypeChanging)
+                   .Slider(0, 0, (int)HalftoneShapeType.Max - 1).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("CUSTOM")
                    .Button("LOAD").Click(this.LoadPatternFromFile)
                    .SameLine()
@@ -91,7 +91,7 @@
                    .Image(90, 90, Properties.Resources.Imageholder, true).Ref(ref customPattern)
                    .Label("SIZE BY")
                    .Wide(90)
-                   .Slider(0, 0, 6).Caption("None").Changing(this.OnShapeSizingChanging)
+                   .Slider(0, 0, (int)HalftoneShapeSizing.Max - 1).Caption("None").Changing(this.OnShapeSizingChanging)
                    .Label("CELL SIZE")
                    .Wide(90)
                    .SliderInt(this.image.CellSize, 2, 64, 1).TextFormat("{0}px").Changing(this.OnCellSizeChanging)
@@ -294,7 +294,7 @@
         private void OnPatternTypeChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[] { "Square", "Circle", "Dithering 4x4" };
+            var types = Enum.GetNames(typeof(HalftoneShapeType));
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.PatternType = value;
@@ -303,9 +303,7 @@
         private void OnShapeSizingChanging(object sender, EventArgs e)
         {
             var slider = sender as UISlider;
-            var types = new string[] { "None", "Brightness", "Brightness Inv",
-                                       "Alpha Channel", "Dithering 2x2", "Dithering 4x4",
-                                       "Dithering 8x8"};
+            var types = Enum.GetNames(typeof(HalftoneShapeSizing));
             var value = (int)slider.Value;
             slider.Caption = types[value];
             this.image.ShapeSizing = value;
