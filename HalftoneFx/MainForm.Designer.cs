@@ -19,20 +19,21 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.openPictureDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.savePictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // openPictureDialog
             // 
             this.openPictureDialog.Filter = resources.GetString("openPictureDialog.Filter");
             // 
-            // saveFileDialog
+            // savePictureDialog
             // 
-            this.saveFileDialog.DefaultExt = "png";
-            this.saveFileDialog.Filter = resources.GetString("saveFileDialog.Filter");
+            this.savePictureDialog.DefaultExt = "png";
+            this.savePictureDialog.Filter = resources.GetString("savePictureDialog.Filter");
             // 
             // MainForm
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 561);
@@ -41,13 +42,15 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "HalftoneFx";
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnFormDragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnFormDragEnter);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.OpenFileDialog openPictureDialog;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.SaveFileDialog savePictureDialog;
     }
 }
 

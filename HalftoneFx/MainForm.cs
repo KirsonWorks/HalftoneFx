@@ -51,9 +51,9 @@
             // Like a bullshit.
             builder.BeginPanel(20, 45)
                    .Label("PICTURE").TextColor(Color.Gold)
-                   .Button("LOAD").Hint("Load picture from a file").Click(this.LoadPictureFromFile)
+                   .Button("LOAD").Hint("Load picture from a file").Click(this.OnOpenPictureDialog)
                    .SameLine()
-                   .Button("SAVE").Hint("Save picture to a file").Click(this.SavePicture)
+                   .Button("SAVE").Hint("Save picture to a file").Click(this.OnSavePictureDialog)
                    .CheckBox("SMOOTHING").Hint("On/Off Smoothing filter").Changed(this.OnSmoothingChanged)
                    .CheckBox("GRAYSCALE").Hint("On/Off Grayscale filter").Changed(this.OnGrayscaleChanged)
                    .CheckBox("NEGATIVE").Hint("On/Off Negative filter").Changed(this.OnNegativeChanged)
@@ -85,9 +85,9 @@
                    .Wide(90)
                    .Slider(0, 0, (int)HalftoneShapeType.Max - 1).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("CUSTOM")
-                   .Button("LOAD").Click(this.LoadPatternFromFile)
+                   .Button("LOAD").Click(this.OnOpenPatternDialog)
                    .SameLine()
-                   .Button("CLEAR").Click(this.ClearPattern)
+                   .Button("CLEAR").Click(this.OnClearPattern)
                    .Image(90, 90, Properties.Resources.Imageholder, true).Ref(ref customPattern)
                    .Label("SIZE BY")
                    .Wide(90)
@@ -112,37 +112,62 @@
                 this.Invalidate();
             };
 
-            this.LoadPicture(Properties.Resources.Logo);
+            this.SetPicture(Properties.Resources.Logo);
             this.pictureBox.Zoom(0.5f);
         }
 
-        private void LoadPicture(Image picture)
+        private void SetPicture(Image picture)
         {
             // this.ui.Reset(true);
 
             this.image.Image = this.pictureBox.Image = picture;
-            this.pictureBox.FitToScreen();
+            this.pictureBox.OptimalView();
 
             this.labelSize.Caption = $"SIZE: {picture.Width}x{picture.Height}";
         }
 
-        private void LoadPictureFromFile(object sender, EventArgs e)
+        private void LoadPictureFromFile(string path)
         {
-            if (this.openPictureDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                try
-                {
-                    var image = Image.FromFile(this.openPictureDialog.FileName);
-                    this.LoadPicture(image);
-                }
-                catch
-                {
-                    MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
+                var image = Image.FromFile(path);
+                this.SetPicture(image);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        private void LoadPatternFromFile(object sender, EventArgs e)
+        private void SavePictureToFile(string path)
+        {
+            try
+            {
+                this.pictureBox.Image.SaveAs(path);
+            }
+            catch
+            {
+                MessageBox.Show("Can't save the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void OnOpenPictureDialog(object sender, EventArgs e)
+        {
+            if (this.openPictureDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.LoadPictureFromFile(this.openPictureDialog.FileName);
+            }
+        }
+
+        private void OnSavePictureDialog(object sender, EventArgs e)
+        {
+            if (this.savePictureDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.SavePictureToFile(this.savePictureDialog.FileName);
+            }
+        }
+
+        private void OnOpenPatternDialog(object sender, EventArgs e)
         {
             if (this.openPictureDialog.ShowDialog() == DialogResult.OK)
             {
@@ -161,25 +186,10 @@
             }
         }
 
-        private void ClearPattern(object sender, EventArgs e)
+        private void OnClearPattern(object sender, EventArgs e)
         {
             this.customPattern.Image = Properties.Resources.Imageholder;
             this.image.CustomPattern = null;
-        }
-
-        private void SavePicture(object sender, EventArgs e)
-        {
-            if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    this.pictureBox.Image.SaveAs(this.saveFileDialog.FileName);
-                }
-                catch
-                {
-                    MessageBox.Show("Can't save the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-            }
         }
 
         private void OnUINotification(object sender, UINotificationEventArgs e)
@@ -313,6 +323,18 @@
         {
             var checkbox = sender as UICheckBox;
             this.image.TransparentBg = checkbox.Checked;
+        }
+
+        private void OnFormDragEnter(object sender, DragEventArgs e)
+        {
+            // And need to check the file extension.
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.All : DragDropEffects.None;
+        }
+
+        private void OnFormDragDrop(object sender, DragEventArgs e)
+        {
+            var filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            this.LoadPictureFromFile(filenames[0]);
         }
     }
 }
