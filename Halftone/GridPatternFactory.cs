@@ -1,32 +1,35 @@
 ﻿namespace Halftone
 {
     using System;
+    using System.Collections.Generic;
 
-    public enum GridPatternType
+    public enum HalftoneGridType
     {
         Square = 0,
         Hexagon,
+        Checkerboard,
+        Lines,
+        Columns,
         Noise,
+        Max
     }
 
     public static class GridPatternFactory
     {
-        public static GridPatternEnumeratorBase GetPattern(GridPatternType type, int width, int height, int cellSize)
+        public static GridPatternEnumeratorBase GetPattern(HalftoneGridType type, int width, int height, int cellSize)
         {
-            switch (type)
+            var patterns = new Dictionary<HalftoneGridType, Type>
             {
-                case GridPatternType.Square:
-                    return new GridPatternSquareEnumerator(width, height, cellSize);
+                { HalftoneGridType.Square, typeof(GridPatternSquareEnumerator) },
+                { HalftoneGridType.Hexagon, typeof(GridPatternHexagonEnumerator) },
+                { HalftoneGridType.Noise, typeof(GridPatternNoiseEnumerator) },
+                { HalftoneGridType.Checkerboard, typeof(GridPatternCheckerboardEnumerator) },
+                { HalftoneGridType.Lines, typeof(GridPatternLinesEnumerator) },
+                { HalftoneGridType.Columns, typeof(GridPatternColumnsEnumerator) },
+            };
 
-                case GridPatternType.Hexagon:
-                    return new GridPatternHexagonEnumerator(width, height, cellSize);
-
-                case GridPatternType.Noise:
-                    return new GridPatternNoiseEnumerator(width, height, cellSize);
-
-                default:
-                    throw new NotSupportedException();
-            }
+            var pattern = patterns.ContainsKey(type) ? patterns[type] : patterns[HalftoneGridType.Square];
+            return (GridPatternEnumeratorBase)Activator.CreateInstance(pattern, width, height, cellSize);
         }
     }
 }

@@ -11,11 +11,12 @@
     {
         None,
         Brightness,
-        BrightnessInverted,
-        AlphaChannel,
+        BrightnessInv,
         Dithering2x2,
         Dithering4x4,
         Dithering8x8,
+        Alpha,
+        Max
     }
 
     public class Halftone
@@ -164,17 +165,17 @@
             var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
-            var grid = GridPatternFactory.GetPattern((GridPatternType)this.gridType, width, height, this.cellSize);
+            var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
             IShapePattern pattern = this.customPattern != null ? 
                     new ShapePatternCustom(this.CustomPattern) :
-                    ShapePatternFactory.GetPattern((ShapePatternType)this.patternType);
+                    ShapePatternFactory.GetPattern((HalftoneShapeType)this.patternType);
             
             using (var graphics = Graphics.FromImage(result))
             {
                 if (!this.transparentBg)
                 {
-                    if (shapeSizing == HalftoneShapeSizing.BrightnessInverted)
+                    if (shapeSizing == HalftoneShapeSizing.BrightnessInv)
                     {
                         graphics.Clear(Color.White);
                     }
@@ -207,11 +208,11 @@
                                 scale = color.GetBrightness();
                                 break;
 
-                            case HalftoneShapeSizing.BrightnessInverted:
+                            case HalftoneShapeSizing.BrightnessInv:
                                 scale = 1.0f - color.GetBrightness();
                                 break;
 
-                            case HalftoneShapeSizing.AlphaChannel:
+                            case HalftoneShapeSizing.Alpha:
                                 scale = (float)color.A / 255.0f;
                                 break;
 

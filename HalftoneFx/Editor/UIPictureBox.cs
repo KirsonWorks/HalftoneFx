@@ -43,10 +43,10 @@
         public Image Image
         { 
             get => this.imageControl.Image;
-            
-            set
+            set 
             {
                 this.imageControl.Image = value;
+                this.toolZoom.OriginalSize = (value != null) ? value.Size : System.Drawing.Size.Empty;
             }
         }
 
@@ -72,14 +72,24 @@
 
         public void FullView()
         {
-            this.imageControl.Size = this.toolZoom.OriginalSize = this.imageControl.Image.Size;
-            this.Zoom(this.imageControl.Size);
+            this.Zoom(1.0f);
         }
 
         public void FitToScreen()
         {
-            this.imageControl.Size = this.toolZoom.OriginalSize = this.imageControl.Image.Size;
             this.Zoom(this.Size - new Size(30, 30));
+        }
+
+        public void OptimalView()
+        {
+            if (this.Image.Width > this.Width || this.Image.Height > this.Height)
+            {
+                this.FitToScreen();
+            }
+            else
+            {
+                this.FullView();
+            }
         }
 
         public void ResetZoom()
