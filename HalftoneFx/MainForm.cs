@@ -81,7 +81,7 @@
                    .Label("GRID TYPE")
                    .Wide(90)
                    .Slider(0, 0, (int)HalftoneGridType.Max - 1).Caption("Square").Changing(this.OnGridTypeChanging)
-                   .Label("PATTERN")
+                   .Label("SHAPE TYPE")
                    .Wide(90)
                    .Slider(0, 0, (int)HalftoneShapeType.Max - 1).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("CUSTOM")
@@ -305,7 +305,7 @@
             var types = Enum.GetNames(typeof(HalftoneShapeType));
             var value = (int)slider.Value;
             slider.Caption = types[value];
-            this.image.PatternType = value;
+            this.image.ShapeType = value;
         }
 
         private void OnShapeSizingChanging(object sender, EventArgs e)

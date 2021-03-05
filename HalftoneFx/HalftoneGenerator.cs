@@ -107,10 +107,10 @@
             set => this.halftone.GridType = value;
         }
 
-        public int PatternType
+        public int ShapeType
         {
-            get => this.halftone.PatternType;
-            set => this.halftone.PatternType = value;
+            get => this.halftone.ShapeType;
+            set => this.halftone.ShapeType = value;
         }
 
         public int ShapeSizing
