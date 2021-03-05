@@ -5,12 +5,14 @@
     using System;
     using System.Linq;
     using System.Drawing;
-    using System.Collections.Generic;
     using System.Drawing.Drawing2D;
+    using System.Collections.Generic;
 
     public partial class UIControl : UINode
     {
         private static UIStyle style = new UIStyle();
+
+        private static UIControl activePopupControl = null;
 
         private static UIControl activeControl = null;
 
@@ -177,6 +179,8 @@
 
         public bool ClipContent { get; set; }
 
+        public UIControl PopupControl { get; set; }
+
         public UIControl this[string name] => this.Find<UIControl>(name);
 
         public UIControl SetSize(float width, float height)
@@ -252,6 +256,11 @@
         public virtual void Hide()
         {
             this.Visible = false;
+
+            if (activePopupControl == this)
+            {
+                activePopupControl = null;
+            }
         }
 
         public void BringToFront()
@@ -271,19 +280,16 @@
             }
         }
 
-        public void Process()
+        public void Popup(PointF location)
         {
-            if (this.Enabled)
-            {
-                this.DoProcess();
+            activePopupControl?.Hide();
+            activePopupControl = this;
 
-                foreach (var child in this.GetChildren<UIControl>())
-                {
-                    child.Process();
-                }
-            }
+            this.BringToFront();
+            this.SetPosition(location);
+            this.Show();
         }
-        
+
         public void Render(Graphics graphics)
         {
             if (this.Visible && !this.NeedClipping)
@@ -392,6 +398,13 @@
 
             activeControl = control.GetControlAt(e.Location);
 
+            if (activePopupControl != null &&
+                activePopupControl != activeControl &&
+                !activePopupControl.IsParentOf(activeControl))
+            {
+                activePopupControl.Hide();
+            }
+
             if (activeControl != null)
             {
                 activeControl.DoMouseInput(e);
@@ -451,6 +464,13 @@
             }
 
             var overControl = control.GetControlAt(e.Location);
+
+            if (activePopupControl != null &&
+                activePopupControl != overControl &&
+                !activePopupControl.IsParentOf(overControl))
+            {
+                activePopupControl.Hide();
+            }
 
             if (activeControl != null)
             {
@@ -562,6 +582,13 @@
 
         protected virtual void DoMouseInput(UIMouseEventArgs e)
         {
+            if (this.PopupControl != null &&
+                e.EventType == UIMouseEventType.Up &&
+                e.Button == UIMouseButtons.Right)
+            {
+                this.PopupControl.Popup(e.Location);
+            }
+
             var events = new Dictionary<UIMouseEventType, EventHandler<UIMouseEventArgs>>
             {
                 { UIMouseEventType.Down, this.OnMouseDown },

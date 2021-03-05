@@ -93,12 +93,26 @@
             }
         }
 
+        public bool IsParentOf(UINode node)
+        {
+            while (node != null)
+            {
+                if (node.Parent == this)
+                    return true;
+
+                node = node.Parent;
+            }
+
+            return false;
+        }
+
         public IEnumerable<UINode> GetChildren()
         {
             return this.children;
         }
 
-        public IEnumerable<T> GetChildren<T>() where T : UINode
+        public IEnumerable<T> GetChildren<T>() 
+            where T : UINode
         {
             return this.children.OfType<T>();
         }
@@ -237,10 +251,6 @@
         }
 
         protected virtual void DoRemoved(UINode node)
-        {
-        }
-
-        protected virtual void DoProcess()
         {
         }
 

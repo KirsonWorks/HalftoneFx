@@ -118,8 +118,6 @@
 
         private void SetPicture(Image picture)
         {
-            // this.ui.Reset(true);
-
             this.image.Image = this.pictureBox.Image = picture;
             this.pictureBox.OptimalView();
 
@@ -133,7 +131,7 @@
                 var image = Image.FromFile(path);
                 this.SetPicture(image);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
