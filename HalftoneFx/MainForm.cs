@@ -46,6 +46,15 @@
 
             this.statusBar = this.ui.NewStatusBar("status-bar");
 
+            var pm = new UIPopupMenu();
+            pm.Parent = this.ui;
+
+            pm.AddItem("ZOOM IN");
+            pm.AddItem("ZOOM OUT");
+            pm.AddItem("RESET VIEW");
+
+            this.pictureBox.PopupControl = pm;
+
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
             // Like a bullshit.
