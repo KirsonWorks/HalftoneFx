@@ -10,9 +10,13 @@
     {
         private readonly List<UIPopupMenuItem> items = new List<UIPopupMenuItem>();
 
-        private SizeF fittedSize = SizeF.Empty;
+        private bool pressed;
 
-        private int selectedIndex = -1;
+        private SizeF itemSize;
+
+        private SizeF fittedSize;
+
+        private int selectedIndex;
 
         public UIPopupMenu()
             : base()
@@ -21,11 +25,14 @@
             this.AutoSize = true;
         }
 
-        public UIPopupMenuItem AddItem(string caption)
+        public UIPopupMenuItem AddItem(string text, Image icon, Action click, bool closeAfterClick = true)
         {
             var item = new UIPopupMenuItem
             {
-                Caption = caption
+                Text = text,
+                Icon = icon,
+                Click = click,
+                CloseAfterClick = closeAfterClick,
             };
 
             this.items.Add(item);
@@ -38,6 +45,8 @@
         {
             if (this.Visible)
             {
+                this.pressed = false;
+                this.selectedIndex = -1;
                 this.AdjustSize();
             }
         }
@@ -46,6 +55,10 @@
         {
             switch (e.EventType)
             {
+                case UIMouseEventType.Down:
+                    this.pressed = e.Button == UIMouseButtons.Left;
+                    break;
+
                 case UIMouseEventType.Move:
                     for (var i = 0; i < this.items.Count; i++)
                     {
@@ -55,7 +68,23 @@
                             break;
                         }
                     }
+                    break;
 
+                case UIMouseEventType.Up:
+                    if (this.pressed &&
+                        this.selectedIndex > -1 &&
+                        this.GetItemRect(this.selectedIndex).Contains(e.Location))
+                    {
+                        var item = this.items[this.selectedIndex];
+                        item?.Click?.Invoke();
+
+                        if (item.CloseAfterClick)
+                        {
+                            this.Hide();
+                        }
+                    }
+
+                    this.pressed = false;
                     break;
             }
 
@@ -70,10 +99,23 @@
             {
                 var item = this.items[i];
                 var rect = this.GetItemRect(i);
-                var bgColor = this.selectedIndex == i ? this.Style.Colors.ButtonHovered : this.Style.Colors.Button;
+                var bgColor = this.Style.Colors.Button;
+
+                if (this.selectedIndex == i)
+                {
+                    bgColor = pressed ? this.Style.Colors.ButtonActive : this.Style.Colors.ButtonHovered;
+                }
+
                 graphics.DrawRect(rect, bgColor, this.Style.Rounding);
                 rect = rect.Inflate(-this.Style.InnerShrink);
-                graphics.DrawText(rect, this.Style.Fonts.Default, this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, item.Caption);
+
+                if (item.Icon != null)
+                {
+                    graphics.DrawImage(item.Icon, rect.X, rect.Y + (rect.Height - item.Icon.Height) / 2);
+                    rect.X += item.Icon.Width + this.Style.Padding;
+                }
+                
+                graphics.DrawText(rect, this.Style.Fonts.Default, this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, item.Text);
             }
         }
         
@@ -83,39 +125,46 @@
             var padding = this.Style.Padding;
             var spacing = this.Style.Spacing;
 
-            var itemHeight = ((this.fittedSize.Height - padding * 2) / this.items.Count);
-            var sz = new SizeF(this.fittedSize.Width - padding * 2, itemHeight);
+            pos = new PointF(pos.X + padding, 
+                             pos.Y + padding + (index * (this.itemSize.Height + spacing)));
             
-            var p = new PointF(pos.X + padding, pos.Y + padding + (index * sz.Height));
-            sz.Height -= spacing;
-            
-            return new RectangleF(p, sz);
+            return new RectangleF(pos, this.itemSize);
         }
 
         private void AdjustSize()
         {
-            var maxTextSize = SizeF.Empty;
+            this.itemSize = SizeF.Empty;
             var padding = this.Style.Padding;
             var spacing = this.Style.Spacing;
 
             foreach (var item in this.items)
             {
-                var textSize = GraphicsHelper.StringSize(item.Caption, this.Style.Fonts.Default);
-                maxTextSize = maxTextSize.Max(textSize);
+                var textSize = GraphicsHelper.StringSize(item.Text, this.Style.Fonts.Default);
+                this.itemSize = itemSize.Max(textSize);
+
+                if (item.Icon != null)
+                {
+                    var iconSize = item.Icon.Size;
+                    this.itemSize = this.itemSize.Max(new SizeF(iconSize.Width + padding + textSize.Width, iconSize.Height));
+                }
             }
 
-            maxTextSize.Width += padding * 3;
-            maxTextSize.Height += padding * 2 + spacing;
+            itemSize.Width += padding * 2;
+            itemSize.Height += padding * 2;
 
-            this.fittedSize = new SizeF(padding + maxTextSize.Width + padding, 
-                padding + (maxTextSize.Height * this.items.Count) + padding);
+            this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
+                padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
         }
     }
 
     public class UIPopupMenuItem
     {
-        public string Caption { get; set; }
+        public string Text { get; set; }
+        
+        public Image Icon { get; set; }
 
-        public event EventHandler<UIMouseEventArgs> OnClick;
+        public bool CloseAfterClick { get; set; } = true;
+
+        public Action Click;
     }
 }

@@ -370,8 +370,8 @@
                 }
                 
                 this.nextX += this.indentCount * this.style.Indent;
-                var x = this.nextX + (width * this.align.X) - (control.Width * this.align.X);
-                var y = this.nextY + (height * this.align.Y) - (control.Height * this.align.Y);
+                var x = this.nextX + (width - control.Width) * this.align.X;
+                var y = this.nextY + (height - control.Height) * this.align.Y;
                 this.nextY += height + this.style.Spacing.Y;
                 this.MaxWidth = Math.Max(this.MaxWidth, this.nextX + width + this.style.Margin.X);
                 this.MaxHeight = Math.Max(this.MaxHeight, this.nextY + this.style.Margin.Y - this.style.Spacing.Y);

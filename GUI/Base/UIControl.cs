@@ -436,12 +436,6 @@
                 hoveredControl = overControl;
             }
 
-            if (activeControl != null)
-            {
-                activeControl.DoMouseInput(e);
-                return true;
-            }
-
             if (overControl != null)
             {
                 overControl.DoMouseInput(e);
@@ -520,7 +514,7 @@
         {
             if (this.HitTest(location))
             {
-                var children = this.GetChildren<UIControl>().Reverse();
+                var children = this.GetChildren<UIControl>().Reverse().Where(c => c.Visible);
 
                 foreach (var child in children)
                 {
