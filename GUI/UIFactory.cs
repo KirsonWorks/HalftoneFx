@@ -109,5 +109,17 @@
         {
             return NewNode<UIStatusBar>(parent, name);
         }
+
+        public static UIPopupMenu NewPopupMenu(this UIControl parent, string name = "")
+        {
+            if (parent.Root is UIControl root)
+            {
+                var menu = NewNode<UIPopupMenu>(root, name);
+                parent.PopupControl = menu;
+                return menu;
+            }
+
+            return null;
+        }
     }
 }

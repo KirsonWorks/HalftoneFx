@@ -44,6 +44,14 @@
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += OnPictureBoxZoomChanged;
 
+            this.pictureBox.NewPopupMenu()
+                .AddItem("ZOOM IN", Properties.Resources.IconZoomIn, 
+                        () => this.pictureBox.ZoomIn(), true)
+                .AddItem("ZOOM OUT", Properties.Resources.IconZoomOut, 
+                        () => this.pictureBox.ZoomOut(), true)
+                .AddItem("OPTIMAL VIEW", Properties.Resources.IconZoomToExtents, 
+                        () => this.pictureBox.OptimalView());
+
             this.statusBar = this.ui.NewStatusBar("status-bar");
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);

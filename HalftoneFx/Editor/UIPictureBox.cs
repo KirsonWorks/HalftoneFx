@@ -70,6 +70,18 @@
             this.OnZoomChanged(this, EventArgs.Empty);
         }
 
+        public void ZoomIn()
+        {
+            this.toolZoom.Zoom(1, this.ScreenPositionCenter);
+            this.OnZoomChanged(this, EventArgs.Empty);
+        }
+
+        public void ZoomOut()
+        {
+            this.toolZoom.Zoom(-1, this.ScreenPositionCenter);
+            this.OnZoomChanged(this, EventArgs.Empty);
+        }
+
         public void FullView()
         {
             this.Zoom(1.0f);

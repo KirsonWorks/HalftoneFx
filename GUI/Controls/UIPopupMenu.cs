@@ -25,18 +25,18 @@
             this.AutoSize = true;
         }
 
-        public UIPopupMenuItem AddItem(string text, Image icon, Action click, bool closeAfterClick = true)
+        public UIPopupMenu AddItem(string text, Image icon, Action click, bool buttonMode = false)
         {
             var item = new UIPopupMenuItem
             {
                 Text = text,
                 Icon = icon,
                 Click = click,
-                CloseAfterClick = closeAfterClick,
+                ButtonMode = buttonMode,
             };
 
             this.items.Add(item);
-            return item;
+            return this;
         }
 
         protected override SizeF GetFittedSize() => this.fittedSize;
@@ -47,7 +47,15 @@
             {
                 this.pressed = false;
                 this.selectedIndex = -1;
-                this.AdjustSize();
+
+                if (this.items.Count > 0)
+                {
+                    this.AdjustSize();
+                }
+                else
+                {
+                    this.Hide();
+                }
             }
         }
 
@@ -78,7 +86,7 @@
                         var item = this.items[this.selectedIndex];
                         item?.Click?.Invoke();
 
-                        if (item.CloseAfterClick)
+                        if (!item.ButtonMode)
                         {
                             this.Hide();
                         }
@@ -125,7 +133,7 @@
             var padding = this.Style.Padding;
             var spacing = this.Style.Spacing;
 
-            pos = new PointF(pos.X + padding, 
+            pos = new PointF(pos.X + padding,
                              pos.Y + padding + (index * (this.itemSize.Height + spacing)));
             
             return new RectangleF(pos, this.itemSize);
@@ -154,6 +162,12 @@
 
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
                 padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
+
+            if (this.Parent is UIControl parent)
+            {
+                var rect = this.ScreenRect.Clamp(parent.ScreenRect);
+                this.SetPosition(rect.Location);
+            }
         }
     }
 
@@ -163,7 +177,7 @@
         
         public Image Icon { get; set; }
 
-        public bool CloseAfterClick { get; set; } = true;
+        public bool ButtonMode { get; set; } = true;
 
         public Action Click;
     }

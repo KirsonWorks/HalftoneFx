@@ -105,6 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Icon.ico" />
+    <Content Include="Resources\Icons\icon-zoom-in.png" />
+    <Content Include="Resources\Icons\icon-zoom-out.png" />
+    <Content Include="Resources\Icons\icon-zoom-to-extents.png" />
     <Content Include="Resources\Imageholder.png" />
   </ItemGroup>
   <ItemGroup>
