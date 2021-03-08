@@ -192,10 +192,10 @@
                 return rect;
             }
 
-            var size = SizeF.Empty;
-
             using (var format = new StringFormat(StringFormat.GenericTypographic))
             {
+                SizeF size;
+
                 if (!autoSize)
                 {
                     format.Trimming = StringTrimming.EllipsisCharacter;
@@ -211,8 +211,8 @@
                     if (!align.IsEmpty)
                     {
                         var oldPos = rect.Location;
-                        rect.X += (rect.Width * align.X) - (size.Width * align.X);
-                        rect.Y += (rect.Height * align.Y) - (size.Height * align.Y);
+                        rect.X += (rect.Width - size.Width) * align.X;
+                        rect.Y += (rect.Height - size.Height) * align.Y;
                         rect.Width += oldPos.X - rect.X;
                         rect.Height += oldPos.Y - rect.Y;
                     }
@@ -220,7 +220,7 @@
                 else
                 {
                     size = graphics.MeasureString(text, font);
-                    rect.Y += (rect.Height * 0.5F) - (size.Height * 0.5F);
+                    rect.Y += (rect.Height - size.Height) * 0.5F;
                     rect.Size = size;
                 }
 

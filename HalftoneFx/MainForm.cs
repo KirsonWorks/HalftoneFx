@@ -44,6 +44,14 @@
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += OnPictureBoxZoomChanged;
 
+            this.pictureBox.NewPopupMenu()
+                .AddItem("ZOOM IN", Properties.Resources.IconZoomIn, 
+                        () => this.pictureBox.ZoomIn(), true)
+                .AddItem("ZOOM OUT", Properties.Resources.IconZoomOut, 
+                        () => this.pictureBox.ZoomOut(), true)
+                .AddItem("OPTIMAL VIEW", Properties.Resources.IconZoomToExtents, 
+                        () => this.pictureBox.OptimalView());
+
             this.statusBar = this.ui.NewStatusBar("status-bar");
 
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
@@ -81,7 +89,7 @@
                    .Label("GRID TYPE")
                    .Wide(90)
                    .Slider(0, 0, (int)HalftoneGridType.Max - 1).Caption("Square").Changing(this.OnGridTypeChanging)
-                   .Label("PATTERN")
+                   .Label("SHAPE TYPE")
                    .Wide(90)
                    .Slider(0, 0, (int)HalftoneShapeType.Max - 1).Caption("Square").Changing(this.OnPatternTypeChanging)
                    .Label("CUSTOM")
@@ -118,8 +126,6 @@
 
         private void SetPicture(Image picture)
         {
-            // this.ui.Reset(true);
-
             this.image.Image = this.pictureBox.Image = picture;
             this.pictureBox.OptimalView();
 
@@ -133,7 +139,7 @@
                 var image = Image.FromFile(path);
                 this.SetPicture(image);
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("Can't load the file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -307,7 +313,7 @@
             var types = Enum.GetNames(typeof(HalftoneShapeType));
             var value = (int)slider.Value;
             slider.Caption = types[value];
-            this.image.PatternType = value;
+            this.image.ShapeType = value;
         }
 
         private void OnShapeSizingChanging(object sender, EventArgs e)

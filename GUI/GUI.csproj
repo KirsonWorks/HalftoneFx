@@ -52,6 +52,7 @@
     <Compile Include="Controls\UIImage.cs" />
     <Compile Include="Controls\UILabel.cs" />
     <Compile Include="Controls\UILine.cs" />
+    <Compile Include="Controls\UIPopupMenu.cs" />
     <Compile Include="Controls\UIProgressBar.cs" />
     <Compile Include="Controls\UIRadioButton.cs" />
     <Compile Include="Base Controls\UIRangeControl.cs" />

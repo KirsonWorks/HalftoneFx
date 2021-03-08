@@ -95,7 +95,6 @@
         {
             e.Graphics.Clear(this.Style.Colors.Background);
 
-            this.Process();
             this.Render(e.Graphics);
         }
 

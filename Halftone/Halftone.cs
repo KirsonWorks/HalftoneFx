@@ -23,7 +23,7 @@
     {
         private int gridType = 0;
 
-        private int patternType = 0;
+        private int shapeType = 0;
         
         private int shapeSizing = 0;
 
@@ -53,15 +53,15 @@
             }
         }
 
-        public int PatternType
+        public int ShapeType
         {
-            get => this.patternType;
+            get => this.shapeType;
 
             set
             {
-                if (this.patternType != value)
+                if (this.shapeType != value)
                 {
-                    this.patternType = value;
+                    this.shapeType = value;
                     this.DoPropertyChanged();
                 }
             }
@@ -169,7 +169,7 @@
 
             IShapePattern pattern = this.customPattern != null ? 
                     new ShapePatternCustom(this.CustomPattern) :
-                    ShapePatternFactory.GetPattern((HalftoneShapeType)this.patternType);
+                    ShapePatternFactory.GetPattern((HalftoneShapeType)this.shapeType);
             
             using (var graphics = Graphics.FromImage(result))
             {

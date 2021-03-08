@@ -66,6 +66,14 @@
             return this.Enabled ? this.Colors.Text : this.Colors.TextDisabled;
         }
 
+        protected override void DoMouseClick(UIMouseEventArgs e)
+        {
+            if (e.Button == this.ActionMouseButton)
+            {
+                base.DoMouseClick(e);
+            }
+        }
+
         protected override void DoMouseInput(UIMouseEventArgs e)
         {
             if (e.Button == this.ActionMouseButton && e.EventType != UIMouseEventType.Move)

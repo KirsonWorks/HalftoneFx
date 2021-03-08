@@ -70,6 +70,18 @@
             this.OnZoomChanged(this, EventArgs.Empty);
         }
 
+        public void ZoomIn()
+        {
+            this.toolZoom.Zoom(1, this.ScreenPositionCenter);
+            this.OnZoomChanged(this, EventArgs.Empty);
+        }
+
+        public void ZoomOut()
+        {
+            this.toolZoom.Zoom(-1, this.ScreenPositionCenter);
+            this.OnZoomChanged(this, EventArgs.Empty);
+        }
+
         public void FullView()
         {
             this.Zoom(1.0f);
@@ -117,26 +129,30 @@
         {
             if (this.imageControl.HasImage())
             {
-                switch (e.EventType)
+                if (e.Button == UIMouseButtons.Left || e.EventType == UIMouseEventType.Wheel)
                 {
-                    case UIMouseEventType.Down:
-                        this.toolPan.Start(e.Location);
-                        this.imageControl.BorderSize = this.ImageBorderSize;
-                        break;
+                    switch (e.EventType)
+                    {
+                        case UIMouseEventType.Down:
+                            this.toolPan.Start(e.Location);
+                            this.imageControl.BorderSize = this.ImageBorderSize;
+                            break;
 
-                    case UIMouseEventType.Move:
-                        this.toolPan.Move(e.Location);
-                        break;
+                        case UIMouseEventType.Move:
+                            this.toolPan.Move(e.Location);
 
-                    case UIMouseEventType.Up:
-                        this.toolPan.Active = false;
-                        this.imageControl.BorderSize = 0;
-                        break;
+                            break;
 
-                    case UIMouseEventType.Wheel:
-                        this.toolZoom.Zoom(e.Delta, e.Location);
-                        this.OnZoomChanged(this, EventArgs.Empty);
-                        break;
+                        case UIMouseEventType.Up:
+                            this.toolPan.Active = false;
+                            this.imageControl.BorderSize = 0;
+                            break;
+
+                        case UIMouseEventType.Wheel:
+                            this.toolZoom.Zoom(e.Delta, e.Location);
+                            this.OnZoomChanged(this, EventArgs.Empty);
+                            break;
+                    }
                 }
 
                 base.DoMouseInput(e);

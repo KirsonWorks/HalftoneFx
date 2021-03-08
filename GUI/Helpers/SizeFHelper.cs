@@ -1,5 +1,6 @@
 ﻿namespace GUI.Helpers
 {
+    using System;
     using System.Drawing;
 
     public static class SizeFHelper
@@ -10,9 +11,11 @@
             return size;
         }
 
-        public static string ToStringWxH(this SizeF size)
+        public static SizeF Max(this SizeF size, SizeF other)
         {
-            return $"{size.Width}x{size.Height}";
+            return new SizeF(
+                Math.Max(size.Width, other.Width),
+                Math.Max(size.Height, other.Height));
         }
 
         public static float Aspect(this SizeF size)
@@ -25,6 +28,10 @@
             {
                 return float.NaN;
             }
+        }
+        public static string ToStringWxH(this SizeF size)
+        {
+            return $"{size.Width}x{size.Height}";
         }
     }
 }
