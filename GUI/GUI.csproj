@@ -47,11 +47,13 @@
     <Compile Include="Base Controls\UIOptionButtonControl.cs" />
     <Compile Include="Controls\UIButton.cs" />
     <Compile Include="Controls\UICheckBox.cs" />
+    <Compile Include="Controls\UIColorBox.cs" />
     <Compile Include="Controls\UILayer.cs" />
     <Compile Include="Controls\UIPanel.cs" />
     <Compile Include="Controls\UIImage.cs" />
     <Compile Include="Controls\UILabel.cs" />
     <Compile Include="Controls\UILine.cs" />
+    <Compile Include="Controls\UIPictureBox.cs" />
     <Compile Include="Controls\UIPopupMenu.cs" />
     <Compile Include="Controls\UIProgressBar.cs" />
     <Compile Include="Controls\UIRadioButton.cs" />
@@ -59,6 +61,8 @@
     <Compile Include="Controls\UISlider.cs" />
     <Compile Include="Controls\UIStatusBar.cs" />
     <Compile Include="Controls\UIWindow.cs" />
+    <Compile Include="Editor\UIToolPan.cs" />
+    <Compile Include="Editor\UIToolZoom.cs" />
     <Compile Include="Helpers\GraphicsHelper.cs" />
     <Compile Include="Helpers\RectFHelper.cs" />
     <Compile Include="Helpers\SizeFHelper.cs" />

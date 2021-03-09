@@ -3,7 +3,7 @@
     using GUI;
     using GUI.Controls;
     using GUI.BaseControls;
-    using HalftoneFx.Editor;
+    using HalftoneFx.UI;
 
     using Common;
     using Halftone;
@@ -39,8 +39,8 @@
             this.ui.Container = this;
             this.ui.OnNotification += this.OnUINotification;
 
-            this.pictureBox.Name = "picture-box";
             this.pictureBox.Parent = this.ui;
+            this.pictureBox.Name = "picture-box";
             this.pictureBox.Size = this.ClientSize;
             this.pictureBox.OnZoomChanged += OnPictureBoxZoomChanged;
 
@@ -57,7 +57,7 @@
             var builder = new UILayoutBuilder(this.ui, UILayoutStyle.Default);
 
             // Like a bullshit.
-            builder.BeginPanel(20, 45)
+            builder.BeginPanel(20, 25)
                    .Label("PICTURE").TextColor(Color.Gold)
                    .Button("LOAD").Hint("Load picture from a file").Click(this.OnOpenPictureDialog)
                    .SameLine()
@@ -84,7 +84,7 @@
                    .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress)
                    .EndPanel();
 
-            builder.BeginPanel(140, 45)
+            builder.BeginPanel(140, 25)
                    .CheckBox("HALFTONE", this.image.HalftoneEnabled).TextColor(Color.Gold).Changed(this.OnHalftoneEnabledChanged)
                    .Label("GRID TYPE")
                    .Wide(90)
@@ -107,6 +107,12 @@
                    .Wide(90)
                    .SliderFloat(this.image.CellScale, 0.5f, 3.0f, 0.05f).Changing(this.OnCellScaleChanging)
                    .CheckBox("TRANSP. BG", this.image.TransparentBg).Changed(this.OnTransparentBgChanged)
+                   .Label("FOREGROUND")
+                   .Wide(90)
+                   .Add<UIColorBox>()
+                   .Label("BACKGROUND")
+                   .Wide(90)
+                   .Add<UIColorBox>()
                    .EndPanel();
 
             this.statusBar.BringToFront();

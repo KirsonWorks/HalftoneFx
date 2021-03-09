@@ -283,7 +283,6 @@
                     for (var x = 0; x < w; x++)
                     {
                         var n = x + (y * w) + (y % 2);
-                        Console.WriteLine(n);
                         var brush = (n % 2 == 0) ? brushA : brushB;
 
                         graphics.FillRectangle(brush,

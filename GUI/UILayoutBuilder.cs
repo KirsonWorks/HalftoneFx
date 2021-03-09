@@ -143,6 +143,13 @@
             return this;
         }
 
+        public UILayoutBuilder Add<T>()
+            where T : UIControl
+        {
+            this.Control = UIFactory.NewNode<T>(this.Container, string.Empty);
+            return this;
+        }
+
         public UILayoutBuilder BeginPanel(float x, float y)
         {
             if (this.Container != this.manager)
@@ -168,7 +175,9 @@
 
         public UILayoutBuilder Label(string caption)
         {
-            this.Control = this.Container.NewLabel(string.Empty, caption);
+            var label = this.Container.NewLabel(string.Empty, caption);
+            label.TextAlign = UIAlign.LeftMiddle;
+            this.Control = label;
             return this;
         }
 
@@ -349,11 +358,6 @@
                     control.AutoSize = false;
                 }
 
-                if (!this.isSameLine)
-                {
-                    this.nextX = this.style.Margin.X;
-                }
-
                 float width;
                 float height = this.customRowHeight >= 1.0f ? this.customRowHeight : this.style.RowHeight;
 
@@ -368,7 +372,17 @@
                     width = control.Width;
                     height = control.Height;
                 }
-                
+
+
+                if (this.isSameLine)
+                {
+                    height = Math.Max(height, this.lastHeight);
+                }
+                else
+                {
+                    this.nextX = this.style.Margin.X;
+                }
+
                 this.nextX += this.indentCount * this.style.Indent;
                 var x = this.nextX + (width - control.Width) * this.align.X;
                 var y = this.nextY + (height - control.Height) * this.align.Y;
