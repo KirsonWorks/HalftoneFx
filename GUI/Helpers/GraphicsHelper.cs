@@ -55,7 +55,7 @@
             return graphics.GetRectPath(rect.Inflate(-0.5F), cornerRadius);
         }
 
-        public static void DrawRect(this Graphics graphics, RectangleF rect, Color color, int cornerRadius, float shrink = 0)
+        public static void DrawRect(this Graphics graphics, RectangleF rect, Brush brush, int cornerRadius, float shrink = 0)
         {
             if (shrink != 0)
             {
@@ -64,10 +64,17 @@
                 rect = rect.Inflate(-shrink);
             }
 
-            using (var brush = new SolidBrush(color))
             using (var path = graphics.GetRectPath(rect, cornerRadius))
             {
                 graphics.FillPath(brush, path);
+            }
+        }
+
+        public static void DrawRect(this Graphics graphics, RectangleF rect, Color color, int cornerRadius, float shrink = 0)
+        {
+            using (var brush = new SolidBrush(color))
+            {
+                graphics.DrawRect(rect, brush, cornerRadius, shrink);
             }
         }
 
@@ -258,6 +265,32 @@
             }
 
             return GraphicsDummy.MeasureString(text, font, 0, StringFormat.GenericTypographic);
+        }
+
+        public static void GenerateCheckerTexture(this Image image, int cellSize, Color colorA, Color colorB)
+        {
+            cellSize = Math.Max(0, cellSize);
+
+            using (var brushA = new SolidBrush(colorA))
+            using (var brushB = new SolidBrush(colorB))
+            using (var graphics = Graphics.FromImage(image))
+            {
+                var w = (int)Math.Ceiling((float)image.Width / cellSize);
+                var h = (int)Math.Ceiling((float)image.Height / cellSize);
+
+                for (var y = 0; y < h; y++)
+                {
+                    for (var x = 0; x < w; x++)
+                    {
+                        var n = x + (y * w) + (y % 2);
+                        Console.WriteLine(n);
+                        var brush = (n % 2 == 0) ? brushA : brushB;
+
+                        graphics.FillRectangle(brush,
+                                new Rectangle(x * cellSize, y * cellSize, cellSize, cellSize));
+                    }
+                }
+            }
         }
     }
 }
