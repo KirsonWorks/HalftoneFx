@@ -436,6 +436,16 @@
                 hoveredControl = overControl;
             }
 
+            if (activeControl != null)
+            {
+                activeControl.DoMouseInput(e);
+
+                if (activeControl == overControl)
+                {
+                    return true;
+                }
+            }
+
             if (overControl != null)
             {
                 overControl.DoMouseInput(e);

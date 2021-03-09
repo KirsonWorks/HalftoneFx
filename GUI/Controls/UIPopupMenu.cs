@@ -153,7 +153,8 @@
                 if (item.Icon != null)
                 {
                     var iconSize = item.Icon.Size;
-                    this.itemSize = this.itemSize.Max(new SizeF(iconSize.Width + padding + textSize.Width, iconSize.Height));
+                    var size = new SizeF(iconSize.Width + padding + textSize.Width, iconSize.Height);
+                    this.itemSize = this.itemSize.Max(size);
                 }
             }
 
@@ -161,7 +162,7 @@
             itemSize.Height += padding * 2;
 
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
-                padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
+                    padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
 
             if (this.Parent is UIControl parent)
             {
