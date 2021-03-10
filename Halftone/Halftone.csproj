@@ -45,7 +45,7 @@
     <Compile Include="Grid Patterns\GridPatternNoiseEnumerator.cs" />
     <Compile Include="Grid Patterns\GridPatternSquareEnumerator.cs" />
     <Compile Include="GridPatternFactory.cs" />
-    <Compile Include="Halftone.cs" />
+    <Compile Include="HalftoneArtist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shape Patterns\IShapePattern.cs" />
     <Compile Include="Shape Patterns\ShapePatternCircle.cs" />

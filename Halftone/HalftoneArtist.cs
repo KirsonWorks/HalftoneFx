@@ -19,7 +19,7 @@
         Max
     }
 
-    public class Halftone
+    public class HalftoneArtist
     {
         private int gridType = 0;
 

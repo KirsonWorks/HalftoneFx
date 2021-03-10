@@ -105,9 +105,14 @@
             return NewNode<UISlider>(parent, name);
         }
 
-        public static UIStatusBar NewStatusBar(this UIControl parent, string name)
+        public static UIStatusBar NewStatusBar(this UIControl parent, string name = "")
         {
             return NewNode<UIStatusBar>(parent, name);
+        }
+
+        public static UIPictureBox NewPictureBox(this UIControl parent, string name = "")
+        {
+            return NewNode<UIPictureBox>(parent, name);
         }
 
         public static UIPopupMenu NewPopupMenu(this UIControl parent, string name = "")

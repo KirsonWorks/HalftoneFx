@@ -12,11 +12,17 @@
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Windows.Forms;
+    using HalftoneFx.Presenters;
+    using HalftoneFx.Views;
 
     public partial class MainForm : Form
     {
-        private readonly UIWinForms ui = new UIWinForms();
+        private readonly UIWinForms ui;
 
+        private readonly WorkspacePresenter workspace;
+
+
+        /*
         private readonly UIPictureBox pictureBox = new UIPictureBox();
 
         private readonly UIStatusBar statusBar = new UIStatusBar();
@@ -30,14 +36,21 @@
         private readonly UIProgressBar progress;
 
         private readonly UIImage customPattern;
+        */
 
         public MainForm()
         {
             this.InitializeComponent();
             this.Text = $"{Application.ProductName} v{Application.ProductVersion}";
 
-            this.ui.Container = this;
-            this.ui.OnNotification += this.OnUINotification;
+            this.ui = new UIWinForms()
+            {
+                Container = this,
+            };
+
+            this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
+
+            /*this.ui.OnNotification += this.OnUINotification;
 
             this.pictureBox.Parent = this.ui;
             this.pictureBox.Name = "picture-box";
@@ -128,8 +141,10 @@
 
             this.SetPicture(Properties.Resources.Logo);
             this.pictureBox.Zoom(0.5f);
+            */
         }
 
+        /*
         private void SetPicture(Image picture)
         {
             this.image.Image = this.pictureBox.Image = picture;
@@ -155,7 +170,7 @@
         {
             try
             {
-                this.pictureBox.Image.SaveAs(path);
+                 this.pictureBox.Image.SaveAs(path);
             }
             catch
             {
@@ -336,6 +351,7 @@
             var checkbox = sender as UICheckBox;
             this.image.TransparentBg = checkbox.Checked;
         }
+        */
 
         private void OnFormDragEnter(object sender, DragEventArgs e)
         {
@@ -346,7 +362,8 @@
         private void OnFormDragDrop(object sender, DragEventArgs e)
         {
             var filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-            this.LoadPictureFromFile(filenames[0]);
+            //this.LoadPictureFromFile(filenames[0]);
         }
+        
     }
 }

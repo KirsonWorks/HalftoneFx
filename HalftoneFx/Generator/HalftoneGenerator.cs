@@ -31,7 +31,7 @@
     {
         private readonly ImageFilterComplex filter = new ImageFilterComplex();
 
-        private readonly Halftone halftone = new Halftone();
+        private readonly HalftoneArtist halftone = new HalftoneArtist();
 
         private CancellationTokenSource cancelationToken = null;
 

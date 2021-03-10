@@ -125,6 +125,11 @@
             }
         }
 
+        protected override void DoParentChanged()
+        {
+            this.DoParentResize(SizeF.Empty);
+        }
+
         protected override void DoMouseInput(UIMouseEventArgs e)
         {
             if (this.imageControl.HasImage())
