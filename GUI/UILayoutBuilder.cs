@@ -5,6 +5,9 @@
 
     using System;
     using System.Drawing;
+    using System.Collections;
+    using System.Collections.Generic;
+    using GUI.Helpers;
 
     public class UILayoutBuilder
     {
@@ -14,16 +17,10 @@
 
         private UIControl control = null;
 
-        public UILayoutBuilder(UIManager manager, UILayoutStyle style)
+        public UILayoutBuilder(UIManager manager)
         {
             this.manager = manager ?? throw new ArgumentNullException(nameof(manager));
-
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-
-            this.positioner = new UIPositioner(style);
+            this.positioner = new UIPositioner(manager.LayoutOptions ?? UILayoutOptions.Default);
             this.control = this.Container = manager;
         }
 
@@ -150,6 +147,30 @@
             return this;
         }
 
+        public UILayoutBuilder Begin<T>(PointF? pos = null)
+            where T: UIControl
+        {
+            this.positioner.Push(pos);
+            this.Control = this.Container.NewNode<T>(string.Empty);
+            this.Container = this.control;
+            this.positioner.Reset();
+            return this;
+        }
+
+        public UILayoutBuilder End()
+        {
+            if (this.Container.Parent == null)
+            {
+                this.control = this.Container = this.manager;
+                return this;
+            }
+
+            this.Container.Size = this.positioner.Pop();
+            this.control = this.Container = this.Container.Parent as UIControl;
+            return this;
+        }
+
+        /*
         public UILayoutBuilder BeginPanel(float x, float y)
         {
             if (this.Container != this.manager)
@@ -161,17 +182,17 @@
             this.Control = this.Container.NewPanel(string.Empty);
             this.Container = this.control;
             this.positioner.Reset();
-
             return this;
         }
 
         public UILayoutBuilder EndPanel()
         {
-            this.Container.Size = this.positioner.MaxSize;
+            this.Container.Size = this.positioner.OverallSize;
             this.control = this.Container = this.manager;
             this.positioner.Reset();
             return this;
         }
+        */
 
         public UILayoutBuilder Label(string caption)
         {
@@ -258,33 +279,33 @@
         }
     }
 
-    public class UILayoutStyle
+    public class UILayoutOptions
     {
-        public static UILayoutStyle Default = new UILayoutStyle
+        public static UILayoutOptions Default = new UILayoutOptions
         {
             Indent = 15.0f,
             Margin = new PointF(10, 10),
-            Spacing = new PointF (5, 5),
-            CellWidth = 80.0f,
-            RowHeight = 23.0f
+            Spacing = new SizeF(5, 5),
+            CellWidth = 90.0f,
+            CellHeight = 23.0f
         };
 
         public float Indent { get; set; }
 
         public PointF Margin { get; set; }
 
-        public PointF Spacing { get; set; }
+        public SizeF Spacing { get; set; }
 
         public float CellWidth { get; set; }
 
-        public float RowHeight { get; set; }
+        public float CellHeight { get; set; }
     }
 
     public class UIPositioner
     {
         private static PointF DefaultAlign = new PointF(0.0f, 0.5f);
 
-        private readonly UILayoutStyle style;
+        private readonly UILayoutOptions options;
 
         private PointF align;
 
@@ -294,24 +315,21 @@
 
         private bool stretching;
 
-        private float nextX, nextY;
+        private PointF Pos = PointF.Empty;
 
-        private float lastWidth, lastHeight, customColWidth, customRowHeight;
+        private SizeF lastCellSize = SizeF.Empty;
 
-        public UIPositioner(UILayoutStyle style)
+        private SizeF customCellSize = SizeF.Empty;
+
+        private Stack<PointF> stack = new Stack<PointF>();
+
+        public UIPositioner(UILayoutOptions options)
         {
-            this.style = style;
+            this.options = options;
             this.Reset();
         }
 
-        public float MaxWidth { get; private set; }
-
-        public float MaxHeight { get; private set; }
-
-        public SizeF MaxSize
-        {
-            get => new SizeF(this.MaxWidth, this.MaxHeight);
-        }
+        public SizeF OverallSize { get; private set; }
 
         public void Align(PointF value)
         {
@@ -325,12 +343,14 @@
 
         public void Wide(float value)
         {
-            this.customColWidth = Math.Max(1.0f, value);
+            this.customCellSize = new SizeF(Math.Max(1.0f, value), this.customCellSize.Height);
+            //this.customColWidth = Math.Max(1.0f, value);
         }
 
         public void Tall(float value)
         {
-            this.customRowHeight = Math.Max(1.0f, value);
+            this.customCellSize = new SizeF(this.customCellSize.Width, Math.Max(1.0f, value));
+            //this.customRowHeight = Math.Max(1.0f, value);
         }
 
         public void Stretch(float value = 0.0f)
@@ -344,8 +364,8 @@
             if (!this.isSameLine)
             {
                 this.isSameLine = true;
-                this.nextX += this.lastWidth + this.style.Spacing.X;
-                this.nextY -= this.lastHeight + this.style.Spacing.Y;
+                var offset = this.lastCellSize + this.options.Spacing;
+                this.Pos += new SizeF(offset.Width, -offset.Height);
             }
         }
 
@@ -359,16 +379,16 @@
                 }
 
                 float width;
-                float height = this.customRowHeight >= 1.0f ? this.customRowHeight : this.style.RowHeight;
+                float height = this.customCellSize.Height >= 1.0f ? this.customCellSize.Height : this.options.CellHeight;
 
-                if (this.customColWidth >= 1.0f)
+                if (this.customCellSize.Width >= 1.0f)
                 {
-                    control.SetSize(this.customColWidth, height);
-                    width = this.customColWidth;
+                    control.SetSize(this.customCellSize.Width, height);
+                    width = this.customCellSize.Width;
                 }
                 else
                 {
-                    control.SetSize(this.style.CellWidth, height);
+                    control.SetSize(this.options.CellWidth, height);
                     width = control.Width;
                     height = control.Height;
                 }
@@ -376,47 +396,70 @@
 
                 if (this.isSameLine)
                 {
-                    height = Math.Max(height, this.lastHeight);
+                    height = Math.Max(height, this.lastCellSize.Height);
                 }
                 else
                 {
-                    this.nextX = this.style.Margin.X;
+                    this.Pos.X += this.options.Margin.X;
                 }
 
-                this.nextX += this.indentCount * this.style.Indent;
-                var x = this.nextX + (width - control.Width) * this.align.X;
-                var y = this.nextY + (height - control.Height) * this.align.Y;
-                this.nextY += height + this.style.Spacing.Y;
-                this.MaxWidth = Math.Max(this.MaxWidth, this.nextX + width + this.style.Margin.X);
-                this.MaxHeight = Math.Max(this.MaxHeight, this.nextY + this.style.Margin.Y - this.style.Spacing.Y);
-                this.lastWidth = width;
-                this.lastHeight = height;
+                this.Pos.X += this.indentCount * this.options.Indent;
+                var x = this.Pos.X + (width - control.Width) * this.align.X;
+                var y = this.Pos.Y + (height - control.Height) * this.align.Y;
+                this.Pos.Y += height + this.options.Spacing.Height;
+
+                var size = new SizeF(
+                    this.Pos.X + width + this.options.Margin.X,
+                    this.Pos.Y + this.options.Margin.Y - this.options.Spacing.Height);
+
+                this.OverallSize = this.OverallSize.Max(size);
+                this.lastCellSize = new SizeF(width, height);
 
                 control.SetPosition(x, y);
-                this.Default();
+                this.NextRow();
             }
         }
 
-        public void Reset(float x = 0.0f, float y = 0.0f)
+        public void Reset(PointF? pos = null, SizeF? size = null)
         {
-            this.MaxWidth = 0.0f;
-            this.MaxHeight = 0.0f;
+            this.Pos = pos.HasValue ? pos.Value : this.options.Margin;
+            this.OverallSize = size.HasValue ? size.Value : SizeF.Empty;
 
-            this.nextX = x > 0.0f ? x : this.style.Margin.X;
-            this.nextY = y > 0.0f ? y : this.style.Margin.Y;
-            
-            this.Default();
+            this.NextRow();
             this.isSameLine = true;
         }
 
-        private void Default()
+        public void Push(PointF? pos)
+        {
+            this.Reset(pos);
+            this.stack.Push(this.Pos);
+        }
+
+        public SizeF Pop()
+        {
+            if (this.stack.Count == 0)
+            {
+                return SizeF.Empty;
+            }
+
+            var size = this.OverallSize;
+            var pos = this.stack.Pop();
+            var overall = this.OverallSize.Max(
+                new SizeF(
+                    pos.X + size.Width + this.options.Margin.X,
+                    pos.Y + size.Height + this.options.Margin.Y - this.options.Spacing.Height));
+
+            this.Reset(new PointF(pos.X, pos.Y + size.Height + options.Spacing.Height), overall);
+            return size;
+        }
+
+        private void NextRow()
         {
             this.indentCount = 0;
             this.isSameLine = false;
             this.stretching = false;
             this.align = DefaultAlign;
-            this.customColWidth = 0.0f;
-            this.customRowHeight = 0.0f;
+            this.customCellSize = SizeF.Empty;
         }
     }
 }

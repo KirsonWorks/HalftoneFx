@@ -1,6 +1,7 @@
 ﻿namespace GUI.Controls
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
 
     public static partial class UIFactory
@@ -105,21 +106,23 @@
             return NewNode<UISlider>(parent, name);
         }
 
-        public static UIStatusBar NewStatusBar(this UIControl parent, string name = "")
+        public static UIStatusBar NewStatusBar(this UIControl parent, string name)
         {
             return NewNode<UIStatusBar>(parent, name);
         }
 
-        public static UIPictureBox NewPictureBox(this UIControl parent, string name = "")
+        public static UIPictureBox NewPictureBox(this UIControl parent, string name)
         {
             return NewNode<UIPictureBox>(parent, name);
         }
 
-        public static UIPopupMenu NewPopupMenu(this UIControl parent, string name = "")
+        public static UIPopupMenu NewPopupMenu(this UIControl parent, string name, 
+            IEnumerable<UIPopupMenuItem> items = null)
         {
             if (parent.Root is UIControl root)
             {
                 var menu = NewNode<UIPopupMenu>(root, name);
+                menu.Items.AddRange(items);
                 parent.PopupControl = menu;
                 return menu;
             }

@@ -4,7 +4,7 @@
     using GUI.Controls;
 
     using HalftoneFx.Presenters;
-
+    using HalftoneFx.UI;
     using System.Drawing;
 
     public class WorkspaceView : IWorkspaceView
@@ -14,6 +14,8 @@
         private UIPictureBox pictureBox;
 
         private UIStatusBar statusBar;
+
+        private UIPictureOptionsPanel pictureOptions;
 
         public WorkspaceView(UIManager ui)
         {
@@ -31,8 +33,28 @@
 
         private void SetUp()
         {
-            this.pictureBox = this.ui.NewPictureBox();
-            this.statusBar = this.ui.NewStatusBar();
+            var layoutBuilder = new UILayoutBuilder(this.ui);
+
+            this.pictureBox = this.ui.NewPictureBox(string.Empty);
+            this.pictureBox.NewPopupMenu(string.Empty,
+                UIPictureBoxPopupMenuItems.Get(this.pictureBox));
+
+            layoutBuilder
+                .Begin<UIPanel>(new PointF(100, 100))
+                .Button("1")
+                .Begin<UIPanel>(new PointF(40, 40))
+                .Button("2")
+                .End()
+                .SameLine()
+                .Begin<UIPanel>()
+                .Button("3")
+                .End()
+                .Slider(0, 0, 10)
+                .End();
+
+            //layoutBuilder.BeginPanel
+
+            this.statusBar = this.ui.NewStatusBar(string.Empty);
         }
 
         private void OnUINotification(object sender, UINotificationEventArgs e)

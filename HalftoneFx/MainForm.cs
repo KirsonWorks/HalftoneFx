@@ -14,6 +14,8 @@
     using System.Windows.Forms;
     using HalftoneFx.Presenters;
     using HalftoneFx.Views;
+    using System.Collections;
+    using System.Collections.Generic;
 
     public partial class MainForm : Form
     {

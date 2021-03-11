@@ -25,19 +25,7 @@
             this.AutoSize = true;
         }
 
-        public UIPopupMenu AddItem(string text, Image icon, Action click, bool buttonMode = false)
-        {
-            var item = new UIPopupMenuItem
-            {
-                Text = text,
-                Icon = icon,
-                Click = click,
-                ButtonMode = buttonMode,
-            };
-
-            this.items.Add(item);
-            return this;
-        }
+        public List<UIPopupMenuItem> Items => this.items;
 
         protected override SizeF GetFittedSize() => this.fittedSize;
 

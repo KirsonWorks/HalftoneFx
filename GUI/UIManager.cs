@@ -22,12 +22,14 @@
         }
 
         public event EventHandler<UINotificationEventArgs> OnNotification = delegate { };
-
+       
         public long FPS { get; private set; }
 
         public bool AntiAliasing { get; set; } = true;
 
         public Point CursorPosition { get; protected set; }
+
+        public UILayoutOptions LayoutOptions { get; set; } = UILayoutOptions.Default;
 
         protected override void DoRender(Graphics graphics)
         {
