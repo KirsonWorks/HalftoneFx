@@ -64,6 +64,7 @@
     <Compile Include="Editor\UIToolPan.cs" />
     <Compile Include="Editor\UIToolZoom.cs" />
     <Compile Include="Helpers\GraphicsHelper.cs" />
+    <Compile Include="Helpers\PointFHelper.cs" />
     <Compile Include="Helpers\RectFHelper.cs" />
     <Compile Include="Helpers\SizeFHelper.cs" />
     <Compile Include="Helpers\UIRangeHelper.cs" />

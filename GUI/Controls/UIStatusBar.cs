@@ -15,11 +15,7 @@
         public override string Caption
         {
             get => base.Caption;
-            
-            set
-            {
-                base.Caption = value;
-            }
+            set => base.Caption = value;
         }
 
         protected override void DoRender(Graphics graphics)

@@ -39,19 +39,27 @@
             this.pictureBox.NewPopupMenu(string.Empty,
                 UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
+            
             layoutBuilder
                 .Begin<UIPanel>(new PointF(100, 100))
-                .Button("1")
-                .Begin<UIPanel>(new PointF(40, 40))
-                .Button("2")
-                .End()
-                .SameLine()
                 .Begin<UIPanel>()
-                .Button("3")
                 .End()
-                .Slider(0, 0, 10)
+                    /*.Begin<UIPanel>()
+                        .Button("Test")
+                    .End()*/
+                    //.SameLine()
+                    //.Wide(30)
                 .End();
 
+            /*
+            layoutBuilder
+                .Begin<UIPanel>(new PointF(100, 100))
+                .Label("HOLY")
+                .SameLine()
+                .Indent(20)
+                .Button("BUTTON")
+                .End();
+            */
             //layoutBuilder.BeginPanel
 
             this.statusBar = this.ui.NewStatusBar(string.Empty);

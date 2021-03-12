@@ -29,6 +29,7 @@
                 return float.NaN;
             }
         }
+
         public static string ToStringWxH(this SizeF size)
         {
             return $"{size.Width}x{size.Height}";
