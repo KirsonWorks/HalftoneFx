@@ -254,6 +254,12 @@
 
             return this;
         }
+
+        public UILayoutBuilder PrintStack()
+        {
+            this.positioner.PrintStack();
+            return this;
+        }
     }
 
     public class UILayoutOptions
@@ -296,7 +302,9 @@
 
         private SizeF customCellSize = SizeF.Empty;
 
-        private Stack<PointF> stack = new Stack<PointF>();
+        private Stack<PointF> positions = new Stack<PointF>();
+
+        private Stack<SizeF> sizes = new Stack<SizeF>();
 
         public UIPositioner(UILayoutOptions options)
         {
@@ -376,7 +384,6 @@
             control.SetPosition(x, y);
 
             var sr = control.ScreenRect;
-            //var rightBottom = new SizeF(control.Left + control.Width, control.Top + control.Height);
             this.OverallSize = this.OverallSize.Max(new SizeF(sr.Right, sr.Bottom));
             this.Translate(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
             this.NextLine();
@@ -389,49 +396,64 @@
 
         public void Push(PointF? pos)
         {
-            this.Reset(pos ?? this.cursor);
+            this.Reset(pos ?? this.cursor, this.OverallSize);
             this.cursor = pos ?? this.cursor;
-            var ex = this.stack.Count > 0 ? this.stack.Peek() : PointF.Empty;
-            this.stack.Push(this.cursor.Add(ex));
+            var ex = this.positions.Count > 0 ? this.positions.Peek() : PointF.Empty;
+            this.positions.Push(this.cursor.Add(ex));
         }
 
         public void PushSize()
         {
-            this.stack.Push((PointF)this.OverallSize);
+            this.sizes.Push(this.OverallSize);
             this.OverallSize = SizeF.Empty;
+        }
+
+        public void PrintStack()
+        {
+            var pos = this.positions.ToArray();
+            var sz = this.sizes.ToArray();
+
+            var i = 0;
+
+            while (i < pos.Length)
+            {
+                Console.WriteLine(new RectangleF(pos[i], sz[i]));
+                i++;
+            }
         }
 
         public SizeF Pop()
         {
-            if (this.stack.Count == 0)
+            if (this.positions.Count == 0)
             {
                 return SizeF.Empty;
             }
 
-            var prevSize = this.stack.Pop();
-            var prevCursor = this.stack.Pop();
+            var prevSize = this.sizes.Pop();
+            var prevCursor = this.positions.Pop();
 
-            //Console.WriteLine(prevCursor);
-            //Console.WriteLine(prevSize);
+            var localSize = prevSize - prevCursor.ToSize();
+            localSize = localSize.Max(this.OverallSize - prevCursor.ToSize());
 
-            var pSize = prevSize.ToSize() - prevCursor.ToSize();
-            pSize = pSize.Max(OverallSize - prevCursor.ToSize());
+            var size = this.cellSize = localSize + this.options.Margin.ToSize();
 
-            Console.WriteLine(prevCursor);
-            Console.WriteLine(pSize);
-            Console.WriteLine(OverallSize);
-
-            var size = this.cellSize = (pSize) + this.options.Margin.ToSize();
-            //Console.WriteLine(size);
-            Console.WriteLine();
             var overallSize = size.Max(
-                new SizeF(prevCursor.X + size.Width, prevCursor.Y + size.Height));
+                new SizeF(
+                    prevCursor.X + size.Width,
+                    prevCursor.Y + size.Height));
+            
+
+            var p = this.positions.Count > 0 ? this.positions.Peek() : PointF.Empty;
+
+            prevCursor -= p.ToSize();
 
             this.Reset(
                 new PointF(
                     this.options.Margin.X,
                     prevCursor.Y + size.Height + options.Spacing.Height),
-                    pSize);
+                    overallSize);
+
+            Console.WriteLine();
 
             return size;
         }

@@ -5,6 +5,7 @@
 
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;
+
     using System.Drawing;
 
     public class WorkspaceView : IWorkspaceView
@@ -39,17 +40,33 @@
             this.pictureBox.NewPopupMenu(string.Empty,
                 UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
-            
+
             layoutBuilder
-                .Begin<UIPanel>(new PointF(100, 100))
+                .Begin<UIPanel>()
+                //.Button("100$")
+                //.SameLine()
+                //.Button("200$")
+                .Begin<UIPanel>()
+                .Button("TEST")
+                .End()
+                .SameLine()
+                .Begin <UIPanel>()
+                .PrintStack()
+                .End()
+                /*.Begin<UIPanel>()
+                .Button("HIT ME")
+                .End()
                 .Begin<UIPanel>()
                 .End()
-                    /*.Begin<UIPanel>()
-                        .Button("Test")
-                    .End()*/
-                    //.SameLine()
-                    //.Wide(30)
+                */
                 .End();
+
+                /*
+                .Begin<UIPanel>(new PointF(300, 300))
+                .Label("LABEL")
+                .Button("CLICK")
+                .End();
+                */
 
             /*
             layoutBuilder
