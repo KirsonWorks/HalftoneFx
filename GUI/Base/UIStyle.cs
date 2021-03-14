@@ -104,6 +104,8 @@ namespace GUI
 
     public class UIFonts
     {
+        public Font Small { get; set; } = new Font("Microsoft Sans Serif", 6);
+
         public Font Default { get; set; } = new Font("Microsoft Sans Serif", 8);
 
         public Font Header { get; set; } = new Font("Microsoft Sans Serif", 10);

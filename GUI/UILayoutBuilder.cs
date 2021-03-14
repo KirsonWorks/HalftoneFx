@@ -432,17 +432,16 @@
             var prevSize = this.sizes.Pop();
             var prevCursor = this.positions.Pop();
 
-            var localSize = prevSize - prevCursor.ToSize();
-            localSize = localSize.Max(this.OverallSize - prevCursor.ToSize());
+            var localSize = prevSize;
+            localSize = localSize.Max(this.OverallSize + this.options.Margin.ToSize());
 
-            var size = this.cellSize = localSize + this.options.Margin.ToSize();
+            var size = this.cellSize = localSize - prevCursor.ToSize();
 
             var overallSize = size.Max(
                 new SizeF(
                     prevCursor.X + size.Width,
                     prevCursor.Y + size.Height));
             
-
             var p = this.positions.Count > 0 ? this.positions.Peek() : PointF.Empty;
 
             prevCursor -= p.ToSize();
@@ -451,7 +450,7 @@
                 new PointF(
                     this.options.Margin.X,
                     prevCursor.Y + size.Height + options.Spacing.Height),
-                    overallSize);
+                    size);
 
             Console.WriteLine();
 

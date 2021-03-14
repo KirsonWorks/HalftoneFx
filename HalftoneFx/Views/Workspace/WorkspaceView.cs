@@ -53,6 +53,8 @@
                 .Begin <UIPanel>()
                 .PrintStack()
                 .End()
+                .Begin<UIPanel>()
+                .End()
                 /*.Begin<UIPanel>()
                 .Button("HIT ME")
                 .End()

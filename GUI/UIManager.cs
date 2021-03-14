@@ -49,9 +49,6 @@
             }
 
             this.fpsCounter++;
-#if DEBUG
-            graphics.DrawText(new RectangleF(10, 10, 30, 25), this.Style.Fonts.Default, this.Style.Colors.Text, this.FPS.ToString());
-#endif
         }
 
         protected override void Notification(UINode sender, UINotification notification)
