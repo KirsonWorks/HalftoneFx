@@ -40,46 +40,12 @@
             this.pictureBox.NewPopupMenu(string.Empty,
                 UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
-
             layoutBuilder
-                .Begin<UIPanel>()
-                //.Button("100$")
-                //.SameLine()
-                //.Button("200$")
-                .Begin<UIPanel>()
-                .Button("TEST")
-                .End()
-                .SameLine()
-                .Begin <UIPanel>()
-                .PrintStack()
-                .End()
-                .Begin<UIPanel>()
-                .End()
-                /*.Begin<UIPanel>()
-                .Button("HIT ME")
-                .End()
-                .Begin<UIPanel>()
-                .End()
-                */
-                .End();
+                    .Button("A").SameLine().Button("B").SameLine().Button("C")
+                    .Translate(new PointF(100, 100))
+                    .Button("CLICK")
+                    .Button("ME");
 
-                /*
-                .Begin<UIPanel>(new PointF(300, 300))
-                .Label("LABEL")
-                .Button("CLICK")
-                .End();
-                */
-
-            /*
-            layoutBuilder
-                .Begin<UIPanel>(new PointF(100, 100))
-                .Label("HOLY")
-                .SameLine()
-                .Indent(20)
-                .Button("BUTTON")
-                .End();
-            */
-            //layoutBuilder.BeginPanel
 
             this.statusBar = this.ui.NewStatusBar(string.Empty);
         }

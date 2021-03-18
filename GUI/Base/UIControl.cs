@@ -223,7 +223,7 @@
                 while (control != null)
                 {
                     var pos = control.LocalPosition;
-                    this.ScreenPosition += new SizeF(pos.X, pos.Y);
+                    this.ScreenPosition += pos.ToSize();
                     control = control.Parent as UIControl;
                 }
             }
@@ -240,6 +240,11 @@
         public UIControl SetPosition(float x, float y)
         {
             return this.SetPosition(new PointF(x, y));
+        }
+
+        public RectangleF ClientRect
+        {
+            get => new RectangleF(this.LocalPosition, this.Size);
         }
 
         public RectangleF ScreenRect

@@ -13,7 +13,7 @@
     {
         private readonly UIManager manager;
 
-        private readonly UIPositioner positioner;
+        private UIPositioner positioner;
 
         private UIControl control = null;
 
@@ -147,14 +147,18 @@
             return this;
         }
 
+        public UILayoutBuilder Translate(PointF location)
+        {
+            this.positioner.Translate(location);
+            return this;
+        }
+
         public UILayoutBuilder Begin<T>(PointF? pos = null)
             where T: UIControl
         {
-            this.positioner.Push(pos);
+            /// FIX ME!
             this.Control = this.Container.NewNode<T>(string.Empty);
             this.Container = this.control;
-            this.positioner.PushSize();
-            this.positioner.ResetCursor();
             return this;
         }
 
@@ -165,8 +169,9 @@
                 this.control = this.Container = this.manager;
                 return this;
             }
+            
+            // FIX ME!
 
-            this.Container.Size = this.positioner.Pop();
             this.control = this.Container = this.Container.Parent as UIControl;
             return this;
         }
@@ -254,12 +259,6 @@
 
             return this;
         }
-
-        public UILayoutBuilder PrintStack()
-        {
-            this.positioner.PrintStack();
-            return this;
-        }
     }
 
     public class UILayoutOptions
@@ -290,28 +289,30 @@
 
         private readonly UILayoutOptions options;
 
-        private PointF align;
+        private PointF align = DefaultAlign;
 
-        private bool isSameLine;
+        private bool isSameLine = true;
 
-        private bool stretching;
+        private bool stretching = false;
 
-        private PointF cursor = PointF.Empty;
+        private PointF local = PointF.Empty;
+
+        private PointF global = PointF.Empty;
 
         private SizeF cellSize = SizeF.Empty;
 
         private SizeF customCellSize = SizeF.Empty;
 
-        private Stack<PointF> positions = new Stack<PointF>();
+        private PointF minPos = new PointF(float.PositiveInfinity, float.PositiveInfinity);
 
-        private Stack<SizeF> sizes = new Stack<SizeF>();
+        private PointF maxPos = PointF.Empty;
 
         public UIPositioner(UILayoutOptions options)
         {
             this.options = options;
         }
 
-        public SizeF OverallSize { get; private set; }
+        public SizeF OverallSize => this.maxPos.ToSize() - this.minPos.ToSize();
 
         public void Align(PointF value)
         {
@@ -336,12 +337,23 @@
 
         public void Indent(int count)
         {
-            this.cursor.X += Math.Max(0, count) * this.options.Indent;
+            this.local.X += Math.Max(0, count) * this.options.Indent;
         }
 
-        public void Translate(SizeF offset)
+        public void Translate(PointF location)
         {
-            this.cursor += offset;
+            this.global = location;
+            this.local = PointF.Empty;
+        }
+
+        public void LocalTranslate(PointF location)
+        {
+            this.local = location;
+        }
+
+        public void Offset(SizeF value)
+        {
+            this.local += value;
         }
 
         public void SameLine()
@@ -350,7 +362,7 @@
             {
                 this.isSameLine = true;
                 var offset = this.cellSize + this.options.Spacing;
-                this.Translate(new SizeF(offset.Width, -offset.Height));
+                this.Offset(new SizeF(offset.Width, -offset.Height));
             }
         }
 
@@ -368,6 +380,7 @@
 
             if (!this.isSameLine)
             {
+                this.LocalTranslate(new PointF(0, this.local.Y));
                 this.cellSize = SizeF.Empty;
             }
 
@@ -378,90 +391,19 @@
             control.SetSize(cellWidth, cellHeight);
             
             this.cellSize = this.cellSize.Max(control.Size.Max(new SizeF(cellWidth, cellHeight)));
-            var x = this.cursor.X + (this.cellSize.Width - control.Width) * this.align.X;
-            var y = this.cursor.Y + (this.cellSize.Height - control.Height) * this.align.Y;
+            var x = this.local.X + (this.cellSize.Width - control.Width) * this.align.X;
+            var y = this.local.Y + (this.cellSize.Height - control.Height) * this.align.Y;
 
-            control.SetPosition(x, y);
+            control.SetPosition(this.global.X + x, this.global.Y + y);
 
-            var sr = control.ScreenRect;
-            this.OverallSize = this.OverallSize.Max(new SizeF(sr.Right, sr.Bottom));
-            this.Translate(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
+            var cr = control.ClientRect;
+            this.minPos = this.minPos.Min(new PointF(cr.Left, cr.Top));
+            this.maxPos = this.maxPos.Max(new PointF(cr.Right, cr.Bottom));
+
+            Console.WriteLine(this.OverallSize);
+
+            this.Offset(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
             this.NextLine();
-        }
-
-        public void ResetCursor()
-        {
-            this.cursor = this.options.Margin;
-        }
-
-        public void Push(PointF? pos)
-        {
-            this.Reset(pos ?? this.cursor, this.OverallSize);
-            this.cursor = pos ?? this.cursor;
-            var ex = this.positions.Count > 0 ? this.positions.Peek() : PointF.Empty;
-            this.positions.Push(this.cursor.Add(ex));
-        }
-
-        public void PushSize()
-        {
-            this.sizes.Push(this.OverallSize);
-            this.OverallSize = SizeF.Empty;
-        }
-
-        public void PrintStack()
-        {
-            var pos = this.positions.ToArray();
-            var sz = this.sizes.ToArray();
-
-            var i = 0;
-
-            while (i < pos.Length)
-            {
-                Console.WriteLine(new RectangleF(pos[i], sz[i]));
-                i++;
-            }
-        }
-
-        public SizeF Pop()
-        {
-            if (this.positions.Count == 0)
-            {
-                return SizeF.Empty;
-            }
-
-            var prevSize = this.sizes.Pop();
-            var prevCursor = this.positions.Pop();
-
-            var localSize = prevSize;
-            localSize = localSize.Max(this.OverallSize + this.options.Margin.ToSize());
-
-            var size = this.cellSize = localSize - prevCursor.ToSize();
-
-            var overallSize = size.Max(
-                new SizeF(
-                    prevCursor.X + size.Width,
-                    prevCursor.Y + size.Height));
-            
-            var p = this.positions.Count > 0 ? this.positions.Peek() : PointF.Empty;
-
-            prevCursor -= p.ToSize();
-
-            this.Reset(
-                new PointF(
-                    this.options.Margin.X,
-                    prevCursor.Y + size.Height + options.Spacing.Height),
-                    size);
-
-            Console.WriteLine();
-
-            return size;
-        }
-
-        private void Reset(PointF? pos = null, SizeF? size = null)
-        {
-            this.isSameLine = false;
-            this.cursor = pos ?? this.options.Margin;
-            this.OverallSize = size ?? SizeF.Empty;
         }
 
         private void NextLine()
@@ -470,7 +412,6 @@
             this.stretching = false;
             this.align = DefaultAlign;
             this.customCellSize = SizeF.Empty;
-            this.cursor.X = this.options.Margin.X;
         }
     }
 }
