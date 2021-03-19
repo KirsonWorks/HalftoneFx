@@ -41,10 +41,16 @@
                 UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
             layoutBuilder
-                    .Button("A").SameLine().Button("B").SameLine().Button("C")
-                    .Translate(new PointF(100, 100))
-                    .Button("CLICK")
-                    .Button("ME");
+                .Translate(new PointF(100, 100))
+                .Begin<UIPanel>()
+                    .Label("TEST")
+                    .Label("ASDA")
+                .End()
+                .SameLine()
+                .Begin<UIPanel>()
+                    .Label("TEST")
+                    .Label("ASDA")
+                .End();
 
 
             this.statusBar = this.ui.NewStatusBar(string.Empty);

@@ -371,9 +371,6 @@
 
         protected virtual void DoRenderOverlay(Graphics graphics)
         {
-            var sr = Rectangle.Round(this.ScreenRect);
-            graphics.DrawText(sr, this.Style.Fonts.Small, this.Style.Colors.Text, UIAlign.LeftTop, false, false, $"{sr.X};{sr.Y}");
-            graphics.DrawText(sr, this.Style.Fonts.Small, this.Style.Colors.Text, UIAlign.RightBottom, false, false, $"{sr.Width}x{sr.Height}");
         }
 
         protected virtual void DoChangeVisibility()

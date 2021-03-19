@@ -13,6 +13,8 @@
     {
         private readonly UIManager manager;
 
+        private readonly Stack<UIPositioner> stack = new Stack<UIPositioner>();
+
         private UIPositioner positioner;
 
         private UIControl control = null;
@@ -20,7 +22,7 @@
         public UILayoutBuilder(UIManager manager)
         {
             this.manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            this.positioner = new UIPositioner(manager.LayoutOptions ?? UILayoutOptions.Default);
+            this.positioner = new UIPositioner(manager.LayoutOptions);
             this.control = this.Container = manager;
         }
 
@@ -51,7 +53,7 @@
             return this;
         }
 
-        public UILayoutBuilder Ref<T>(ref T control) 
+        public UILayoutBuilder Ref<T>(ref T control)
             where T: UIControl
         {
             control = this.Control as T;
@@ -156,9 +158,16 @@
         public UILayoutBuilder Begin<T>(PointF? pos = null)
             where T: UIControl
         {
-            /// FIX ME!
+            if (pos.HasValue)
+            {
+                this.positioner.Translate(pos.Value);
+            }
+
             this.Control = this.Container.NewNode<T>(string.Empty);
             this.Container = this.control;
+
+            this.stack.Push(this.positioner);
+            this.positioner = new UIPositioner(this.manager.LayoutOptions);
             return this;
         }
 
@@ -169,10 +178,19 @@
                 this.control = this.Container = this.manager;
                 return this;
             }
-            
-            // FIX ME!
+
+            var size = this.positioner.OverallSize;
+
+            if (!size.IsEmpty)
+            {
+                this.Container.Size = size;
+            }
 
             this.control = this.Container = this.Container.Parent as UIControl;
+            
+            var prev = this.positioner;
+            this.positioner = this.stack.Pop();
+            this.positioner.NextLine(prev);
             return this;
         }
 
@@ -291,7 +309,7 @@
 
         private PointF align = DefaultAlign;
 
-        private bool isSameLine = true;
+        private bool isSameLine = false;
 
         private bool stretching = false;
 
@@ -305,14 +323,29 @@
 
         private PointF minPos = new PointF(float.PositiveInfinity, float.PositiveInfinity);
 
-        private PointF maxPos = PointF.Empty;
+        private PointF maxPos = new PointF(float.NegativeInfinity, float.NegativeInfinity);
 
         public UIPositioner(UILayoutOptions options)
         {
             this.options = options;
+            this.Translate(this.options.Margin);
         }
 
-        public SizeF OverallSize => this.maxPos.ToSize() - this.minPos.ToSize();
+        public SizeF OverallSize
+        {
+            get
+            {
+                if (this.minPos.X == float.PositiveInfinity ||
+                    this.minPos.Y == float.PositiveInfinity)
+                {
+                    return SizeF.Empty;
+                }
+
+                var margin = this.options.Margin;
+                margin += margin.ToSize();
+                return this.maxPos.ToSize() - this.minPos.ToSize() + margin.ToSize();
+            }
+        }
 
         public void Align(PointF value)
         {
@@ -397,12 +430,9 @@
             control.SetPosition(this.global.X + x, this.global.Y + y);
 
             var cr = control.ClientRect;
-            this.minPos = this.minPos.Min(new PointF(cr.Left, cr.Top));
+            this.minPos = this.minPos.Min(cr.Location);
             this.maxPos = this.maxPos.Max(new PointF(cr.Right, cr.Bottom));
 
-            Console.WriteLine(this.OverallSize);
-
-            this.Offset(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
             this.NextLine();
         }
 
@@ -412,6 +442,15 @@
             this.stretching = false;
             this.align = DefaultAlign;
             this.customCellSize = SizeF.Empty;
+            this.Offset(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
+        }
+
+        public void NextLine(UIPositioner p)
+        {
+            this.Offset(new SizeF(0, -(this.cellSize.Height + this.options.Spacing.Height)));
+            this.maxPos = this.maxPos.Max(this.global + this.local.ToSize() + p.OverallSize);
+            this.cellSize = p.OverallSize;
+            this.NextLine();
         }
     }
 }
