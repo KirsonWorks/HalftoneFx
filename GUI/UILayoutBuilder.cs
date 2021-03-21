@@ -155,13 +155,15 @@
             return this;
         }
 
-        public UILayoutBuilder Begin<T>(PointF? pos = null)
+        public UILayoutBuilder Begin<T>(PointF? location = null)
             where T: UIControl
         {
-            if (pos.HasValue)
+            if (location.HasValue)
             {
-                this.positioner.Translate(pos.Value);
+                this.positioner.Translate(location.Value);
             }
+
+            this.positioner.Align(PointF.Empty);
 
             this.Control = this.Container.NewNode<T>(string.Empty);
             this.Container = this.control;
@@ -186,11 +188,11 @@
                 this.Container.Size = size;
             }
 
-            this.control = this.Container = this.Container.Parent as UIControl;
-            
             var prev = this.positioner;
             this.positioner = this.stack.Pop();
             this.positioner.NextLine(prev);
+
+            this.control = this.Container = this.Container.Parent as UIControl;
             return this;
         }
 
@@ -323,7 +325,7 @@
 
         private PointF minPos = new PointF(float.PositiveInfinity, float.PositiveInfinity);
 
-        private PointF maxPos = new PointF(float.NegativeInfinity, float.NegativeInfinity);
+        private PointF maxPos = PointF.Empty;
 
         public UIPositioner(UILayoutOptions options)
         {
@@ -335,8 +337,7 @@
         {
             get
             {
-                if (this.minPos.X == float.PositiveInfinity ||
-                    this.minPos.Y == float.PositiveInfinity)
+                if (maxPos.IsEmpty)
                 {
                     return SizeF.Empty;
                 }

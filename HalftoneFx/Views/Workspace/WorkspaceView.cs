@@ -41,7 +41,7 @@
                 UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
             layoutBuilder
-                .Translate(new PointF(100, 100))
+                .Translate(new PointF(100, 50))
                 .Begin<UIPanel>()
                     .Label("TEST")
                     .Label("ASDA")
@@ -50,6 +50,10 @@
                 .Begin<UIPanel>()
                     .Label("TEST")
                     .Label("ASDA")
+                    .Label("ASDAD")
+                    .Button("CLICK")
+                .End()
+                .Begin<UIPanel>()
                 .End();
 
 
