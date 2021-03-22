@@ -62,6 +62,7 @@
         public void SetProgress(float percent)
         {
             this.pictureOptions.ValueForProgress(percent);
+            this.ui.Refresh();
         }
 
         public void Error(string text)

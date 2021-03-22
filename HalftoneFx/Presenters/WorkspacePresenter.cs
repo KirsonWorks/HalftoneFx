@@ -1,5 +1,8 @@
 ﻿namespace HalftoneFx.Presenters
 {
+    using Halftone;
+    using HalftoneFx.Helpers;
+    using HalftoneFx.Models;
     using HalftoneFx.Views;
 
     using System;
@@ -49,10 +52,7 @@
             set => this.halftone.Brightness.Value = value;
         }
 
-
-        public int BrightnessMin => this.halftone.Brightness.MinValue;
-
-        public int BrightnessMax => this.halftone.Brightness.MaxValue;
+        public Range<int> BrightnessRange => this.halftone.Brightness.GetRange();
 
         public int Contrast
         {
@@ -60,9 +60,7 @@
             set => this.halftone.Contrast.Value = value;
         }
 
-        public int ContrastMin => this.halftone.Contrast.MinValue;
-
-        public int ContrastMax => this.halftone.Contrast.MaxValue;
+        public Range<int> ContrastRange => this.halftone.Contrast.GetRange();
 
         public int Quantization
         {
@@ -70,9 +68,7 @@
             set => this.halftone.Quantization.Value = value;
         }
 
-        public int QuantizationMin => this.halftone.Quantization.MinValue;
-
-        public int QuantizationMax => this.halftone.Quantization.MaxValue;
+        public Range<int> QuantizationRange => this.halftone.Quantization.GetRange();
 
         public int Dithering
         {
@@ -80,9 +76,31 @@
             set => this.halftone.Dithering.Value = value;
         }
 
-        public int DitheringMin => this.halftone.Dithering.MinValue;
+        public Range<int> DitheringRange => this.halftone.Dithering.GetRange();
 
-        public int DitheringMax => this.halftone.Dithering.MaxValue;
+        public bool HalftoneEnabled
+        {
+            get => this.halftone.HalftoneEnabled;
+            set => this.halftone.HalftoneEnabled = value; 
+        }
+
+        public int GridType
+        {
+            get => this.halftone.GridType;
+            set => this.halftone.GridType = value;
+        }
+
+        public Range<int> GridTypeRange =>
+            new Range<int>(0, (int)HalftoneGridType.Max - 1);
+
+        public string[] GridTypeNames =>
+            Enum.GetNames(typeof(HalftoneGridType));
+
+        public int ShapeType
+        {
+            get => this.halftone.ShapeType;
+            set => this.halftone.ShapeType = value;
+        }
 
         public void LoadPicture(Image picture)
         {

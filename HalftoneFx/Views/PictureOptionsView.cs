@@ -3,7 +3,7 @@
     using GUI;
     using GUI.BaseControls;
     using GUI.Controls;
-
+    using HalftoneFx.Helpers;
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;
 
@@ -68,14 +68,10 @@
 
         public void SetUp()
         {
-            this.sliderBrightness.Min = this.Presenter.BrightnessMin;
-            this.sliderBrightness.Max = this.Presenter.BrightnessMax;
-            this.sliderContrast.Min = this.Presenter.ContrastMin;
-            this.sliderContrast.Max = this.Presenter.ContrastMax;
-            this.sliderQuantization.Min = this.Presenter.QuantizationMin;
-            this.sliderQuantization.Max = this.Presenter.QuantizationMax;
-            this.sliderDithering.Min = this.Presenter.DitheringMin;
-            this.sliderDithering.Max = this.Presenter.DitheringMax;
+            this.sliderBrightness.SetRange(this.Presenter.BrightnessRange);
+            this.sliderContrast.SetRange(this.Presenter.ContrastRange);
+            this.sliderQuantization.SetRange(this.Presenter.QuantizationRange);
+            this.sliderDithering.SetRange(this.Presenter.DitheringRange);
 
             this.ValueForSmoothing(this.Presenter.Smoothing);
             this.ValueForGrayscale(this.Presenter.Grayscale);
