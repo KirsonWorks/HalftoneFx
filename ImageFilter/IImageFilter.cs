@@ -1,7 +1,15 @@
-﻿namespace ImageFilter
+﻿using System;
+
+namespace ImageFilter
 {
     public interface IImageFilter
     {
+        int Value { get; set; }
+
+        int MinValue { get; set; }
+
+        int MaxValue { get; set; }
+
         bool HasEffect();
 
         byte GetKernelSize();

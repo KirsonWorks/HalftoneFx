@@ -80,7 +80,7 @@
         public float Step
         {
             get => this.range.Step;
-            set => this.range.Step = UIMath.Clamp(value, 0, this.Interval);
+            set => this.range.Step = value;
         }
 
         public float Percent

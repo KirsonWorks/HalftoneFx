@@ -5,24 +5,22 @@
 
     using System;
     using System.Drawing;
-    using System.Collections;
     using System.Collections.Generic;
-    using GUI.Helpers;
 
     public class UILayoutBuilder
     {
         private readonly UIManager manager;
 
-        private readonly Stack<UIPositioner> stack = new Stack<UIPositioner>();
+        private readonly Stack<UILayoutWorkbench> stack = new Stack<UILayoutWorkbench>();
 
-        private UIPositioner positioner;
+        private UILayoutWorkbench workbench;
 
         private UIControl control = null;
 
         public UILayoutBuilder(UIManager manager)
         {
             this.manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            this.positioner = new UIPositioner(manager.LayoutOptions);
+            this.workbench = new UILayoutWorkbench(manager.LayoutOptions);
             this.control = this.Container = manager;
         }
 
@@ -42,7 +40,8 @@
                 if (this.control != value)
                 {
                     this.control = value;
-                    this.positioner.Set(value);
+                    this.control.Parent = this.Container;
+                    this.workbench.Set(value);
                 }
             }
         }
@@ -74,45 +73,45 @@
 
         public UILayoutBuilder Indent(int count = 1)
         {
-            this.positioner.Indent(count);
+            this.workbench.Indent(count);
             return this;
         }
 
         public UILayoutBuilder SameLine()
         {
-            this.positioner.SameLine();
+            this.workbench.SameLine();
             return this;
         }
 
         public UILayoutBuilder Wide(float value)
         {
-            this.positioner.Wide(value);
+            this.workbench.Wide(value);
             return this;
         }
 
         public UILayoutBuilder WideCenter(float value)
         {
-            this.positioner.Wide(value);
-            this.positioner.Align(UIAlign.Center);
+            this.workbench.Wide(value);
+            this.workbench.Align(UIAlign.Center);
             return this;
         }
 
         public UILayoutBuilder WideRight(float value)
         {
-            this.positioner.Wide(value);
-            this.positioner.Align(UIAlign.RightMiddle);
+            this.workbench.Wide(value);
+            this.workbench.Align(UIAlign.RightMiddle);
             return this;
         }
 
         public UILayoutBuilder Stretch(float value = 0.0f)
         {
-            this.positioner.Stretch(value);
+            this.workbench.Stretch(value);
             return this;
         }
 
         public UILayoutBuilder Tall(float value = 0.0f)
         {
-            this.positioner.Tall(value);
+            this.workbench.Tall(value);
             return this;
         }
 
@@ -151,25 +150,37 @@
 
         public UILayoutBuilder Translate(PointF location)
         {
-            this.positioner.Translate(location);
+            this.workbench.Translate(location);
+            return this;
+        }
+
+        public UILayoutBuilder Translate(float x, float y)
+        {
+            return this.Translate(new PointF(x, y));
+        }
+
+        public UILayoutBuilder Begin(UIControl container, PointF? location = null)
+        {
+            this.workbench.Align(PointF.Empty);
+
+            if (location.HasValue)
+            {
+                this.workbench.Translate(location.Value);
+            }
+
+            this.Control = container;
+            this.Container = this.control;
+
+            this.stack.Push(this.workbench);
+            this.workbench = new UILayoutWorkbench(this.manager.LayoutOptions);
             return this;
         }
 
         public UILayoutBuilder Begin<T>(PointF? location = null)
             where T: UIControl
         {
-            if (location.HasValue)
-            {
-                this.positioner.Translate(location.Value);
-            }
-
-            this.positioner.Align(PointF.Empty);
-
-            this.Control = this.Container.NewNode<T>(string.Empty);
-            this.Container = this.control;
-
-            this.stack.Push(this.positioner);
-            this.positioner = new UIPositioner(this.manager.LayoutOptions);
+            var container = this.Container.NewNode<T>(string.Empty);
+            this.Begin(container, location);
             return this;
         }
 
@@ -181,24 +192,25 @@
                 return this;
             }
 
-            var size = this.positioner.OverallSize;
+            var size = this.workbench.OverallSize;
 
             if (!size.IsEmpty)
             {
                 this.Container.Size = size;
             }
 
-            var prev = this.positioner;
-            this.positioner = this.stack.Pop();
-            this.positioner.NextLine(prev);
+            var previous = this.workbench;
+            this.workbench = this.stack.Pop();
+            this.workbench.NextLine(previous);
 
             this.control = this.Container = this.Container.Parent as UIControl;
             return this;
         }
 
-        public UILayoutBuilder Label(string caption)
+        public UILayoutBuilder Label(string caption, bool autoSize = true)
         {
             var label = this.Container.NewLabel(string.Empty, caption);
+            label.AutoSize = autoSize;
             label.TextAlign = UIAlign.LeftMiddle;
             this.Control = label;
             return this;
@@ -256,8 +268,8 @@
             image.Stretch = true;
             image.BorderSize = 1;
 
-            this.positioner.Stretch(width);
-            this.positioner.Tall(height);
+            this.workbench.Stretch(width);
+            this.workbench.Tall(height);
             this.Control = image;
             return this;
         }
@@ -278,180 +290,6 @@
             }
 
             return this;
-        }
-    }
-
-    public class UILayoutOptions
-    {
-        public static UILayoutOptions Default = new UILayoutOptions
-        {
-            Indent = 15.0f,
-            Margin = new PointF(10, 10),
-            Spacing = new SizeF(5, 5),
-            CellWidth = 90.0f,
-            CellHeight = 23.0f
-        };
-
-        public float Indent { get; set; }
-
-        public PointF Margin { get; set; }
-
-        public SizeF Spacing { get; set; }
-
-        public float CellWidth { get; set; }
-
-        public float CellHeight { get; set; }
-    }
-
-    public class UIPositioner
-    {
-        private static PointF DefaultAlign = new PointF(0.0f, 0.5f);
-
-        private readonly UILayoutOptions options;
-
-        private PointF align = DefaultAlign;
-
-        private bool isSameLine = false;
-
-        private bool stretching = false;
-
-        private PointF local = PointF.Empty;
-
-        private PointF global = PointF.Empty;
-
-        private SizeF cellSize = SizeF.Empty;
-
-        private SizeF customCellSize = SizeF.Empty;
-
-        private PointF minPos = new PointF(float.PositiveInfinity, float.PositiveInfinity);
-
-        private PointF maxPos = PointF.Empty;
-
-        public UIPositioner(UILayoutOptions options)
-        {
-            this.options = options;
-            this.Translate(this.options.Margin);
-        }
-
-        public SizeF OverallSize
-        {
-            get
-            {
-                if (maxPos.IsEmpty)
-                {
-                    return SizeF.Empty;
-                }
-
-                var margin = this.options.Margin;
-                margin += margin.ToSize();
-                return this.maxPos.ToSize() - this.minPos.ToSize() + margin.ToSize();
-            }
-        }
-
-        public void Align(PointF value)
-        {
-            this.align = value;
-        }
-
-        public void Stretch(float value = 0.0f)
-        {
-            this.stretching = true;
-            this.Wide(value);
-        }
-
-        public void Wide(float value)
-        {
-            this.customCellSize = new SizeF(Math.Max(1.0f, value), this.customCellSize.Height);
-        }
-
-        public void Tall(float value)
-        {
-            this.customCellSize = new SizeF(this.customCellSize.Width, Math.Max(1.0f, value));
-        }
-
-        public void Indent(int count)
-        {
-            this.local.X += Math.Max(0, count) * this.options.Indent;
-        }
-
-        public void Translate(PointF location)
-        {
-            this.global = location;
-            this.local = PointF.Empty;
-        }
-
-        public void LocalTranslate(PointF location)
-        {
-            this.local = location;
-        }
-
-        public void Offset(SizeF value)
-        {
-            this.local += value;
-        }
-
-        public void SameLine()
-        {
-            if (!this.isSameLine)
-            {
-                this.isSameLine = true;
-                var offset = this.cellSize + this.options.Spacing;
-                this.Offset(new SizeF(offset.Width, -offset.Height));
-            }
-        }
-
-        public void Set(UIControl control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            if (this.stretching)
-            {
-                control.AutoSize = false;
-            }
-
-            if (!this.isSameLine)
-            {
-                this.LocalTranslate(new PointF(0, this.local.Y));
-                this.cellSize = SizeF.Empty;
-            }
-
-            var cellWidth = this.customCellSize.Width >= 1.0f ? this.customCellSize.Width : this.options.CellWidth;
-            var cellHeight = this.customCellSize.Height >= 1.0f ? this.customCellSize.Height : this.options.CellHeight;
-
-            // Trying to set the size from options.
-            control.SetSize(cellWidth, cellHeight);
-            
-            this.cellSize = this.cellSize.Max(control.Size.Max(new SizeF(cellWidth, cellHeight)));
-            var x = this.local.X + (this.cellSize.Width - control.Width) * this.align.X;
-            var y = this.local.Y + (this.cellSize.Height - control.Height) * this.align.Y;
-
-            control.SetPosition(this.global.X + x, this.global.Y + y);
-
-            var cr = control.ClientRect;
-            this.minPos = this.minPos.Min(cr.Location);
-            this.maxPos = this.maxPos.Max(new PointF(cr.Right, cr.Bottom));
-
-            this.NextLine();
-        }
-
-        private void NextLine()
-        {
-            this.isSameLine = false;
-            this.stretching = false;
-            this.align = DefaultAlign;
-            this.customCellSize = SizeF.Empty;
-            this.Offset(new SizeF(0, this.cellSize.Height + this.options.Spacing.Height));
-        }
-
-        public void NextLine(UIPositioner p)
-        {
-            this.Offset(new SizeF(0, -(this.cellSize.Height + this.options.Spacing.Height)));
-            this.maxPos = this.maxPos.Max(this.global + this.local.ToSize() + p.OverallSize);
-            this.cellSize = p.OverallSize;
-            this.NextLine();
         }
     }
 }

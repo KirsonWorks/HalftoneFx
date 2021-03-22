@@ -31,6 +31,10 @@
 
         public UILayoutOptions LayoutOptions { get; set; } = UILayoutOptions.Default;
 
+        public virtual void Refresh()
+        {
+        }
+
         protected override void DoRender(Graphics graphics)
         {
             this.smoothModeStored = graphics.SmoothingMode;

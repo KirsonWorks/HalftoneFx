@@ -7,5 +7,11 @@
     public interface IWorkspaceView : IView<WorkspacePresenter>
     {
         void SetPicture(Image image);
+
+        void UpdatePicture(Image image);
+
+        void SetProgress(float percent);
+
+        void Error(string text);
     }
 }

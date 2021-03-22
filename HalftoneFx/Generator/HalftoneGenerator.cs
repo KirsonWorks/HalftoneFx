@@ -29,7 +29,7 @@
 
     public class HalftoneGenerator
     {
-        private readonly ImageFilterComplex filter = new ImageFilterComplex();
+        private readonly ImageFilterComplex filters = new ImageFilterComplex();
 
         private readonly HalftoneArtist halftone = new HalftoneArtist();
 
@@ -39,15 +39,15 @@
 
         public HalftoneGenerator()
         {
-            this.filter.Add(nameof(Smoothing), new ImageFilterGaussian5x5());
-            this.filter.Add(nameof(Grayscale), new ImageFilterGrayscale());
-            this.filter.Add(nameof(Negative), new ImageFilterNegative());
-            this.filter.Add(nameof(Brightness), new ImageFilterBrightness());
-            this.filter.Add(nameof(Contrast), new ImageFilterContrast());
-            this.filter.Add(nameof(Quantization), new ImageFilterQuantization());
-            this.filter.Add(nameof(Dithering), new ImageFilterDithering());
+            this.Smoothing = this.filters.Add("Smoothing", new ImageFilterGaussian5x5());
+            this.Grayscale = this.filters.Add("Grayscale", new ImageFilterGrayscale());
+            this.Negative = this.filters.Add("Negative", new ImageFilterNegative());
+            this.Brightness = this.filters.Add("Brightness", new ImageFilterBrightness());
+            this.Contrast = this.filters.Add("Contrast", new ImageFilterContrast());
+            this.Quantization = this.filters.Add("Quantization", new ImageFilterQuantization());
+            this.Dithering = this.filters.Add("Dithering", new ImageFilterDithering());
             
-            this.filter.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
+            this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
         }
 
@@ -59,47 +59,19 @@
 
         public event EventHandler<ProgressChangedEventArgs> OnProgress = delegate { };
 
-        public bool Grayscale
-        {
-            get => this.filter[nameof(Grayscale)] == 1;
-            set => this.filter[nameof(Grayscale)] = Convert.ToInt32(value);
-        }
+        public IImageFilter Smoothing { get; private set; }
 
-        public bool Negative
-        {
-            get => this.filter[nameof(Negative)] == 1;
-            set => this.filter[nameof(Negative)] = Convert.ToInt32(value);
-        }
+        public IImageFilter Grayscale { get; private set; }
 
-        public int Brightness
-        {
-            get => this.filter[nameof(Brightness)];
-            set => this.filter[nameof(Brightness)] = value;
-        }
+        public IImageFilter Negative { get; private set; }
 
-        public int Contrast
-        {
-            get => this.filter[nameof(Contrast)];
-            set => this.filter[nameof(Contrast)] = value;
-        }
+        public IImageFilter Brightness { get; private set; }
 
-        public int Quantization
-        {
-            get => this.filter[nameof(Quantization)];
-            set => this.filter[nameof(Quantization)] = value;
-        }
+        public IImageFilter Contrast { get; private set; }
 
-        public bool Smoothing
-        {
-            get => this.filter[nameof(Smoothing)] == 1;
-            set => this.filter[nameof(Smoothing)] = Convert.ToInt32(value);
-        }
+        public IImageFilter Quantization { get; private set; }
 
-        public int Dithering
-        {
-            get => this.filter[nameof(Dithering)];
-            set => this.filter[nameof(Dithering)] = value;
-        }
+        public IImageFilter Dithering { get; private set; }
 
         public int GridType
         {
@@ -161,7 +133,7 @@
 
             if (flags.HasFlag(ImageGenerationFlags.Filtering))
             {
-                img = ImageFilterPass.GetFiltered(img, this.filter,
+                img = ImageFilterPass.GetFiltered(img, this.filters,
                 (percent) =>
                 {
                     this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });

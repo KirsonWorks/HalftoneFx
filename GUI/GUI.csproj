@@ -68,6 +68,8 @@
     <Compile Include="Helpers\RectFHelper.cs" />
     <Compile Include="Helpers\SizeFHelper.cs" />
     <Compile Include="Helpers\UIRangeHelper.cs" />
+    <Compile Include="Layout\UILayoutOptions.cs" />
+    <Compile Include="Layout\UILayoutWorkbench.cs" />
     <Compile Include="Render\UISelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -78,7 +80,7 @@
     <Compile Include="Editor\UIEditor.cs" />
     <Compile Include="Base\UIControl.cs" />
     <Compile Include="UIFactory.cs" />
-    <Compile Include="UILayoutBuilder.cs" />
+    <Compile Include="Layout\UILayoutBuilder.cs" />
     <Compile Include="UIManager.cs" />
     <Compile Include="Common\UIMath.cs" />
     <Compile Include="Base\UINode.cs" />

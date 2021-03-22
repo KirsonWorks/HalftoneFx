@@ -50,6 +50,11 @@
             }
         }
 
+        public override void Refresh()
+        {
+            this.container?.Invalidate();
+        }
+
         private void Subscribe(Control container)
         {
             Debug.Assert(container != null);

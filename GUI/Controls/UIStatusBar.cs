@@ -18,6 +18,8 @@
             set => base.Caption = value;
         }
 
+        public bool ShowControlHints { get; set; }
+
         protected override void DoRender(Graphics graphics)
         {
             var sr = this.ScreenRect;
@@ -33,7 +35,33 @@
 
         protected override void DoParentChanged()
         {
+            if (this.Root is UIManager manager)
+            {
+                manager.OnNotification += OnManagerNotification;
+            }
+
             this.UpdateSize();
+        }
+
+        private void OnManagerNotification(object sender, UINotificationEventArgs e)
+        {
+            if (this.ShowControlHints)
+            {
+                switch (e.What)
+                {
+                    case UINotification.MouseOver:
+                        if (sender is UIControl control)
+                        {
+                            this.Caption = control.HintText;
+                        }
+
+                        break;
+
+                    case UINotification.MouseOut:
+                        this.Caption = string.Empty;
+                        break;
+                }
+            }
         }
 
         private void UpdateSize()

@@ -45,6 +45,7 @@ namespace HalftoneFx
                 Task.Run(async () => await this.GenerateFilteredAsync(200)).ConfigureAwait(false);
             }
         }
+
         public Image Filtered
         {
             get => this.filtered;

@@ -49,7 +49,7 @@
             {
                 Container = this,
             };
-
+            
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
 
             /*this.ui.OnNotification += this.OnUINotification;

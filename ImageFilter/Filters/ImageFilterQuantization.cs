@@ -10,6 +10,7 @@
         {
             this.MinValue = Min;
             this.MaxValue = Max;
+            this.Value = 1;
         }
 
         public override bool HasEffect() => this.Value > this.MinValue;
