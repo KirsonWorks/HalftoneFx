@@ -1,8 +1,7 @@
-﻿using System;
-using System.Drawing;
-
-namespace Halftone
+﻿namespace Halftone
 {
+    using System.Drawing;
+
     public class GridPatternHexagonEnumerator : GridPatternEnumeratorBase
     {
         public GridPatternHexagonEnumerator(int width, int height, int cellSize)

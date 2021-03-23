@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ImageFilter
+﻿namespace ImageFilter
 {
     public interface IImageFilter
     {

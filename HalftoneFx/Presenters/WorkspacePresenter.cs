@@ -1,18 +1,22 @@
 ﻿namespace HalftoneFx.Presenters
 {
-    using Halftone;
+    using Common;
+
     using HalftoneFx.Helpers;
     using HalftoneFx.Models;
     using HalftoneFx.Views;
 
-    using System;
+    using System;    
     using System.Drawing;
+    using System.Drawing.Drawing2D;
 
     public class WorkspacePresenter
     {
         private readonly IWorkspaceView view;
 
         private readonly HalftoneImage halftone;
+
+        private Image pictureForSave;
 
         public WorkspacePresenter(IWorkspaceView view)
         {
@@ -90,21 +94,33 @@
             set => this.halftone.GridType = value;
         }
 
-        public Range<int> GridTypeRange =>
-            new Range<int>(0, (int)HalftoneGridType.Max - 1);
-
-        public string[] GridTypeNames =>
-            Enum.GetNames(typeof(HalftoneGridType));
-
         public int ShapeType
         {
             get => this.halftone.ShapeType;
             set => this.halftone.ShapeType = value;
         }
 
+        public int ShapeSizeBy
+        {
+            get => this.halftone.ShapeSizeBy;
+            set => this.halftone.ShapeSizeBy = value;
+        }
+
+        public int CellSize
+        {
+            get => this.halftone.CellSize;
+            set => this.halftone.CellSize = value;
+        }
+
+        public float CellScale
+        {
+            get => this.halftone.CellScale;
+            set => this.halftone.CellScale = value;
+        }
+
         public void LoadPicture(Image picture)
         {
-            this.halftone.Image = picture;
+            this.halftone.Image = this.pictureForSave = picture;
             this.view.SetPicture(picture);
         }
 
@@ -125,12 +141,34 @@
         {
             try
             {
-                
+                this.pictureForSave.SaveAs(path);
             }
             catch
             {
                 this.view.Error($"Can't save the file {path}");
             }
+        }
+
+        public void LoadPatternFromFile(string path)
+        {
+            try
+            {
+                var pattern = Image.FromFile(path)
+                    .Resize(64, 64, InterpolationMode.High);
+
+                this.view.SetPattern(pattern);
+                this.halftone.CustomPattern = new Bitmap(pattern);
+            }
+            catch
+            {
+                this.view.Error($"Can't load pattern from the file {path}");
+            }
+        }
+
+        public void ClearPattern()
+        {
+            this.view.SetPattern(null);
+            this.halftone.CustomPattern = null;
         }
 
         private void OnProgress(object sender, ProgressChangedEventArgs e)
@@ -140,6 +178,11 @@
 
         private void OnImageAvailable(object sender, GenerateDoneEventArgs e)
         {
+            if (e.Flags.HasFlag(ImageGenerationFlags.Halftoning))
+            {
+                this.pictureForSave = e.Image;
+            }
+
             this.view.UpdatePicture(e.Image);
             GC.Collect();
         }

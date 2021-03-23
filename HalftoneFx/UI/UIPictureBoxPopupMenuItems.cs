@@ -1,6 +1,7 @@
 ﻿namespace HalftoneFx.UI
 {
     using GUI.Controls;
+
     using System.Collections.Generic;
 
     public static class UIPictureBoxPopupMenuItems
@@ -29,6 +30,14 @@
                 ButtonMode = false,
                 Icon = Properties.Resources.IconZoomToExtents,
                 Click = () => pictureBox?.OptimalView(),
+            };
+
+            yield return new UIPopupMenuItem
+            { 
+                Text = "FULL VIEW",
+                ButtonMode = false,
+                Icon = Properties.Resources.IconFullView,
+                Click = () => pictureBox?.FullView(),
             };
         }
     }

@@ -1,7 +1,7 @@
-﻿using System.Drawing;
-
-namespace GUI
+﻿namespace GUI
 {
+    using System.Drawing;
+
     public class UILayoutOptions
     {
         public static UILayoutOptions Default = new UILayoutOptions

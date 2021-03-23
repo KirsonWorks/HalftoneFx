@@ -230,11 +230,26 @@
             return this;
         }
 
-        public UILayoutBuilder Slider(int value, int min, int max)
+        public UILayoutBuilder Slider(int value, int min = 0, int max = 100)
         {
             var slider = this.Container.NewSlider(string.Empty);
             slider.Setup(min, max, 1, value);
             slider.TextType = UIRangeTextType.Caption;
+            this.Control = slider;
+            return this;
+        }
+
+        public UILayoutBuilder Slider(int value, string[] lookup)
+        {
+            if (lookup == null)
+            {
+                throw new ArgumentNullException(nameof(lookup));
+            }
+
+            var slider = this.Container.NewSlider(string.Empty);
+            slider.Setup(0, lookup.Length - 1, 1, value);
+            slider.TextType = UIRangeTextType.Caption;
+            slider.Lookup = lookup;
             this.Control = slider;
             return this;
         }

@@ -12,6 +12,8 @@
 
         void SetProgress(float percent);
 
+        void SetPattern(Image image);
+
         void Error(string text);
     }
 }

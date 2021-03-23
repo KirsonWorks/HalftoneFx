@@ -18,18 +18,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.openPictureDialog = new System.Windows.Forms.OpenFileDialog();
-            this.savePictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
-            // 
-            // openPictureDialog
-            // 
-            this.openPictureDialog.Filter = resources.GetString("openPictureDialog.Filter");
-            // 
-            // savePictureDialog
-            // 
-            this.savePictureDialog.DefaultExt = "png";
-            this.savePictureDialog.Filter = resources.GetString("savePictureDialog.Filter");
             // 
             // MainForm
             // 
@@ -49,8 +38,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.OpenFileDialog openPictureDialog;
-        private System.Windows.Forms.SaveFileDialog savePictureDialog;
     }
 }
 

@@ -117,18 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="openPictureDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>97, 17</value>
-  </metadata>
-  <data name="openPictureDialog.Filter" xml:space="preserve">
-    <value>Image Files(*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif)|*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif|PNG (*.png)|*.png|JPEG (*.jpg;*.jpe*)|*.jpg;*.jpe*|BMP (*.bmp)|*.bmp|GIF (*.gif)|*.gif|TIFF (*.tif;*.tiff)|*.tif;*.tiff|All files (*.*)|*.*</value>
-  </data>
-  <metadata name="savePictureDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>249, 17</value>
-  </metadata>
-  <data name="savePictureDialog.Filter" xml:space="preserve">
-    <value>PNG (*.png)|*.png|JPEG (*.jpg;*.jpe*)|*.jpg;*.jpe*|BMP (*.bmp)|*.bmp|GIF (*.gif)|*.gif|TIFF (*.tif;*.tiff)|*.tif;*.tiff|Image Files(*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif)|*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif|All files (*.*)|*.*</value>
-  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>51</value>
   </metadata>

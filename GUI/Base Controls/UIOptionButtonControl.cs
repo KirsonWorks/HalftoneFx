@@ -1,6 +1,7 @@
 ﻿namespace GUI.BaseControls
 {
     using GUI.Helpers;
+
     using System.Drawing;
 
     public abstract class UIOptionButtonControl : UIButtonControl

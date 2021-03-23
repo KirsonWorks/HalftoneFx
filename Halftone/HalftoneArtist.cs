@@ -7,7 +7,7 @@
     using System.Drawing.Drawing2D;
     using System.Threading;
 
-    public enum HalftoneShapeSizing
+    public enum HalftoneShapeSizeBy
     {
         None,
         Brightness,
@@ -25,7 +25,7 @@
 
         private int shapeType = 0;
         
-        private int shapeSizing = 0;
+        private int shapeSizeBy = 0;
 
         private int cellSize = 8;
 
@@ -62,6 +62,20 @@
                 if (this.shapeType != value)
                 {
                     this.shapeType = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+
+        public int ShapeSizeBy
+        {
+            get => this.shapeSizeBy;
+
+            set
+            {
+                if (this.shapeSizeBy != value)
+                {
+                    this.shapeSizeBy = value;
                     this.DoPropertyChanged();
                 }
             }
@@ -125,20 +139,6 @@
             }
         }
 
-        public int ShapeSizing
-        {
-            get => this.shapeSizing;
-
-            set
-            {
-                if (this.shapeSizing != value)
-                {
-                    this.shapeSizing = value;
-                    this.DoPropertyChanged();
-                }
-            }
-        }
-
         public Image CustomPattern
         {
             get => this.customPattern;
@@ -164,7 +164,7 @@
             var result = new Bitmap(width, height);
             var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
             int shapeSize = (int)(this.CellSize * this.CellScale);
-            var shapeSizing = (HalftoneShapeSizing)this.ShapeSizing;
+            var shapeSizing = (HalftoneShapeSizeBy)this.ShapeSizeBy;
             var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
             IShapePattern pattern = this.customPattern != null ? 
@@ -175,7 +175,7 @@
             {
                 if (!this.transparentBg)
                 {
-                    if (shapeSizing == HalftoneShapeSizing.BrightnessInv)
+                    if (shapeSizing == HalftoneShapeSizeBy.BrightnessInv)
                     {
                         graphics.Clear(Color.White);
                     }
@@ -204,21 +204,21 @@
 
                         switch (shapeSizing)
                         {
-                            case HalftoneShapeSizing.Brightness:
+                            case HalftoneShapeSizeBy.Brightness:
                                 scale = color.GetBrightness();
                                 break;
 
-                            case HalftoneShapeSizing.BrightnessInv:
+                            case HalftoneShapeSizeBy.BrightnessInv:
                                 scale = 1.0f - color.GetBrightness();
                                 break;
 
-                            case HalftoneShapeSizing.Alpha:
+                            case HalftoneShapeSizeBy.Alpha:
                                 scale = (float)color.A / 255.0f;
                                 break;
 
-                            case HalftoneShapeSizing.Dithering2x2:
-                            case HalftoneShapeSizing.Dithering4x4:
-                            case HalftoneShapeSizing.Dithering8x8:
+                            case HalftoneShapeSizeBy.Dithering2x2:
+                            case HalftoneShapeSizeBy.Dithering4x4:
+                            case HalftoneShapeSizeBy.Dithering8x8:
                                 var mid = (color.R + color.B + color.G) / 3;
                                 scale = mid > bayer[cell.X, cell.Y] ? mid / 255.0f : 0.0f;
                                 break;
@@ -253,15 +253,15 @@
 
         private BayerMatrix CreateBayerMatrix()
         {
-            switch ((HalftoneShapeSizing)this.ShapeSizing)
+            switch ((HalftoneShapeSizeBy)this.ShapeSizeBy)
             {
-                case HalftoneShapeSizing.Dithering2x2:
+                case HalftoneShapeSizeBy.Dithering2x2:
                     return new BayerMatrix(1);
 
-                case HalftoneShapeSizing.Dithering4x4:
+                case HalftoneShapeSizeBy.Dithering4x4:
                     return new BayerMatrix(2);
   
-                case HalftoneShapeSizing.Dithering8x8:
+                case HalftoneShapeSizeBy.Dithering8x8:
                     return new BayerMatrix(3);
 
                 default:

@@ -65,6 +65,12 @@
             this.ui.Refresh();
         }
 
+        public void SetPattern(Image image)
+        {
+            this.halftoneOptions.ValueForCustomPattern(image);
+            this.ui.Refresh();
+        }
+
         public void Error(string text)
         {
             MessageBox.Show(text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

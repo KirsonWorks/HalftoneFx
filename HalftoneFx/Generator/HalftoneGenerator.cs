@@ -85,10 +85,10 @@
             set => this.halftone.ShapeType = value;
         }
 
-        public int ShapeSizing
+        public int ShapeSizeBy
         {
-            get => this.halftone.ShapeSizing;
-            set => this.halftone.ShapeSizing = value;
+            get => this.halftone.ShapeSizeBy;
+            set => this.halftone.ShapeSizeBy = value;
         }
             
         public int CellSize

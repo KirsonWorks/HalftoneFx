@@ -50,21 +50,29 @@
             this.labelZoom.Caption = $"ZOOM: {value:P0}";
         }
 
-        public void ValueForProgress(float value) => this.progress.Value = value;
+        public void ValueForProgress(float value) =>
+            this.progress.Value = value;
 
-        public void ValueForSmoothing(bool value) => this.checkBoxSmoothing.Checked = value;
+        public void ValueForSmoothing(bool value) =>
+            this.checkBoxSmoothing.Checked = value;
 
-        public void ValueForGrayscale(bool value) => this.checkBoxGrayscale.Checked = value;
+        public void ValueForGrayscale(bool value) =>
+            this.checkBoxGrayscale.Checked = value;
 
-        public void ValueForNegative(bool value) => this.checkBoxNegative.Checked = value;
+        public void ValueForNegative(bool value) =>
+            this.checkBoxNegative.Checked = value;
 
-        public void ValueForBrightness(int value) => this.sliderBrightness.Value = value;
+        public void ValueForBrightness(int value) =>
+            this.sliderBrightness.Value = value;
 
-        public void ValueForContrast(int value) => this.sliderContrast.Value = value;
+        public void ValueForContrast(int value) =>
+            this.sliderContrast.Value = value;
 
-        public void ValueForQuantization(int value) => this.sliderQuantization.Value = value;
+        public void ValueForQuantization(int value) =>
+            this.sliderQuantization.Value = value;
 
-        public void ValueForDithering(int value) => this.sliderDithering.Value = value;
+        public void ValueForDithering(int value) =>
+            this.sliderDithering.Value = value;
 
         public void SetUp()
         {
@@ -97,107 +105,98 @@
                 .Hint("Save picture to a file")
                 .Click(this.OnSaveClick)
 
-                .CheckBox("SMOOTHING").Ref(ref checkBoxSmoothing)
+                .CheckBox("SMOOTHING")
+                .Ref(ref checkBoxSmoothing)
                 .Hint("On/Off Smoothing filter")
                 .Changed(this.OnSmoothingChanged)
 
-                .CheckBox("GRAYSCALE").Ref(ref checkBoxGrayscale)
+                .CheckBox("GRAYSCALE")
+                .Ref(ref checkBoxGrayscale)
                 .Hint("On/Off Grayscale filter")
                 .Changed(this.OnGrayscaleChanged)
 
-                .CheckBox("NEGATIVE").Ref(ref checkBoxNegative)
+                .CheckBox("NEGATIVE")
+                .Ref(ref checkBoxNegative)
                 .Hint("On/Off Negative filter")
                 .Changed(this.OnNegativeChanged)
 
                 .Label("BRIGHTNESS")
-                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign).Ref(ref sliderBrightness)
+                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign)
+                .Ref(ref sliderBrightness)
                 .Hint("Brightness filter")
                 .Changing(this.OnBrightnessChanging)
 
                 .Label("CONTRAST")
-                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign).Ref(ref sliderContrast)
+                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign)
+                .Ref(ref sliderContrast)
                 .Hint("Contrast filter")
                 .Changing(this.OnContrastChanging)
 
                 .Label("QUANTIZATION")
-                .SliderInt(0, 0, 0, 1).Ref(ref sliderQuantization)
+                .SliderInt(0, 0, 0, 1)
+                .Ref(ref sliderQuantization)
                 .Hint("Quantization filter")
                 .Changing(this.OnQuantizationChanging)
 
                 .Label("DITHERING")
-                .Slider(0, 0, 0).Ref(ref sliderDithering)
-                .Caption("None")
+                .Slider(0, new [] { "None", "2x2", "4x4", "8x8" })
+                .Ref(ref sliderDithering)
                 .Hint("Dithering effect")
                 .Changing(this.OnDitheringChanging)
 
-                .Label("SIZE: 0x0").Ref(ref labelSize)
-                .Label("ZOOM: 100%").Ref(ref labelZoom)
-                .Progress(0.0f, 1.0f, 0.1f).Ref(ref progress);
+                .Label("SIZE: 0x0")
+                .Ref(ref labelSize)
+
+                .Label("ZOOM: 100%")
+                .Ref(ref labelZoom)
+
+                .Progress(0.0f, 1.0f, 0.1f)
+                .Ref(ref progress);
         }
 
-        private void OnSmoothingChanged(object sender, EventArgs e)
-        {
-            var checkbox = sender as UICheckBox;
-            this.Presenter.Smoothing = checkbox.Checked;
-        }
+        private void OnSmoothingChanged(object sender, EventArgs e) =>
+            this.Presenter.Smoothing = this.checkBoxSmoothing.Checked;
 
-        private void OnGrayscaleChanged(object sender, EventArgs e)
-        {
-            var checkbox = sender as UICheckBox;
-            this.Presenter.Grayscale = checkbox.Checked;
-        }
+        private void OnGrayscaleChanged(object sender, EventArgs e) =>
+            this.Presenter.Grayscale = this.checkBoxGrayscale.Checked;
         
-        private void OnNegativeChanged(object sender, EventArgs e)
-        {
-            var checkbox = sender as UICheckBox;
-            this.Presenter.Negative = checkbox.Checked;
-        }
+        private void OnNegativeChanged(object sender, EventArgs e) =>
+            this.Presenter.Negative = this.checkBoxNegative.Checked;
 
-        private void OnBrightnessChanging(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.Presenter.Brightness = (int)slider.Value;
-        }
+        private void OnBrightnessChanging(object sender, EventArgs e) => 
+            this.Presenter.Brightness = (int)this.sliderBrightness.Value;
 
-        private void OnContrastChanging(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.Presenter.Contrast = (int)slider.Value;
-        }
+        private void OnContrastChanging(object sender, EventArgs e) =>
+            this.Presenter.Contrast = (int)this.sliderContrast.Value;
 
-        private void OnQuantizationChanging(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            this.Presenter.Quantization = (int)slider.Value;
-        }
+        private void OnQuantizationChanging(object sender, EventArgs e) =>
+            this.Presenter.Quantization = (int)this.sliderQuantization.Value;
 
-        private void OnDitheringChanging(object sender, EventArgs e)
-        {
-            var slider = sender as UISlider;
-            var value = (int)slider.Value;
-            var dimension = 1 << value;
-            slider.Caption = dimension > 1 ? $"{dimension}x{dimension}" : "None";
-            this.Presenter.Dithering = value;
-        }
-
-        private void OnSaveClick(object sender, EventArgs e)
-        {
-            using (var saveDialog = new SaveFileDialog())
-            {
-                if (saveDialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.Presenter.SavePictureToFile(saveDialog.FileName);
-                }
-            }
-        }
+        private void OnDitheringChanging(object sender, EventArgs e) => 
+            this.Presenter.Dithering = (int)this.sliderDithering.Value;
+        
 
         private void OnLoadClick(object sender, EventArgs e)
         {
-            using (var openDialog = new OpenFileDialog())
+            using (var dialog = new OpenFileDialog())
             {
-                if (openDialog.ShowDialog() == DialogResult.OK)
+                dialog.Filter = Properties.Resources.ImageFilesOpenFilter;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    this.Presenter.LoadPictureFromFile(openDialog.FileName);
+                    this.Presenter.LoadPictureFromFile(dialog.FileName);
+                }
+            }
+        }
+        private void OnSaveClick(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.Filter = Properties.Resources.ImageFilesSaveFilter;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.Presenter.SavePictureToFile(dialog.FileName);
                 }
             }
         }

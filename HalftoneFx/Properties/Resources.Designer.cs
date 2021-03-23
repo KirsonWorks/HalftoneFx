@@ -73,6 +73,16 @@ namespace HalftoneFx.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IconFullView {
+            get {
+                object obj = ResourceManager.GetObject("IconFullView", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IconZoomIn {
             get {
                 object obj = ResourceManager.GetObject("IconZoomIn", resourceCulture);
@@ -97,6 +107,24 @@ namespace HalftoneFx.Properties {
             get {
                 object obj = ResourceManager.GetObject("IconZoomToExtents", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Image Files (*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif)|*.png;*.bmp;*.jpg;*.jpe*;*.gif;*.tif|PNG (*.png)|*.png|JPEG (*.jpg;*.jpe*)|*.jpg;*.jpe*|BMP (*.bmp)|*.bmp|GIF (*.gif)|*.gif|TIFF (*.tif;*.tiff)|*.tif;*.tiff|All files (*.*)|*.*.
+        /// </summary>
+        internal static string ImageFilesOpenFilter {
+            get {
+                return ResourceManager.GetString("ImageFilesOpenFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на PNG (*.png)|*.png|JPEG (*.jpg;*.jpe*)|*.jpg;*.jpe*|BMP (*.bmp)|*.bmp|GIF (*.gif)|*.gif|TIFF (*.tif;*.tiff)|*.tif;*.tiff|All files (*.*)|*.*.
+        /// </summary>
+        internal static string ImageFilesSaveFilter {
+            get {
+                return ResourceManager.GetString("ImageFilesSaveFilter", resourceCulture);
             }
         }
         

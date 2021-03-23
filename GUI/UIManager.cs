@@ -1,6 +1,5 @@
 ﻿namespace GUI
 {
-    using GUI.Helpers;
     using System;
     using System.Diagnostics;
     using System.Drawing;
