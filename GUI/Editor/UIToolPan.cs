@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.Editor
+﻿namespace GUI.Editor
 {
     using GUI;
 

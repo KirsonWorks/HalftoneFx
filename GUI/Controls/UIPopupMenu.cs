@@ -25,19 +25,7 @@
             this.AutoSize = true;
         }
 
-        public UIPopupMenu AddItem(string text, Image icon, Action click, bool buttonMode = false)
-        {
-            var item = new UIPopupMenuItem
-            {
-                Text = text,
-                Icon = icon,
-                Click = click,
-                ButtonMode = buttonMode,
-            };
-
-            this.items.Add(item);
-            return this;
-        }
+        public List<UIPopupMenuItem> Items => this.items;
 
         protected override SizeF GetFittedSize() => this.fittedSize;
 
@@ -153,7 +141,8 @@
                 if (item.Icon != null)
                 {
                     var iconSize = item.Icon.Size;
-                    this.itemSize = this.itemSize.Max(new SizeF(iconSize.Width + padding + textSize.Width, iconSize.Height));
+                    var size = new SizeF(iconSize.Width + padding + textSize.Width, iconSize.Height);
+                    this.itemSize = this.itemSize.Max(size);
                 }
             }
 
@@ -161,7 +150,7 @@
             itemSize.Height += padding * 2;
 
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
-                padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
+                    padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
 
             if (this.Parent is UIControl parent)
             {

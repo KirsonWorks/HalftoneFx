@@ -1,10 +1,10 @@
-﻿namespace HalftoneFx.Editor
+﻿namespace GUI.Controls
 {
     using System;
     using System.Drawing;
     
     using GUI;
-    using GUI.Controls;
+    using GUI.Editor;
 
     public class UIPictureBox : UIControl
     {
@@ -20,7 +20,7 @@
         {
             this.imageControl = new UIImage
             {
-                Name = "image",
+                Name = UIFactory.Name(typeof(UIImage)),
                 Parent = this,
                 Stretch = true,
                 AutoSize = false,
@@ -123,6 +123,11 @@
                 this.Size = parent.Size;
                 this.toolPan.Reset(this.ScreenPositionCenter);
             }
+        }
+
+        protected override void DoParentChanged()
+        {
+            this.DoParentResize(SizeF.Empty);
         }
 
         protected override void DoMouseInput(UIMouseEventArgs e)

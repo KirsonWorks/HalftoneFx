@@ -4,20 +4,26 @@
     using System.Linq;
     using System.Collections.Generic;
 
-    public class ImageFilterComplex: IImageFilter
+    public class ImageFilterComplex : IImageFilter
     {
         private readonly Dictionary<string, IImageFilter> filters;
 
         private IList<IImageFilter> activeFilters = new List<IImageFilter>();
-
-        public event EventHandler OnPropertyChanged = delegate { };
 
         public ImageFilterComplex()
         {
             this.filters = new Dictionary<string, IImageFilter>();
         }
 
-        public void Add(string name, IImageFilter filter)
+        public event EventHandler OnPropertyChanged = delegate { };
+
+        public int Value { get; set; }
+
+        public int MinValue { get; set; }
+
+        public int MaxValue { get; set; }
+
+        public IImageFilter Add(string name, IImageFilter filter)
         {
             if (filter == null)
             {
@@ -26,19 +32,22 @@
 
             if (!this.filters.ContainsKey(name))
             {
+                if (filter is ImageFilterBase filterBase)
+                {
+                    filterBase.OnValueChanged += DoFilterValueChanged;
+                }
+
                 this.filters.Add(name, filter);
+                return filter;
             }
+
+            return this.filters[name];
         }
 
         public void SetValue(string name, int value)
         {
             var filter = this.GetFilter(name);
-
-            if (filter != null && filter.Value != value)
-            {
-                filter.Value = value;
-                this.OnPropertyChanged(this, EventArgs.Empty);
-            }
+            filter.Value = value;
         }
 
         public int GetValue(string name)
@@ -78,6 +87,11 @@
             {
                 filter.RGB(ref r, ref g, ref b, kernel, x, y);
             }
+        }
+
+        private void DoFilterValueChanged(object sender, EventArgs e)
+        {
+            this.OnPropertyChanged?.Invoke(sender, e);
         }
 
         private ImageFilterBase GetFilter(string name)

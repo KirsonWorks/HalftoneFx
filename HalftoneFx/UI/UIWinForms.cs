@@ -1,4 +1,4 @@
-﻿namespace HalftoneFx.Editor
+﻿namespace HalftoneFx.UI
 {
     using GUI;
 
@@ -48,6 +48,11 @@
 
                 this.container = value;
             }
+        }
+
+        public override void Refresh()
+        {
+            this.container?.Invalidate();
         }
 
         private void Subscribe(Control container)

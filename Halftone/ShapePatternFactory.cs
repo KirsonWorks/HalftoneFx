@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Halftone
+﻿namespace Halftone
 {
+    using System;
+    using System.Collections.Generic;
+    
     public enum HalftoneShapeType
     {
         Square = 0,

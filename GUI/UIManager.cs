@@ -1,6 +1,5 @@
 ﻿namespace GUI
 {
-    using GUI.Helpers;
     using System;
     using System.Diagnostics;
     using System.Drawing;
@@ -22,12 +21,18 @@
         }
 
         public event EventHandler<UINotificationEventArgs> OnNotification = delegate { };
-
+       
         public long FPS { get; private set; }
 
         public bool AntiAliasing { get; set; } = true;
 
         public Point CursorPosition { get; protected set; }
+
+        public UILayoutOptions LayoutOptions { get; set; } = UILayoutOptions.Default;
+
+        public virtual void Refresh()
+        {
+        }
 
         protected override void DoRender(Graphics graphics)
         {
@@ -47,9 +52,6 @@
             }
 
             this.fpsCounter++;
-#if DEBUG
-            graphics.DrawText(new RectangleF(10, 10, 30, 25), this.Style.Fonts.Default, this.Style.Colors.Text, this.FPS.ToString());
-#endif
         }
 
         protected override void Notification(UINode sender, UINotification notification)

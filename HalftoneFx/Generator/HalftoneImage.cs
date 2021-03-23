@@ -45,6 +45,7 @@ namespace HalftoneFx
                 Task.Run(async () => await this.GenerateFilteredAsync(200)).ConfigureAwait(false);
             }
         }
+
         public Image Filtered
         {
             get => this.filtered;
@@ -65,7 +66,7 @@ namespace HalftoneFx
             }
         }
 
-        public int ThumbnailSize { get; set; } = 200;
+        public int ThumbnailSize { get; set; } = 300;
 
         private void GenerateThumbnail(ImageGenerationFlags flags)
         {

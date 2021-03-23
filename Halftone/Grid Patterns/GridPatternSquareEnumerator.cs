@@ -1,6 +1,5 @@
 ﻿namespace Halftone
 {
-    using System;
     using System.Drawing;
 
     public class GridPatternSquareEnumerator : GridPatternEnumeratorBase

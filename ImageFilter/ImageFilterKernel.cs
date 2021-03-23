@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ImageFilter
+﻿namespace ImageFilter
 {
+    using System;
+
     public class ImageFilterKernel : ImageFilterBase, IImageFilter
     {
         private byte kernelSize = 3;

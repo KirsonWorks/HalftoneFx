@@ -12,7 +12,6 @@
         {
             this.MinValue = Min;
             this.MaxValue = Max;
-            this.Value = 0;
         }
 
         public override bool HasEffect() => this.Value != 0;

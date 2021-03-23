@@ -13,8 +13,20 @@
         public virtual int Value
         {
             get => this.value;
-            set => this.value = this.Clamp(value, this.MinValue, this.MaxValue);
+
+            set
+            {
+                var newValue = this.Clamp(value, this.MinValue, this.MaxValue);
+
+                if (this.value != newValue)
+                {
+                    this.value = newValue;
+                    this.DoValueChanged();
+                }
+            }
         }
+
+        public event EventHandler OnValueChanged = delegate { };
 
         public int MinValue
         { 
@@ -75,6 +87,11 @@
         protected byte StepByte(byte a, byte b)
         {
             return (byte)(a > b ? 255 : 0);
+        }
+
+        protected virtual void DoValueChanged()
+        {
+            this.OnValueChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -52,7 +52,7 @@
                 var step = Math.Min(this.Step, this.Interval);
                 var newValue = UIMath.Snap(value, step);
 
-                if (this.defaultValue == null)
+                if (!this.defaultValue.HasValue)
                 {
                     this.defaultValue = newValue;
                 }
@@ -80,7 +80,7 @@
         public float Step
         {
             get => this.range.Step;
-            set => this.range.Step = UIMath.Clamp(value, 0, this.Interval);
+            set => this.range.Step = value;
         }
 
         public float Percent
@@ -108,6 +108,8 @@
         public PointF TextAlign { get; set; } = UIAlign.Center;
 
         public string TextFormat { get; set; }
+
+        public string[] Lookup { get; set; }
 
         public bool Vertical { get; set; }
 
@@ -236,7 +238,16 @@
                     return;
 
                 case UIRangeTextType.Caption:
-                    text = this.Caption;
+                    if (this.Lookup != null)
+                    {
+                        var index = UIMath.Clamp((int)this.Value, 0, this.Lookup.Length - 1);
+                        text = this.Lookup[index];
+                    }
+                    else
+                    {
+                        text = this.Caption;
+                    }
+                    
                     break;
 
                 case UIRangeTextType.Value:
