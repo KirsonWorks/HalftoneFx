@@ -26,6 +26,10 @@
 
         private UIImage customPattern;
 
+        private UIColorBox colorBoxForeground;
+
+        private UIColorBox colorBoxBackground;
+
         public HalftoneOptionsView(UILayoutBuilder builder)
             : base(builder)
         {
@@ -72,7 +76,7 @@
                 .TextColor(Color.Gold)
                 .Hint("")
                 .Changed(this.OnHalftoneEnabledChanged)
-                
+
                 .Label("GRID TYPE")
                 .Slider(0, new[] { "Square", "Hexagon", "Checkerboard", "Lines", "Columns", "Noise" })
                 .Ref(ref sliderGridType)
@@ -100,7 +104,7 @@
                 .Changing(this.OnShapeSizeByChanging)
 
                 .Label("CELL SIZE")
-                .SliderInt(8, 2, 64, 1)
+                .SliderInt(2, 2, 64, 1)
                 .Ref(ref sliderCellSize)
                 .TextFormat("{0}px")
                 .Changing(this.OnCellSizeChanging)
@@ -112,9 +116,11 @@
 
                 .Label("FOREGROUND")
                 .Add<UIColorBox>()
+                .Ref(ref colorBoxForeground)
 
                 .Label("BACKGROUND")
-                .Add<UIColorBox>();
+                .Add<UIColorBox>()
+                .Ref(ref colorBoxBackground);
         }
         private void OnHalftoneEnabledChanged(object sender, EventArgs e) => 
             this.Presenter.HalftoneEnabled = this.checkBoxEnabled.Checked;

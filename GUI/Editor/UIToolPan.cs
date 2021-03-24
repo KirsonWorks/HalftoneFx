@@ -1,7 +1,7 @@
 ﻿namespace GUI.Editor
 {
     using GUI;
-
+    using GUI.Helpers;
     using System.Drawing;
 
     public class UIToolPan
@@ -29,7 +29,8 @@
 
         public void Reset(PointF location)
         {
-            this.Control?.SetCenterPos(location);
+            var offset = new SizeF(0, 0.5f);
+            this.Control?.SetCenterPos(location.Round() + offset);
         }
     }
 }

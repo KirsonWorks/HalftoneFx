@@ -120,8 +120,8 @@
 
         public void LoadPicture(Image picture)
         {
-            this.halftone.Image = this.pictureForSave = picture;
             this.view.SetPicture(picture);
+            this.halftone.Image = this.pictureForSave = picture;
         }
 
         public void LoadPictureFromFile(string path)

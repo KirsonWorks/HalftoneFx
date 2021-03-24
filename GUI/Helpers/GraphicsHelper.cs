@@ -88,9 +88,10 @@
             using (var pen = new Pen(color))
             using (var path = graphics.GetRectPath(rect, cornerRadius))
             {
+                var offsetMode = graphics.PixelOffsetMode;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
                 graphics.DrawPath(pen, path);
-                graphics.PixelOffsetMode = PixelOffsetMode.Default;
+                graphics.PixelOffsetMode = offsetMode;
             }
         }
 
@@ -147,10 +148,11 @@
 
             using (var pen = new Pen(color))
             {
+                var offsetMode = graphics.PixelOffsetMode;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
                 graphics.DrawPath(pen, pathL);
                 graphics.DrawPath(pen, pathR);
-                graphics.PixelOffsetMode = PixelOffsetMode.Default;
+                graphics.PixelOffsetMode = offsetMode;
             }
 
             pathL.Dispose();

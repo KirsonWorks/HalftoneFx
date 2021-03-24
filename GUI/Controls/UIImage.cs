@@ -86,6 +86,9 @@
                 graphics.DrawBorder(this.ScreenRect, this.BorderColor, 0, -this.BorderSize);
             }
 
+            var interpolationMode = graphics.InterpolationMode;
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+
             if (this.AutoSize)
             {
                 graphics.DrawImage(this.Image, this.ScreenPosition);
@@ -106,6 +109,8 @@
 
                 graphics.DrawImage(this.Image, this.ScreenRect, cropRect, GraphicsUnit.Pixel);
             }
+
+            graphics.InterpolationMode = interpolationMode;
         }
     }
 }

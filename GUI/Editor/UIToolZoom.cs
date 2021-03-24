@@ -11,17 +11,15 @@
     {
         private const float DefaultScale = 1.0f;
 
-        private const float DefaultStep = 0.1f;
+        private const float DefaultScaleIntensity = 0.2f;
 
         private const float DefaultScaleMin = 0.03f;
 
         private const float DefaultScaleMax = 12.8f;
 
-        private const float StepDivider = 5.0f;
-
         public float Scale { get; private set; } = DefaultScale;
 
-        public float Step { get; private set; } = DefaultStep;
+        public float ScaleIntensity { get; private set; } = DefaultScaleIntensity;
 
         public float ScaleMin { get; set; } = DefaultScaleMin;
 
@@ -36,7 +34,6 @@
         public void Reset()
         {
             this.Scale = DefaultScale;
-            this.Step = DefaultStep;
             this.Zoom();
         }
 
@@ -46,15 +43,14 @@
 
             if (this.Control != null)
             {
-                this.Control.Width = this.OriginalSize.Width * this.Scale;
-                this.Control.Height = this.OriginalSize.Height * this.Scale;
+                this.Control.Width = (float)Math.Round(this.OriginalSize.Width * this.Scale);
+                this.Control.Height = (float)Math.Round(this.OriginalSize.Height * this.Scale);
             }
         }
 
         public void Zoom(float scale)
         {
             this.Scale = scale;
-            this.Step = this.Scale / StepDivider;
             this.Zoom();
         }
 
@@ -62,20 +58,16 @@
         {
             var a = size.Aspect();
             var b = this.OriginalSize.Aspect();
-            
             var sizeA = a > b ? size.Height : size.Width;
             var sizeB = a > b ? this.OriginalSize.Height : this.OriginalSize.Width;
             var scale = sizeA / Math.Max(1.0f, sizeB);
-
             this.Zoom(scale);
         }
 
         public void Zoom(int delta)
         {
             delta = Math.Sign(delta);
-            this.Scale += delta * this.Step;
-            this.Step = this.Scale / StepDivider;
-
+            this.Scale *= (float)Math.Exp(this.ScaleIntensity * delta);
             this.Zoom();
         }
 
@@ -84,13 +76,15 @@
             if (this.Control != null)
             {
                 var prevSize = this.Control.Size;
-                var pos = this.Control.ScreenPosition;
-                var pivotX = (point.X - pos.X) / this.Control.Width;
-                var pivotY = (point.Y - pos.Y) / this.Control.Height;
+                var sr = this.Control.ScreenRect;
+                point.X = UIMath.Clamp(point.X, sr.X, sr.Right);
+                point.Y = UIMath.Clamp(point.Y, sr.Y, sr.Bottom);
+                var pivotX = (point.X - sr.X) / sr.Width;
+                var pivotY = (point.Y - sr.Y) / sr.Height;
                 this.Zoom(delta);
 
                 var deltaSize = prevSize - this.Control.Size;
-                this.Control.SetPosition(pos.X + deltaSize.Width * pivotX, pos.Y + deltaSize.Height * pivotY);
+                this.Control.SetPosition(sr.X + deltaSize.Width * pivotX, sr.Y + deltaSize.Height * pivotY);
             }
         }
     }

@@ -43,7 +43,7 @@
         protected override void DoRenderOverlay(Graphics graphics)
         {
             graphics.SmoothingMode = this.smoothModeStored;
-
+            
             if (this.fpsInterval.ElapsedMilliseconds >= 1000)
             {
                 this.fpsInterval.Restart();

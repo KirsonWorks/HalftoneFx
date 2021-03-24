@@ -27,7 +27,7 @@
         
         private int shapeSizeBy = 0;
 
-        private int cellSize = 8;
+        private int cellSize = 4;
 
         private float cellScale = 1.0f;
 

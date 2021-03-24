@@ -1,10 +1,10 @@
 ﻿namespace GUI.Controls
 {
-    using System;
-    using System.Drawing;
-    
     using GUI;
     using GUI.Editor;
+
+    using System;
+    using System.Drawing;
 
     public class UIPictureBox : UIControl
     {
@@ -43,6 +43,7 @@
         public Image Image
         { 
             get => this.imageControl.Image;
+            
             set 
             {
                 this.imageControl.Image = value;
