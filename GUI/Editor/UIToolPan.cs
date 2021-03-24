@@ -2,6 +2,7 @@
 {
     using GUI;
     using GUI.Helpers;
+    using System;
     using System.Drawing;
 
     public class UIToolPan
@@ -29,8 +30,7 @@
 
         public void Reset(PointF location)
         {
-            var offset = new SizeF(0, 0.5f);
-            this.Control?.SetCenterPos(location.Round() + offset);
+            this.Control?.SetCenterPos(location);
         }
     }
 }

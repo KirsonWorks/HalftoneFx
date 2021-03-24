@@ -87,7 +87,7 @@
             }
 
             var interpolationMode = graphics.InterpolationMode;
-            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
 
             if (this.AutoSize)
             {
@@ -107,7 +107,8 @@
                     cropRect.Y = (this.Image.Height - this.Height) / 2;
                 }
 
-                graphics.DrawImage(this.Image, this.ScreenRect, cropRect, GraphicsUnit.Pixel);
+                graphics.DrawImage(this.Image, Rectangle.Round(this.ScreenRect),
+                    Rectangle.Round(cropRect), GraphicsUnit.Pixel);
             }
 
             graphics.InterpolationMode = interpolationMode;

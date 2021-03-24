@@ -15,11 +15,6 @@
             return new PointF(Math.Max(point.X, other.X), Math.Max(point.Y, other.Y));
         }
 
-        public static PointF Round(this PointF point)
-        {
-            return new PointF((float)Math.Round(point.X), (float)Math.Round(point.Y));
-        }
-
         public static SizeF ToSize(this PointF point)
         {
             return new SizeF(point.X, point.Y);
