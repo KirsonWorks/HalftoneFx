@@ -66,6 +66,14 @@
 
         public Range<int> ContrastRange => this.halftone.Contrast.GetRange();
 
+        public int Saturation
+        {
+            get => this.halftone.Saturation.Value;
+            set => this.halftone.Saturation.Value = value;
+        }
+
+        public Range<int> SaturationRange => this.halftone.Saturation.GetRange();
+
         public int Quantization
         {
             get => this.halftone.Quantization.Value;

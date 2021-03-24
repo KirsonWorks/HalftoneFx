@@ -27,6 +27,8 @@
 
         private UISlider sliderContrast;
 
+        private UISlider sliderSaturation;
+
         private UISlider sliderQuantization;
 
         private UISlider sliderDithering;
@@ -68,6 +70,9 @@
         public void ValueForContrast(int value) =>
             this.sliderContrast.Value = value;
 
+        public void ValueForSaturation(int value) =>
+            this.sliderSaturation.Value = value;
+
         public void ValueForQuantization(int value) =>
             this.sliderQuantization.Value = value;
 
@@ -78,6 +83,7 @@
         {
             this.sliderBrightness.SetRange(this.Presenter.BrightnessRange);
             this.sliderContrast.SetRange(this.Presenter.ContrastRange);
+            this.sliderSaturation.SetRange(this.Presenter.SaturationRange);
             this.sliderQuantization.SetRange(this.Presenter.QuantizationRange);
             this.sliderDithering.SetRange(this.Presenter.DitheringRange);
 
@@ -86,6 +92,7 @@
             this.ValueForNegative(this.Presenter.Negative);
             this.ValueForBrightness(this.Presenter.Brightness);
             this.ValueForContrast(this.Presenter.Contrast);
+            this.ValueForSaturation(this.Presenter.Saturation);
             this.ValueForQuantization(this.Presenter.Quantization);
             this.ValueForDithering(this.Presenter.Dithering);
         }
@@ -121,21 +128,28 @@
                 .Changed(this.OnNegativeChanged)
 
                 .Label("BRIGHTNESS")
-                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign)
+                .SliderInt(0, 0, 0, 1, flags: UIRangeTextFlags.PlusSign)
                 .Ref(ref sliderBrightness)
-                .Hint("Brightness filter")
+                .Hint("Brightness adjusting")
                 .Changing(this.OnBrightnessChanging)
 
                 .Label("CONTRAST")
-                .SliderInt(0, 0, 0, 1, UIRangeTextFlags.PlusSign)
+                .SliderInt(0, 0, 0, 1, flags: UIRangeTextFlags.PlusSign)
                 .Ref(ref sliderContrast)
-                .Hint("Contrast filter")
+                .Hint("Contrast adjusting")
                 .Changing(this.OnContrastChanging)
+
+                .Label("SATURATION")
+                .SliderInt(100, 0, 100, 1)
+                .TextFormat("{0}%")
+                .Ref(ref sliderSaturation)
+                .Hint("Saturation adjusting")
+                .Changing(this.OnSaturationChanging)
 
                 .Label("QUANTIZATION")
                 .SliderInt(0, 0, 0, 1)
                 .Ref(ref sliderQuantization)
-                .Hint("Quantization filter")
+                .Hint("Quantization adjusting")
                 .Changing(this.OnQuantizationChanging)
 
                 .Label("DITHERING")
@@ -168,6 +182,9 @@
 
         private void OnContrastChanging(object sender, EventArgs e) =>
             this.Presenter.Contrast = (int)this.sliderContrast.Value;
+
+        private void OnSaturationChanging(object sender, EventArgs e) =>
+            this.Presenter.Saturation = (int)this.sliderSaturation.Value;
 
         private void OnQuantizationChanging(object sender, EventArgs e) =>
             this.Presenter.Quantization = (int)this.sliderQuantization.Value;

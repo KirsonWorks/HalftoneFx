@@ -255,22 +255,24 @@
         }
 
         public UILayoutBuilder SliderFloat(float value, float min, float max, float step,
+            UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
             var slider = this.Container.NewSlider(string.Empty);
             slider.Setup(min, max, step, value);
-            slider.TextType = UIRangeTextType.Value;
+            slider.TextType = textType;
             slider.TextFlags = flags;
             this.Control = slider;
             return this;
         }
 
-        public UILayoutBuilder SliderInt(int value, int min, int max, int step,
+        public UILayoutBuilder SliderInt(int value, int min, int max, int step, 
+            UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
             var slider = this.Container.NewSlider(string.Empty);
             slider.Setup(min, max, step, value);
-            slider.TextType = UIRangeTextType.Value;
+            slider.TextType = textType;
             slider.TextFlags = UIRangeTextFlags.Decimal | flags;
             this.Control = slider;
             return this;
