@@ -38,12 +38,6 @@
             set => this.halftone.Smoothing.Value = Convert.ToInt32(value);
         }
 
-        public bool Grayscale
-        {
-            get => this.halftone.Grayscale.Value == 1;
-            set => this.halftone.Grayscale.Value = Convert.ToInt32(value);
-        }
-
         public bool Negative
         {
             get => this.halftone.Negative.Value == 1;

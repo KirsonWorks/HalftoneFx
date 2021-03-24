@@ -40,7 +40,6 @@
         public HalftoneGenerator()
         {
             this.Smoothing = this.filters.Add("Smoothing", new ImageFilterGaussian5x5());
-            this.Grayscale = this.filters.Add("Grayscale", new ImageFilterGrayscale());
             this.Negative = this.filters.Add("Negative", new ImageFilterNegative());
             this.Brightness = this.filters.Add("Brightness", new ImageFilterBrightness());
             this.Contrast = this.filters.Add("Contrast", new ImageFilterContrast());
@@ -61,8 +60,6 @@
         public event EventHandler<ProgressChangedEventArgs> OnProgress = delegate { };
 
         public IImageFilter Smoothing { get; private set; }
-
-        public IImageFilter Grayscale { get; private set; }
 
         public IImageFilter Negative { get; private set; }
 

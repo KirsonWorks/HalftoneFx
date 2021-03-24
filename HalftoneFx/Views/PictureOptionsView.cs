@@ -19,8 +19,6 @@
 
         private UICheckBox checkBoxSmoothing;
 
-        private UICheckBox checkBoxGrayscale;
-
         private UICheckBox checkBoxNegative;
 
         private UISlider sliderBrightness;
@@ -58,9 +56,6 @@
         public void ValueForSmoothing(bool value) =>
             this.checkBoxSmoothing.Checked = value;
 
-        public void ValueForGrayscale(bool value) =>
-            this.checkBoxGrayscale.Checked = value;
-
         public void ValueForNegative(bool value) =>
             this.checkBoxNegative.Checked = value;
 
@@ -88,7 +83,6 @@
             this.sliderDithering.SetRange(this.Presenter.DitheringRange);
 
             this.ValueForSmoothing(this.Presenter.Smoothing);
-            this.ValueForGrayscale(this.Presenter.Grayscale);
             this.ValueForNegative(this.Presenter.Negative);
             this.ValueForBrightness(this.Presenter.Brightness);
             this.ValueForContrast(this.Presenter.Contrast);
@@ -116,11 +110,6 @@
                 .Ref(ref checkBoxSmoothing)
                 .Hint("On/Off Smoothing filter")
                 .Changed(this.OnSmoothingChanged)
-
-                .CheckBox("GRAYSCALE")
-                .Ref(ref checkBoxGrayscale)
-                .Hint("On/Off Grayscale filter")
-                .Changed(this.OnGrayscaleChanged)
 
                 .CheckBox("NEGATIVE")
                 .Ref(ref checkBoxNegative)
@@ -170,9 +159,6 @@
 
         private void OnSmoothingChanged(object sender, EventArgs e) =>
             this.Presenter.Smoothing = this.checkBoxSmoothing.Checked;
-
-        private void OnGrayscaleChanged(object sender, EventArgs e) =>
-            this.Presenter.Grayscale = this.checkBoxGrayscale.Checked;
         
         private void OnNegativeChanged(object sender, EventArgs e) =>
             this.Presenter.Negative = this.checkBoxNegative.Checked;

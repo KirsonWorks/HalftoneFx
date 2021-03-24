@@ -104,7 +104,7 @@
                 .Changing(this.OnShapeSizeByChanging)
 
                 .Label("CELL SIZE")
-                .SliderInt(2, 2, 64, 1)
+                .SliderInt(4, 2, 64, 1)
                 .Ref(ref sliderCellSize)
                 .TextFormat("{0}px")
                 .Changing(this.OnCellSizeChanging)
