@@ -99,7 +99,6 @@
         private void PaintHandler(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(this.Style.Colors.Background);
-
             this.Render(e.Graphics);
         }
 
@@ -112,7 +111,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseDown(this, args);
+            this.HandleMouseDown(args);
         }
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -124,8 +123,7 @@
                 Button = UIMouseEventArgs.ParseButtonType(e.Button.ToString())
             };
 
-            this.CursorPosition = e.Location;
-            HandleMouseMove(this, args);
+            this.HandleMouseMove(args);
         }
 
         private void MouseUpHandler(object sender, MouseEventArgs e)
@@ -137,7 +135,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseUp(this, args);
+            this.HandleMouseUp(args);
         }
 
         private void MouseWheelHandler(object sender, MouseEventArgs e)
@@ -149,7 +147,7 @@
                 Delta = e.Delta
             };
 
-            HandleMouseWheel(this, args);
+            this.HandleMouseWheel(args);
         }
     }
 }

@@ -87,11 +87,11 @@
             }
 
             var interpolationMode = graphics.InterpolationMode;
-            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
 
             if (this.AutoSize)
             {
-                graphics.DrawImage(this.Image, this.ScreenPosition);
+                graphics.DrawImage(this.Image, Point.Round(this.ScreenPosition));
             }
             else
             {

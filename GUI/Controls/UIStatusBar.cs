@@ -9,7 +9,7 @@
         public UIStatusBar() : base()
         {
             this.Height = 26;
-            this.HandleEvents = false;
+            this.HandleMouseEvents = false;
         }
 
         public override string Caption

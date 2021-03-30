@@ -6,7 +6,7 @@
     {
         public UILayer() : base()
         {
-            this.HandleEvents = false;
+            this.HandleMouseEvents = false;
         }
 
         protected override void DoParentResize(SizeF deltaSize)

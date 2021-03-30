@@ -16,7 +16,7 @@
 
         private static UIControl activeControl = null;
 
-        private static UIControl hoveredControl = null;
+        private static UIControl hoverControl = null;
 
         private static bool isDoubleClick = false;
 
@@ -25,6 +25,8 @@
         private bool visible = true;
 
         private bool enabled = true;
+
+        private bool autoSize = false;
 
         private PointF dragOffset;
 
@@ -66,9 +68,9 @@
 
         public virtual string HintText { get; set; }
 
-        public virtual bool AutoSize { get; set; }
+        public bool HandleMouseEvents { get; set; } = true;
 
-        public bool HandleEvents { get; set; } = true;
+        public UIAnchors Anchors { get; set; }
 
         public float ExtraSize { get; set; }
 
@@ -84,38 +86,29 @@
             set => this.SetPosition(new PointF(this.LocalPosition.X, value));
         }
 
-        public SizeF Size
+        public virtual bool AutoSize
         {
-            get
-            {
-                if (this.AutoSize)
-                {
-                    var maxSize = this.GetFittedSize();
-
-                    foreach (var child in this.GetChildren<UIControl>())
-                    {
-                        var ps = child.LocalPosition + child.Size;
-                        maxSize = new SizeF(Math.Max(ps.X, maxSize.Width), Math.Max(ps.Y, maxSize.Height));
-                    }
-
-                    return maxSize;
-                }
-
-                return this.size;
-            }
+            get => this.autoSize;
 
             set
             {
-                if (this.size != value)
+                if (this.autoSize != value)
                 {
-                    var deltaSize = value - this.size;
-                    this.size = value;
-                    this.DoResize(deltaSize);
+                    this.autoSize = value;
+                    this.AdjustSize();
+                }
+            }
+        }
 
-                    if (this.Parent is UIControl parent && parent.AutoSize)
-                    {
-                        parent.DoResize(deltaSize);
-                    }
+        public SizeF Size
+        {
+            get => this.size;
+
+            set
+            {
+                if (!this.AutoSize)
+                {
+                    this.SetSize(value);
                 }
             }
         }
@@ -181,6 +174,8 @@
 
         public UIControl PopupControl { get; set; }
 
+        public bool IsMouseOver => hoverControl == this;
+
         public UIControl this[string name] => this.Find<UIControl>(name);
 
         public UIControl SetSize(float width, float height)
@@ -242,6 +237,21 @@
             return this.SetPosition(new PointF(x, y));
         }
 
+        public UIControl SetGlobalPosition(PointF value)
+        {
+            if (this.Parent is UIControl parent)
+            {
+                var pos = parent.ScreenPosition;
+                this.SetPosition(value.X - pos.X, value.Y - pos.Y);
+            }
+            else
+            {
+                this.SetPosition(value);
+            }
+
+            return this;
+        }
+
         public RectangleF ClientRect
         {
             get => new RectangleF(this.LocalPosition, this.Size);
@@ -251,6 +261,11 @@
         {
             get => new RectangleF(this.ScreenPosition - new SizeF(this.ExtraSize, this.ExtraSize),
                                   this.Size + new SizeF(this.ExtraSize * 2, this.ExtraSize * 2));
+        }
+
+        public virtual RectangleF HitRect
+        {
+            get => this.ScreenRect;
         }
 
         public virtual void Show()
@@ -285,13 +300,13 @@
             }
         }
 
-        public void Popup(PointF location)
+        public void Popup(PointF global)
         {
             activePopupControl?.Hide();
             activePopupControl = this;
 
             this.BringToFront();
-            this.SetPosition(location);
+            this.SetGlobalPosition(global);
             this.Show();
         }
 
@@ -389,11 +404,33 @@
         {
         }
 
-        public static bool HandleMouseDown(UIControl control, UIMouseEventArgs e)
+        protected void AdjustSize()
+        {
+            if (this.AutoSize)
+            {
+                this.SetSize(this.GetFittedSize());
+            }
+        }
+
+        private void SetSize(SizeF value)
+        {
+            if (this.size != value)
+            {
+                var deltaSize = value - this.size;
+                this.size = value;
+
+                if (!deltaSize.IsEmpty)
+                {
+                    this.DoResize(deltaSize);
+                }
+            }
+        }
+
+        public static void HandleMouseDown(UIControl control, UIMouseEventArgs e)
         {
             if (control == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(control));
             }
 
             if (e == null)
@@ -414,31 +451,28 @@
             {
                 activeControl.DoMouseInput(e);
                 isDoubleClick = e.Clicks > 1;
-                return true;
             }
-
-            return false;
         }
 
-        public static bool HandleMouseMove(UIControl control, UIMouseEventArgs e)
+        public static void HandleMouseMove(UIControl control, UIMouseEventArgs e)
         {
+            if (control == null)
+            {
+                throw new ArgumentNullException(nameof(control));
+            }
+
             if (e == null)
             {
                 throw new ArgumentNullException(nameof(e));
             }
 
-            if (control == null)
-            {
-                return false;
-            }
-
             var overControl = control.GetControlAt(e.Location);
 
-            if (overControl != hoveredControl)
+            if (overControl != hoverControl)
             {
-                hoveredControl?.DoMouseOverOut(e, false);
+                hoverControl?.DoMouseOverOut(e, false);
                 overControl?.DoMouseOverOut(e, true);
-                hoveredControl = overControl;
+                hoverControl = overControl;
             }
 
             if (activeControl != null)
@@ -447,29 +481,26 @@
 
                 if (activeControl == overControl)
                 {
-                    return true;
+                    return;
                 }
             }
 
             if (overControl != null)
             {
                 overControl.DoMouseInput(e);
-                return true;
             }
-
-            return false;
         }
 
-        public static bool HandleMouseUp(UIControl control, UIMouseEventArgs e)
+        public static void HandleMouseUp(UIControl control, UIMouseEventArgs e)
         {
+            if (control == null)
+            {
+                throw new ArgumentNullException(nameof(control));
+            }
+
             if (e == null)
             {
                 throw new ArgumentNullException(nameof(e));
-            }
-
-            if (control == null)
-            {
-                return false;
             }
 
             var overControl = control.GetControlAt(e.Location);
@@ -496,22 +527,19 @@
                 }
 
                 activeControl.DoMouseInput(e);
-                return true;
             }
-
-            return false;
         }
 
-        public static bool HandleMouseWheel(UIControl control, UIMouseEventArgs e)
+        public static void HandleMouseWheel(UIControl control, UIMouseEventArgs e)
         {
+            if (control == null)
+            {
+                throw new ArgumentNullException(nameof(control));
+            }
+
             if (e == null)
             {
                 throw new ArgumentNullException(nameof(e));
-            }
-
-            if (control == null)
-            {
-                return false;
             }
 
             var overControl = control.GetControlAt(e.Location);
@@ -519,15 +547,12 @@
             if (overControl != null)
             {
                 overControl.DoMouseInput(e);
-                return true;
             }
-
-            return false;
         }
 
         public UIControl GetControlAt(PointF location)
         {
-            if (this.HitTest(location))
+            if (this.Visible && this.Enabled)
             {
                 var children = this.GetChildren<UIControl>().Reverse().Where(c => c.Visible);
 
@@ -541,7 +566,7 @@
                     }
                 }
 
-                if (this.HandleEvents)
+                if (this.HandleMouseEvents && this.HitTest(location))
                 {
                     return this;
                 }
@@ -557,7 +582,7 @@
 
         public bool HitTest(PointF location)
         {
-            return this.Visible && this.Enabled && this.ScreenRect.Contains(location);
+            return this.HitRect.Contains(location);
         }
 
         public bool HitTest(float x, float y)
@@ -607,6 +632,11 @@
             };
 
             events[e.EventType]?.Invoke(this, e);
+
+            if (this.Parent is UIControl parent && parent.HandleMouseEvents)
+            {
+                parent.DoMouseInput(e);
+            }
         }
 
         protected virtual void DoMouseOverOut(UIMouseEventArgs e, bool isOver)

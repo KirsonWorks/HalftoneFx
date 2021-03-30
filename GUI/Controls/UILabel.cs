@@ -10,7 +10,7 @@
 
         public UILabel() : base()
         {
-            this.textSize = this.Size = new SizeF(30, 20);
+            this.textSize = SizeF.Empty;
             this.AutoSize = true;
         }
 
@@ -24,6 +24,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
+                    this.AdjustSize();
                 }
             }
         }

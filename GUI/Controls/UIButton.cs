@@ -25,6 +25,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
+                    this.AdjustSize();
                 }
             }
         }

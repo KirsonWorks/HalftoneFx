@@ -69,11 +69,6 @@
             return parent.NewImage(name, image);
         }
 
-        public static UIHorizontalLine NewHorizontalLine(this UIControl parent, string name)
-        {
-            return NewNode<UIHorizontalLine>(parent, name);
-        }
-
         public static UIButton NewButton(this UIControl parent, string name, string caption = "")
         {
             var control = NewNode<UIButton>(parent, name);

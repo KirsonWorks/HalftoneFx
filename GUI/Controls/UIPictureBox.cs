@@ -24,7 +24,7 @@
                 Parent = this,
                 Stretch = true,
                 AutoSize = false,
-                HandleEvents = false,
+                HandleMouseEvents = false,
                 BorderColor = Color.LightSlateGray,
             };
 

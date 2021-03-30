@@ -51,7 +51,6 @@
     <Compile Include="Controls\UIPanel.cs" />
     <Compile Include="Controls\UIImage.cs" />
     <Compile Include="Controls\UILabel.cs" />
-    <Compile Include="Controls\UILine.cs" />
     <Compile Include="Controls\UIPictureBox.cs" />
     <Compile Include="Controls\UIPopupMenu.cs" />
     <Compile Include="Controls\UIProgressBar.cs" />

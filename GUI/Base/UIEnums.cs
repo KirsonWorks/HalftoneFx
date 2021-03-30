@@ -1,5 +1,6 @@
 ﻿namespace GUI
 {
+    using System;
     using System.Drawing;
 
     public enum UINotification
@@ -9,6 +10,15 @@
         ParentChanged,
         MouseOver,
         MouseOut,
+    }
+
+    [Flags]
+    public enum UIAnchors
+    {
+        Left = 1,
+        Top = 2,
+        Right = 4,
+        Bottom = 8,
     }
 
     public struct UIAlign

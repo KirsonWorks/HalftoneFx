@@ -30,12 +30,14 @@
             this.EventType = eventType;
         }
 
-        public UIMouseEventArgs(UIMouseEventType eventType, UIMouseButtons button) : this(eventType)
+        public UIMouseEventArgs(UIMouseEventType eventType, UIMouseButtons button)
+            : this(eventType)
         {
             this.Button = button;
         }
 
-        public UIMouseEventArgs(UIMouseEventType eventType, UIMouseButtons button, int x, int y, int clicks, int delta) : this(eventType)
+        public UIMouseEventArgs(UIMouseEventType eventType, UIMouseButtons button, int x, int y, int clicks, int delta)
+            : this(eventType)
         {
             this.EventType = eventType;
             this.Button = button;
@@ -73,27 +75,31 @@
 
     public class UIMouseDownEventArgs : UIMouseEventArgs
     {
-        public UIMouseDownEventArgs(string button) : base(UIMouseEventType.Down, ParseButtonType(button))
+        public UIMouseDownEventArgs(string button)
+            : base(UIMouseEventType.Down, ParseButtonType(button))
         {
         }
     }
     public class UIMouseUpEventArgs : UIMouseEventArgs
     {
-        public UIMouseUpEventArgs(string button) : base(UIMouseEventType.Up, ParseButtonType(button))
+        public UIMouseUpEventArgs(string button)
+            : base(UIMouseEventType.Up, ParseButtonType(button))
         {
         }
     }
 
     public class UIMouseMoveEventArgs : UIMouseEventArgs
     {
-        public UIMouseMoveEventArgs() : base(UIMouseEventType.Move)
+        public UIMouseMoveEventArgs()
+            : base(UIMouseEventType.Move)
         {
         }
     }
 
     public class UIMouseWheelEventArgs : UIMouseEventArgs
     {
-        public UIMouseWheelEventArgs() : base(UIMouseEventType.Wheel)
+        public UIMouseWheelEventArgs()
+            : base(UIMouseEventType.Wheel)
         {
         }
     }

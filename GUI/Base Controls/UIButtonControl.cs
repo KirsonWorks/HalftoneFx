@@ -61,6 +61,7 @@
                 this.OnChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         protected Color GetTextColor()
         {
             return this.Enabled ? this.Colors.Text : this.Colors.TextDisabled;
