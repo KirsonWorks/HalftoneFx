@@ -25,14 +25,13 @@
 
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
 
-            /*
+            
             var wnd = this.ui.NewNode<UIWindow>(string.Empty);
             wnd.Caption = "Window Title";
-            wnd.SetPosition(0, 0);
-            wnd.SetSize(50, 50);
-            wnd.SetPosition((this.Width - wnd.Width) / 2, (this.Height - wnd.Height) / 2);
+            wnd.Anchors = GUI.UIAnchors.Right;
+            wnd.SetSize(200, 200);
+            wnd.SetPosition((this.ClientSize.Width - wnd.Width) / 2, (this.ClientSize.Height - wnd.Height) / 2);
             wnd.Show();
-            */
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

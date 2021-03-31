@@ -129,7 +129,7 @@
             this.children.Add(node);
             this.DoAdded(node);
             this.OnAdded(node, EventArgs.Empty);
-            this.Root.Notification(node, UINotification.EnterTree);
+            this.Root.Notification(node, UINotification.AddNode);
         }
 
         public UINode AddNode(UINode node)
@@ -154,7 +154,7 @@
             this.children.Remove(node);
             this.DoRemoved(node);
             this.OnRemoved(node, EventArgs.Empty);
-            this.Root.Notification(node, UINotification.ExitTree);
+            this.Root.Notification(node, UINotification.RemoveNode);
         }
 
         public void RemoveAll(Func<UIControl, bool> predicate)

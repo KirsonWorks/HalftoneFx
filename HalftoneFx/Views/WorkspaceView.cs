@@ -81,6 +81,8 @@
             var layoutBuilder = new UILayoutBuilder(this.ui);
 
             this.pictureBox = this.ui.NewPictureBox(string.Empty);
+            this.pictureBox.Anchors = UIAnchors.All;
+            this.pictureBox.Size = this.ui.Size;
 
             this.pictureBox.OnZoomChanged += (s, e) =>
                 this.pictureOptions.ValueForZoom(this.pictureBox.Scale);

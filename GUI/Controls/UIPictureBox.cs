@@ -117,18 +117,9 @@
             }
         }
 
-        protected override void DoParentResize(SizeF deltaSize)
+        protected override void DoParentResize()
         {
-            if (this.Parent is UIControl parent)
-            {
-                this.Size = parent.Size;
-                this.toolPan.Reset(this.ScreenPositionCenter);
-            }
-        }
-
-        protected override void DoParentChanged()
-        {
-            this.DoParentResize(SizeF.Empty);
+            this.toolPan.Reset(this.ScreenPositionCenter);
         }
 
         protected override void DoMouseInput(UIMouseEventArgs e)

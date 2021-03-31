@@ -1,27 +1,16 @@
 ﻿namespace GUI.Controls
 {
-    using System.Drawing;
-
     public class UILayer : UIControl
     {
         public UILayer() : base()
         {
             this.HandleMouseEvents = false;
-        }
-
-        protected override void DoParentResize(SizeF deltaSize)
-        {
-            this.UpdateSize();
+            this.Anchors = UIAnchors.All;
         }
 
         protected override void DoParentChanged()
         {
-            this.UpdateSize();
-        }
-
-        private void UpdateSize()
-        {
-            if (this.Parent is UIManager parent)
+            if (this.Parent is UIControl parent)
             {
                 this.Size = parent.Size;
             }

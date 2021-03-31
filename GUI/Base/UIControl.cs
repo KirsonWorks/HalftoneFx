@@ -197,17 +197,6 @@
                        .SetSize(width, height);
         }
 
-        public UIControl SetCenterPos(PointF pos)
-        {
-            var size = this.Size;
-            return this.SetPosition(pos.X - (size.Width / 2), pos.Y - (size.Height / 2));
-        }
-
-        public UIControl SetCenterPos(float x, float y)
-        {
-            return this.SetCenterPos(new PointF(x, y));
-        }
-
         public UIControl SetPosition(PointF value)
         {
             this.LocalPosition = value;
@@ -250,6 +239,17 @@
             }
 
             return this;
+        }
+
+        public UIControl SetPositionToCenterFrom(PointF pos)
+        {
+            var size = this.Size;
+            return this.SetPosition(pos.X - (size.Width / 2), pos.Y - (size.Height / 2));
+        }
+
+        public UIControl SetPositionToCenterFrom(float x, float y)
+        {
+            return this.SetPositionToCenterFrom(new PointF(x, y));
         }
 
         public RectangleF ClientRect
@@ -370,14 +370,16 @@
             return graphics.GetRectPath(rect, 0);
         }
 
-        protected virtual void DoResize(SizeF prevSize, SizeF deltaSize)
+        protected virtual void DoResize(SizeF prevSize)
         {
             this.OnResize(this, EventArgs.Empty);
 
+            var delta = this.size - prevSize;
+
             foreach (var child in this.GetChildren<UIControl>())
             {
-                child.ComputeSize(prevSize, deltaSize);
-                child.DoParentResize(deltaSize);
+                child.ComputeSize(prevSize, delta);
+                child.DoParentResize();
             }
         }
 
@@ -397,7 +399,7 @@
         {
         }
 
-        protected virtual void DoParentResize(SizeF deltaSize)
+        protected virtual void DoParentResize()
         {
         }
 
@@ -419,11 +421,11 @@
             {
                 var prevSize = this.size;
                 this.size = value;
-                this.DoResize(prevSize, value - prevSize);
+                this.DoResize(prevSize);
             }
         }
 
-        protected void ComputeSize(SizeF prevSize, SizeF deltaSize)
+        protected void ComputeSize(SizeF prevSize, SizeF delta)
         {
             if (this.Anchors == (UIAnchors.Left | UIAnchors.Top))
             {
@@ -441,30 +443,30 @@
             switch (this.Anchors & (UIAnchors.Left | UIAnchors.Right))
             {
                 case UIAnchors.Left | UIAnchors.Right:
-                    width += deltaSize.Width;
+                    width += delta.Width;
                     break;
 
                 case UIAnchors.Right:
-                    left += deltaSize.Width;
+                    left += delta.Width;
                     break;
 
                 case UIAnchors.None:
-                    left += (left + width / 2) / prevSize.Width * deltaSize.Width;
+                    left += (left + width / 2) / prevSize.Width * delta.Width;
                     break;
             }
 
             switch (this.Anchors & (UIAnchors.Top | UIAnchors.Bottom))
             {
                 case UIAnchors.Top | UIAnchors.Bottom:
-                    height += deltaSize.Height;
+                    height += delta.Height;
                     break;
 
                 case UIAnchors.Bottom:
-                    top += deltaSize.Height;
+                    top += delta.Height;
                     break;
 
                 case UIAnchors.None:
-                    top += (top + height / 2) / prevSize.Height * deltaSize.Height;
+                    top += (top + height / 2) / prevSize.Height * delta.Height;
                     break;
             }
 

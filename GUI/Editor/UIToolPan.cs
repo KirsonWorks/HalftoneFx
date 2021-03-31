@@ -30,7 +30,7 @@
 
         public void Reset(PointF location)
         {
-            this.Control?.SetCenterPos(location);
+            this.Control?.SetPositionToCenterFrom(location);
         }
     }
 }

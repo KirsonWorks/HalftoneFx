@@ -11,6 +11,7 @@
         public UIManager() : base()
         {
             this.Name = "ui-manager";
+            this.HandleMouseEvents = false;
         }
 
         public event EventHandler<UINotificationEventArgs> OnNotification = delegate { };
@@ -44,11 +45,6 @@
         public void HandleMouseWheel(UIMouseEventArgs e)
         {
             HandleMouseWheel(this, e);
-        }
-
-        protected override void DoMouseInput(UIMouseEventArgs e)
-        {
-            
         }
 
         protected override void DoRender(Graphics graphics)

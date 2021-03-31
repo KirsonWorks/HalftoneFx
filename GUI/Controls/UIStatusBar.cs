@@ -6,10 +6,13 @@
 
     public class UIStatusBar : UIControl
     {
+        private UIManager manager;
+
         public UIStatusBar() : base()
         {
             this.Height = 26;
             this.HandleMouseEvents = false;
+            this.Anchors = UIAnchors.Left | UIAnchors.Right | UIAnchors.Bottom;
         }
 
         public override string Caption
@@ -28,19 +31,24 @@
                     this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, this.Caption);
         }
 
-        protected override void DoParentResize(SizeF deltaSize)
-        {
-            this.UpdateSize();
-        }
-
         protected override void DoParentChanged()
         {
             if (this.Root is UIManager manager)
             {
+                if (this.manager != null)
+                {
+                    this.manager.OnNotification -= OnManagerNotification;
+                }
+
                 manager.OnNotification += OnManagerNotification;
+                this.manager = manager;
             }
 
-            this.UpdateSize();
+            if (this.Parent is UIControl parent)
+            {
+                this.SetPosition(0.0f, parent.Height - this.Height);
+                this.SetSize(parent.Width, this.Height);
+            }
         }
 
         private void OnManagerNotification(object sender, UINotificationEventArgs e)
@@ -61,15 +69,6 @@
                         this.Caption = string.Empty;
                         break;
                 }
-            }
-        }
-
-        private void UpdateSize()
-        {
-            if (this.Parent is UIControl parent)
-            {
-                this.SetPosition(0.0f, parent.Height - this.Height);
-                this.Width = parent.Width;
             }
         }
     }
