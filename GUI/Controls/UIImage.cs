@@ -27,12 +27,7 @@
             set
             {   
                 this.image = value;
-
-                if (this.AutoSize && this.image != null)
-                {
-                    this.Size = this.image.Size;
-                }
-
+                this.UpdateMinimumSize();
                 this.OnImageChanged(this, EventArgs.Empty);
             }
         }
@@ -64,14 +59,14 @@
             return this.Image != null;
         }
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetMinimumSize()
         {
             if (this.HasImage())
             {
                 return this.Image.Size;
             }
 
-            return base.GetFittedSize();
+            return base.GetMinimumSize();
         }
 
         protected override void DoRender(Graphics graphics)

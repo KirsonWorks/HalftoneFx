@@ -25,7 +25,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
-                    this.AdjustSize();
+                    this.UpdateMinimumSize();
                 }
             }
         }
@@ -55,7 +55,7 @@
             return this.Colors.Button;
         }
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetMinimumSize()
         {
             return this.textSize + new SizeF().OneValue(this.Style.Padding * 2);
         }

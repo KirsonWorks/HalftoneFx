@@ -15,6 +15,7 @@
     [Flags]
     public enum UIAnchors
     {
+        None = 0,
         Left = 1,
         Top = 2,
         Right = 4,

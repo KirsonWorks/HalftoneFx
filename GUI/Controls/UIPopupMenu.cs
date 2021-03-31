@@ -27,7 +27,7 @@
 
         public List<UIPopupMenuItem> Items => this.items;
 
-        protected override SizeF GetFittedSize() => this.fittedSize;
+        protected override SizeF GetMinimumSize() => this.fittedSize;
 
         protected override void DoChangeVisibility()
         {
@@ -158,7 +158,7 @@
                 this.SetGlobalPosition(rect.Location);
             }
 
-            base.AdjustSize();
+            base.UpdateMinimumSize();
         }
     }
 

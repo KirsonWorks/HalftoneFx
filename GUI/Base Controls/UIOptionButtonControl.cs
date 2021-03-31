@@ -29,7 +29,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
-                    this.AdjustSize();
+                    this.UpdateMinimumSize();
                 }
             }
         }
@@ -40,7 +40,7 @@
             set => base.ToggleMode = true;
         }
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetMinimumSize()
         {
             var minSize = this.GetCheckMarkSize();
 

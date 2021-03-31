@@ -15,23 +15,16 @@
         public UIWindow()
             : base()
         {
-            this.Size = new SizeF(200, 200);
+            this.Visible = false;
+            this.Size = new SizeF(100, 100);
             this.ClipContent = true;
-            this.AutoSize = true;
-
-            this.NewButton("test", "test").SetPosition(60, 80);
         }
 
         public void Close()
         {
         }
 
-        protected override void DoResize(SizeF deltaSize)
-        {
-
-        }
-
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetMinimumSize()
         {
             return new SizeF(100, 100);
         }

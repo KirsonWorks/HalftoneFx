@@ -70,7 +70,7 @@
 
         public bool HandleMouseEvents { get; set; } = true;
 
-        public UIAnchors Anchors { get; set; }
+        public UIAnchors Anchors { get; set; } = UIAnchors.Left | UIAnchors.Top;
 
         public float ExtraSize { get; set; }
 
@@ -95,7 +95,7 @@
                 if (this.autoSize != value)
                 {
                     this.autoSize = value;
-                    this.AdjustSize();
+                    this.UpdateMinimumSize();
                 }
             }
         }
@@ -108,7 +108,7 @@
             {
                 if (!this.AutoSize)
                 {
-                    this.SetSize(value);
+                    this.UpdateSize(value);
                 }
             }
         }
@@ -347,7 +347,7 @@
             return this;
         }
 
-        protected virtual SizeF GetFittedSize()
+        protected virtual SizeF GetMinimumSize()
         {
             return SizeF.Empty;
         }
@@ -370,12 +370,13 @@
             return graphics.GetRectPath(rect, 0);
         }
 
-        protected virtual void DoResize(SizeF deltaSize)
+        protected virtual void DoResize(SizeF prevSize, SizeF deltaSize)
         {
             this.OnResize(this, EventArgs.Empty);
 
             foreach (var child in this.GetChildren<UIControl>())
             {
+                child.ComputeSize(prevSize, deltaSize);
                 child.DoParentResize(deltaSize);
             }
         }
@@ -404,26 +405,70 @@
         {
         }
 
-        protected void AdjustSize()
+        protected void UpdateMinimumSize()
         {
             if (this.AutoSize)
             {
-                this.SetSize(this.GetFittedSize());
+                this.UpdateSize(this.GetMinimumSize());
             }
         }
 
-        private void SetSize(SizeF value)
+        protected void UpdateSize(SizeF value)
         {
             if (this.size != value)
             {
-                var deltaSize = value - this.size;
+                var prevSize = this.size;
                 this.size = value;
-
-                if (!deltaSize.IsEmpty)
-                {
-                    this.DoResize(deltaSize);
-                }
+                this.DoResize(prevSize, value - prevSize);
             }
+        }
+
+        protected void ComputeSize(SizeF prevSize, SizeF deltaSize)
+        {
+            if (this.Anchors == (UIAnchors.Left | UIAnchors.Top))
+            {
+                return;
+            }
+
+            var clientRect = this.ClientRect;
+            var left = clientRect.X;
+            var top = clientRect.Y;
+            var width = clientRect.Width;
+            var height = clientRect.Height;
+
+            prevSize = prevSize.Max(new SizeF().OneValue(1));
+
+            switch (this.Anchors & (UIAnchors.Left | UIAnchors.Right))
+            {
+                case UIAnchors.Left | UIAnchors.Right:
+                    width += deltaSize.Width;
+                    break;
+
+                case UIAnchors.Right:
+                    left += deltaSize.Width;
+                    break;
+
+                case UIAnchors.None:
+                    left += (left + width / 2) / prevSize.Width * deltaSize.Width;
+                    break;
+            }
+
+            switch (this.Anchors & (UIAnchors.Top | UIAnchors.Bottom))
+            {
+                case UIAnchors.Top | UIAnchors.Bottom:
+                    height += deltaSize.Height;
+                    break;
+
+                case UIAnchors.Bottom:
+                    top += deltaSize.Height;
+                    break;
+
+                case UIAnchors.None:
+                    top += (top + height / 2) / prevSize.Height * deltaSize.Height;
+                    break;
+            }
+
+            this.SetBounds(left, top, width, height);
         }
 
         public static void HandleMouseDown(UIControl control, UIMouseEventArgs e)

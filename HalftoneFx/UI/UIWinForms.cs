@@ -84,8 +84,7 @@
                 if (this.idleInterval.ElapsedMilliseconds >= 1000 / 60)
                 {   
                     this.idleInterval.Restart();
-                    this.container.Refresh();
-                    this.container.Invalidate();
+                    this.Refresh();
                 }
             }
         }
@@ -93,7 +92,7 @@
         private void ResizeHandler(object sender, EventArgs e)
         {
             this.Size = this.container.ClientSize;
-            this.container.Invalidate();
+            this.Refresh();
         }
 
         private void PaintHandler(object sender, PaintEventArgs e)

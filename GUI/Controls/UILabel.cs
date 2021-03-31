@@ -24,7 +24,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
-                    this.AdjustSize();
+                    this.UpdateMinimumSize();
                 }
             }
         }
@@ -33,7 +33,7 @@
 
         public PointF TextAlign { get; set; } = UIAlign.None;
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetMinimumSize()
         {
             return this.textSize;
         }
