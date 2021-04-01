@@ -27,7 +27,7 @@
 
         public List<UIPopupMenuItem> Items => this.items;
 
-        protected override SizeF GetPreferedSize() => this.fittedSize;
+        protected override SizeF GetPreferredSize() => this.fittedSize;
 
         protected override void DoChangeVisibility()
         {

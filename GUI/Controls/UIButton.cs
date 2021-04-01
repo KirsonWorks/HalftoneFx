@@ -55,7 +55,7 @@
             return this.Colors.Button;
         }
 
-        protected override SizeF GetPreferedSize()
+        protected override SizeF GetPreferredSize()
         {
             return this.textSize + new SizeF().OneValue(this.Style.Padding * 2);
         }

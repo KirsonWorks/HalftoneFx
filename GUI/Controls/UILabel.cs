@@ -33,7 +33,7 @@
 
         public PointF TextAlign { get; set; } = UIAlign.None;
 
-        protected override SizeF GetPreferedSize()
+        protected override SizeF GetPreferredSize()
         {
             return this.textSize;
         }

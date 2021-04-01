@@ -62,7 +62,7 @@
             return this.Image != null;
         }
 
-        protected override SizeF GetPreferedSize()
+        protected override SizeF GetPreferredSize()
         {
             return this.imageSize;
         }

@@ -40,7 +40,7 @@
             set => base.ToggleMode = true;
         }
 
-        protected override SizeF GetPreferedSize()
+        protected override SizeF GetPreferredSize()
         {
             var minSize = this.GetCheckMarkSize();
 

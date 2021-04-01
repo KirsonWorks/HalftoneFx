@@ -28,8 +28,10 @@
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
 
             var wnd = this.ui.NewWindow("", "Test").SetLayoutPreset(UILayoutPreset.Center);
-            wnd.NewPanel("").SetBounds(5, 0, 20, 20).SetLayoutPreset(UILayoutPreset.TopWide);
             wnd.Show();
+
+            var wnd2 = this.ui.NewWindow("", "Window title").SetLayoutPreset(UILayoutPreset.CenterRight);
+            wnd2.Show();
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

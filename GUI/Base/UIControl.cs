@@ -168,10 +168,10 @@
             {
                 if (this.Parent is UIControl parent)
                 {
-                    return !parent.ScreenRect.IntersectsWith(this.ScreenRect);
+                    return parent.ScreenRect.IntersectsWith(this.ScreenRect);
                 }
 
-                return false;
+                return true;
             }
         }
 
@@ -292,7 +292,7 @@
 
         public void Render(Graphics graphics)
         {
-            if (this.Visible && !this.CanRender)
+            if (this.Visible && this.CanRender)
             {
                 this.Style.Colors.PushColors(this.customColors);
                 this.DoRender(graphics);
@@ -325,7 +325,7 @@
             return graphics.GetRectPath(rect, 0);
         }
 
-        protected virtual SizeF GetPreferedSize()
+        protected virtual SizeF GetPreferredSize()
         {
             return SizeF.Empty;
         }
@@ -344,7 +344,7 @@
         {
             if (this.AutoSize)
             {
-                this.UpdateSize(this.GetPreferedSize());
+                this.UpdateSize(this.GetPreferredSize());
             }
         }
 
