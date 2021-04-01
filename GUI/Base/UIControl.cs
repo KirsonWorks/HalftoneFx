@@ -178,10 +178,15 @@
 
         public UIControl this[string name] => this.Find<UIControl>(name);
 
+        public UIControl SetSize(SizeF value)
+        {
+            this.Size = value;
+            return this;
+        }
+
         public UIControl SetSize(float width, float height)
         {
-            this.Size = new SizeF(width, height);
-            return this;
+            return this.SetSize(new SizeF(width, height));
         }
 
         public UIControl SetBounds(PointF location, SizeF size)
@@ -378,7 +383,7 @@
 
             foreach (var child in this.GetChildren<UIControl>())
             {
-                child.ComputeSize(prevSize, delta);
+                child.SizeChanged(prevSize, delta);
                 child.DoParentResize();
             }
         }
@@ -425,7 +430,7 @@
             }
         }
 
-        protected void ComputeSize(SizeF prevSize, SizeF delta)
+        protected void SizeChanged(SizeF prevSize, SizeF delta)
         {
             if (this.Anchors == (UIAnchors.Left | UIAnchors.Top))
             {

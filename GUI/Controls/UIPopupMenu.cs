@@ -127,7 +127,7 @@
             return new RectangleF(pos, this.itemSize);
         }
 
-        private new void AdjustSize()
+        private void AdjustSize()
         {
             this.itemSize = SizeF.Empty;
             var padding = this.Style.Padding;
@@ -152,13 +152,13 @@
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
                     padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
 
+            base.UpdateMinimumSize();
+
             if (this.Parent is UIControl parent)
             {
                 var rect = this.ScreenRect.Clamp(parent.ScreenRect);
                 this.SetGlobalPosition(rect.Location);
             }
-
-            base.UpdateMinimumSize();
         }
     }
 

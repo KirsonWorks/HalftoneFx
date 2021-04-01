@@ -5,7 +5,6 @@
     using HalftoneFx.Views;
 
     using System.Windows.Forms;
-    using GUI.Controls;
 
     public partial class MainForm : Form
     {
@@ -24,14 +23,6 @@
             };
 
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
-
-            
-            var wnd = this.ui.NewNode<UIWindow>(string.Empty);
-            wnd.Caption = "Window Title";
-            wnd.Anchors = GUI.UIAnchors.Right;
-            wnd.SetSize(200, 200);
-            wnd.SetPosition((this.ClientSize.Width - wnd.Width) / 2, (this.ClientSize.Height - wnd.Height) / 2);
-            wnd.Show();
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

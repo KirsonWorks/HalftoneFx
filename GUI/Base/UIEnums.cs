@@ -23,6 +23,26 @@
         All = Left | Top | Right | Bottom,
     }
 
+    public enum UILayoutPreset
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        CenterLeft,
+        CenterTop,
+        CenterRight,
+        CenterBottom,
+        Center,
+        LeftWide,
+        TopWide,
+        RightWide,
+        BottomWide,
+        VCenterWide,
+        HCenterWide,
+        Wide,
+    }
+
     public struct UIAlign
     {
         public static PointF None = PointF.Empty;

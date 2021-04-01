@@ -18,33 +18,10 @@
 
         public bool AntiAliasing { get; set; } = true;
 
-        public Point CursorPosition { get; protected set; }
-
         public UILayoutOptions LayoutOptions { get; set; } = UILayoutOptions.Default;
 
         public virtual void Refresh()
         {
-        }
-
-        public void HandleMouseDown(UIMouseEventArgs e)
-        {
-            HandleMouseDown(this, e);
-        }
-
-        public void HandleMouseMove(UIMouseEventArgs e)
-        {
-            this.CursorPosition = Point.Round(e.Location);
-            HandleMouseMove(this, e);
-        }
-
-        public void HandleMouseUp(UIMouseEventArgs e)
-        {
-            HandleMouseUp(this, e);
-        }
-
-        public void HandleMouseWheel(UIMouseEventArgs e)
-        {
-            HandleMouseWheel(this, e);
         }
 
         protected override void DoRender(Graphics graphics)
