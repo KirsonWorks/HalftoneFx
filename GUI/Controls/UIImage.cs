@@ -11,6 +11,8 @@
 
         private string path;
 
+        private Size imageSize;
+
         public event EventHandler OnImageChanged = delegate { };
 
         public UIImage() : base()
@@ -25,9 +27,10 @@
             get => this.image;
 
             set
-            {   
+            {
                 this.image = value;
-                this.UpdateMinimumSize();
+                this.imageSize = value != null ? value.Size : System.Drawing.Size.Empty;
+                this.UpdatePreferredSize();
                 this.OnImageChanged(this, EventArgs.Empty);
             }
         }
@@ -59,14 +62,9 @@
             return this.Image != null;
         }
 
-        protected override SizeF GetMinimumSize()
+        protected override SizeF GetPreferedSize()
         {
-            if (this.HasImage())
-            {
-                return this.Image.Size;
-            }
-
-            return base.GetMinimumSize();
+            return this.imageSize;
         }
 
         protected override void DoRender(Graphics graphics)
@@ -94,12 +92,12 @@
 
                 if (this.Stretch)
                 {
-                    cropRect = new RectangleF(PointF.Empty, this.Image.Size);
+                    cropRect = new RectangleF(PointF.Empty, this.imageSize);
                 }
                 else if (this.Center)
                 {
-                    cropRect.X = (this.Image.Width - this.Width) / 2;
-                    cropRect.Y = (this.Image.Height - this.Height) / 2;
+                    cropRect.X = (this.imageSize.Width - this.Width) / 2;
+                    cropRect.Y = (this.imageSize.Height - this.Height) / 2;
                 }
 
                 graphics.DrawImage(this.Image, Rectangle.Round(this.ScreenRect),

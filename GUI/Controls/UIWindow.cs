@@ -8,23 +8,36 @@
 
     public class UIWindow : UIControl
     {
-        private bool canMove = false;
+        private bool canMove = false; 
 
-        public event EventHandler OnCloseClick = delegate {};
+        public event EventHandler OnCloseClick = delegate { };
 
         public UIWindow()
             : base()
         {
             this.Visible = false;
-            this.Size = new SizeF(100, 100);
             this.ClipContent = true;
+            this.Size = new SizeF(180, 180);
+        }
+
+        public override RectangleF ClientRect
+        {
+            get
+            {
+                var rect = base.ClientRect;
+                var size = this.Style.WindowTitleSize;
+                rect.Y += size;
+                rect.Height -= size;
+                return rect;
+            }
+
         }
 
         public void Close()
         {
         }
 
-        protected override SizeF GetMinimumSize()
+        protected override SizeF GetPreferedSize()
         {
             return new SizeF(100, 100);
         }
@@ -45,11 +58,20 @@
                 }
             }
             */
+
+            // Window frame.
             var rect = this.ScreenRect;
-            var clr = Color.FromArgb(100, Color.Black);
-            graphics.DrawRect(rect, clr, this.Style.WindowRounding, -3.5f);
+            graphics.DrawRect(rect, this.Colors.WindowShadow, this.Style.WindowRounding, -this.Style.WindowShadowSize);
             graphics.DrawFrame(rect, this.Colors.Window, this.Colors.Border, this.Style.WindowRounding);
             graphics.DrawBorderVolume(rect, this.Colors.BorderVolume, this.Style.WindowRounding);
+
+            // Title bar.
+            rect.Height = this.Style.WindowTitleSize;
+            graphics.DrawRect(rect, this.Style.Colors.WindowTitle, this.Style.WindowRounding);
+
+            // Title text.
+            rect.Inflate(-this.Style.Padding, 0);
+            graphics.DrawText(rect, this.Style.Fonts.Default, this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, this.Caption);
         }
 
         protected override void DoMouseInput(UIMouseEventArgs e)
@@ -81,18 +103,6 @@
             }
 
             base.DoMouseInput(e);
-        }
-
-        protected override void DoRenderOverlay(Graphics graphics)
-        {
-            var r = this.ScreenRect;
-            r.Height = 24;
-
-            var tr = r;
-            tr.X += 10;
-
-            graphics.DrawRect(r, Color.Crimson, this.Style.WindowRounding);
-            graphics.DrawText(tr, Style.Fonts.Default, this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, this.Caption);
         }
     }
 }

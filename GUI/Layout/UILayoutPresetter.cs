@@ -5,16 +5,17 @@
 
     public static class UILayoutPresetter
     {
-        public static void SetLayoutPreset(this UIControl control, UILayoutPreset preset, SizeF margin)
+        public static UIControl SetLayoutPreset(this UIControl control, UILayoutPreset preset, SizeF margin)
         {
             SetAnchors(control, preset);
             SetOffset(control, preset, margin);
             SetSize(control, preset, margin);
+            return control;
         }
 
-        public static void SetLayoutPreset(this UIControl control, UILayoutPreset preset)
+        public static UIControl SetLayoutPreset(this UIControl control, UILayoutPreset preset)
         {
-            control.SetLayoutPreset(preset, SizeF.Empty);
+            return control.SetLayoutPreset(preset, SizeF.Empty);
         }
 
         private static void SetAnchors(UIControl control, UILayoutPreset preset)
@@ -91,7 +92,7 @@
             if (control.Parent is UIControl parent)
             {
                 var size = control.Size;
-                var parentSize = parent.Size;
+                var parentSize = parent.ClientRect.Size;
                 var offset = margin.ToPointF();
 
                 if (new List<UILayoutPreset>
@@ -151,7 +152,7 @@
             if (control.Parent is UIControl parent)
             {
                 var size = control.Size;
-                var parentSize = parent.Size;
+                var parentSize = parent.ClientRect.Size;
 
                 if (new List<UILayoutPreset>
                 {

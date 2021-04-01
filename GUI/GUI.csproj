@@ -38,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base Controls\UIButtonGroup.cs" />
+    <Compile Include="Base\UIControlMouseEvents.cs" />
+    <Compile Include="Base\UIControlStyle.cs" />
     <Compile Include="Base\UIStyle.cs" />
     <Compile Include="Base\UIEnums.cs" />
     <Compile Include="Base\UIMouseEvent.cs" />

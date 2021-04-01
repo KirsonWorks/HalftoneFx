@@ -33,6 +33,8 @@ namespace GUI
 
         public Color WindowTitle { get; set; }
 
+        public Color WindowShadow { get; set; }
+
         public Color Button { get; set; }
 
         public Color ButtonHovered { get; set; }
@@ -123,11 +125,15 @@ namespace GUI
 
         public int WindowRounding { get; set; } = 5;
 
+        public float WindowTitleSize { get; set; } = 24;
+
+        public float WindowShadowSize { get; set; } = 3.5f;
+
         public float ToggleSize { get; set; } = 20;
 
         public float SliderGrabSize { get; set; } = 15;
 
-        public float InnerShrink { get; set; } = 3.5F;
+        public float InnerShrink { get; set; } = 3.5f;
 
         public UIFonts Fonts { get; } = new UIFonts();
 
@@ -170,6 +176,7 @@ namespace GUI
 
             this.Colors.Window = Color.FromArgb(255, 28, 38, 43);
             this.Colors.WindowTitle = Color.FromArgb(255, 23, 31, 36);
+            this.Colors.WindowShadow = Color.FromArgb(100, 0, 0, 0);
 
             this.Colors.SliderGrab = Color.FromArgb(255, 71, 143, 255);
             this.Colors.SliderGrabActive = Color.Crimson;

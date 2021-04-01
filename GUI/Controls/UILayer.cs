@@ -10,6 +10,8 @@
 
         protected override void DoParentChanged()
         {
+            base.DoParentChanged();
+
             if (this.Parent is UIControl parent)
             {
                 this.Size = parent.Size;

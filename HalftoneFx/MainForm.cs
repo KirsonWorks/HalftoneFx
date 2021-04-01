@@ -6,6 +6,9 @@
 
     using System.Windows.Forms;
 
+    using GUI.Controls;
+    using GUI;
+
     public partial class MainForm : Form
     {
         private readonly UIWinForms ui;
@@ -23,6 +26,10 @@
             };
 
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
+
+            var wnd = this.ui.NewWindow("", "Test").SetLayoutPreset(UILayoutPreset.Center);
+            wnd.NewPanel("").SetBounds(5, 0, 20, 20).SetLayoutPreset(UILayoutPreset.TopWide);
+            wnd.Show();
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

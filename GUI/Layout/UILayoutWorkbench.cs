@@ -135,9 +135,9 @@
 
             control.SetPosition(this.global.X + x, this.global.Y + y);
 
-            var cr = control.ClientRect;
-            this.minPos = this.minPos.Min(cr.Location);
-            this.maxPos = this.maxPos.Max(new PointF(cr.Right, cr.Bottom));
+            var rect = control.BoundsRect;
+            this.minPos = this.minPos.Min(rect.Location);
+            this.maxPos = this.maxPos.Max(new PointF(rect.Right, rect.Bottom));
 
             this.NextLine();
         }

@@ -6,7 +6,7 @@
 
     public static class GraphicsHelper
     {
-        private static readonly PointF[] CheckMarkPath = new PointF[] 
+        private static readonly PointF[] CheckMarkPath = new PointF[]
         {
             new PointF(0.15f, 0.5f),
             new PointF(0.3f, 0.5f),
@@ -52,7 +52,7 @@
 
         public static GraphicsPath GetClipPath(this Graphics graphics, RectangleF rect, int cornerRadius)
         {
-            return graphics.GetRectPath(rect.Inflate(-0.5F), cornerRadius);
+            return graphics.GetRectPath(rect.Inflate(-0.5f), cornerRadius);
         }
 
         public static void DrawRect(this Graphics graphics, RectangleF rect, Brush brush, int cornerRadius, float shrink = 0)
@@ -95,7 +95,7 @@
             }
         }
 
-        public static void DrawBorderVolume(this Graphics graphics, RectangleF rect, Color color, int cornerRadius, float shrink = 0, float offset = 1F)
+        public static void DrawBorderVolume(this Graphics graphics, RectangleF rect, Color color, int cornerRadius, float shrink = 0, float offset = 1f)
         {
             if (rect.IsEmpty || color.IsEmpty || color.A == 0)
             {

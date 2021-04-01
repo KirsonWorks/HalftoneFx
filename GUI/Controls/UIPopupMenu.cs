@@ -27,7 +27,7 @@
 
         public List<UIPopupMenuItem> Items => this.items;
 
-        protected override SizeF GetMinimumSize() => this.fittedSize;
+        protected override SizeF GetPreferedSize() => this.fittedSize;
 
         protected override void DoChangeVisibility()
         {
@@ -152,7 +152,7 @@
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
                     padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
 
-            base.UpdateMinimumSize();
+            base.UpdatePreferredSize();
 
             if (this.Parent is UIControl parent)
             {

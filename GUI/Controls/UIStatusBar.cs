@@ -33,6 +33,8 @@
 
         protected override void DoParentChanged()
         {
+            base.DoParentChanged();
+
             if (this.Root is UIManager manager)
             {
                 if (this.manager != null)
