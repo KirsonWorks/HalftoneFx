@@ -197,7 +197,7 @@
 
             if (!size.IsEmpty)
             {
-                this.Container.Size = size;
+                this.Container.ClientSize = size;
             }
 
             var previous = this.workbench;

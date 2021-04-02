@@ -15,7 +15,7 @@
         TitleBar = 1,
         ClosingBox = 2,
         ExpandingBox = 4,
-        Draggable = 8
+        Draggable = 8,
     }
 
     public class UIWindow : UIControl
@@ -26,7 +26,7 @@
 
         private UIWindowFeatures features;
 
-        private SizeF clientSize;
+        private float height;
 
         private bool dragging = false;
 
@@ -41,34 +41,14 @@
             this.ClipContent = true;
             this.Size = new SizeF(180, 180);
 
-            this.buttonClose = this.NewNode<UIToolButton>("");
-            this.buttonClose.SetSize(16, 16);
-            
-            this.buttonClose.Shape = new PointF[]
-                {
-                    new PointF(0.1f, 0.1f),
-                    new PointF(0.3f, 0.1f),
-                    new PointF(0.5f, 0.4f),
-                    new PointF(0.7f, 0.1f),
-                    new PointF(0.9f, 0.1f),
-                    new PointF(0.6f, 0.5f),
-                    new PointF(0.9f, 0.9f),
-                    new PointF(0.7f, 0.9f),
-                    new PointF(0.5f, 0.6f),
-                    new PointF(0.3f, 0.9f),
-                    new PointF(0.1f, 0.9f),
-                    new PointF(0.4f, 0.5f),
-                };
-
+            var size = this.Style.WindowBarSize - this.Style.InnerShrink * 2;
+            this.buttonClose = this.NewToolButton(size: size, shape: this.Shapes.Cross);
             this.buttonClose.OnMouseClick += (s, e) => this.Close();
 
-            this.buttonExpand = this.NewNode<UIToolButton>("");
-            this.buttonExpand.SetSize(16, 16);
-            this.buttonExpand.ToggleMode = true;
-            this.buttonExpand.Shape = this.Shapes.CheckMark;
-            this.buttonExpand.OnChanged += (s, e) => this.Expanded = !this.buttonExpand.Checked;
+            this.buttonExpand = this.NewToolButton(size: size, shape: this.Shapes.Upperscore);
+            this.buttonExpand.OnMouseClick += (s, e) => this.Expanded = !this.Expanded;
 
-            this.Features = UIWindowFeatures.TitleBar | UIWindowFeatures.ClosingBox | UIWindowFeatures.ExpandingBox | UIWindowFeatures.Draggable;
+            this.Features = UIWindowFeatures.TitleBar | UIWindowFeatures.ClosingBox;
         }
 
         public UIWindowFeatures Features
@@ -88,7 +68,7 @@
 
             set
             {
-                if (this.Features.HasFlag(UIWindowFeatures.TitleBar))
+                if (this.Features.HasFlag(UIWindowFeatures.ExpandingBox))
                 {
                     if (this.expanded != value)
                     {
@@ -99,16 +79,18 @@
             }
         }
 
-        private void ExpandCollapse(bool value)
+        private void ExpandCollapse(bool expanded)
         {
-            if (!value)
+            if (!expanded)
             {
-                this.clientSize = this.ClientRect.Size;
-                this.Height = this.Style.WindowTitleSize;
+                this.height = this.Height;
+                this.Height = 0;
+                this.buttonExpand.Shape = this.Shapes.Square;
                 return;
             }
 
-            this.Height = this.Style.WindowTitleSize + this.clientSize.Height;
+            this.Height = height;
+            this.buttonExpand.Shape = this.Shapes.Upperscore;
         }
 
         public override RectangleF ClientRect
@@ -119,9 +101,9 @@
 
                 if (this.features.HasFlag(UIWindowFeatures.TitleBar))
                 {
-                    var size = this.Style.WindowTitleSize;
-                    rect.Y += size;
-                    rect.Height -= size;
+                    var height = this.Style.WindowBarSize;
+                    rect.Y += height;
+                    rect.Height -= height;
                 }
 
                 return rect;
@@ -130,8 +112,11 @@
 
         public void Close()
         {
-            this.Hide();
-            this.OnClose(this, EventArgs.Empty);
+            if (this.Visible)
+            {
+                this.Hide();
+                this.OnClose(this, EventArgs.Empty);
+            }
         }
 
         protected override GraphicsPath GetClipPath(Graphics graphics, RectangleF rect)
@@ -140,13 +125,15 @@
         }
 
         protected override void DoRender(Graphics graphics)
-        {
+        { 
             /*
+             * For modal window.
+             * 
             if (this.Parent is UIControl parent)
             {
                 using (var brush = new SolidBrush(Color.FromArgb(180, Color.Black)))
                 {
-                    graphics.FillRectangle(brush, parent.ScreenRect);
+                    graphics.FillRectangle(brush, parent.ScreenClientRect);
                 }
             }
             */
@@ -160,12 +147,12 @@
             if (this.Features.HasFlag(UIWindowFeatures.TitleBar))
             {
                 // Title bar.
-                rect.Height = this.Style.WindowTitleSize;
-                graphics.DrawRect(rect, this.Style.Colors.WindowTitle, this.Style.WindowRounding);
+                rect.Height = this.Style.WindowBarSize;
+                graphics.DrawRect(rect, this.Colors.WindowBar, this.Style.WindowRounding);
 
-                // Title text.
+                // Title bar caption.
                 rect.Inflate(-this.Style.Padding, 0);
-                graphics.DrawText(rect, this.Style.Fonts.Default, this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, this.Caption);
+                graphics.DrawText(rect, this.Fonts.Default, this.Colors.WindowCaption, UIAlign.LeftMiddle, false, false, this.Caption);
 
                 this.buttonClose.Render(graphics);
                 this.buttonExpand.Render(graphics);
@@ -183,7 +170,7 @@
 
                     if (!this.Features.HasFlag(UIWindowFeatures.Draggable))
                     {
-                        dragArea.Height = this.Style.WindowTitleSize;
+                        dragArea.Height = this.Style.WindowBarSize;
                     }
 
                     if (IsMouseOver && dragArea.Contains(e.Location))
@@ -233,7 +220,7 @@
                 buttons.RemoveAt(0);
             }
 
-            var margin = new SizeF(this.Style.Padding, -this.Style.WindowTitleSize + 4);
+            var margin = new SizeF(this.Style.Padding, -this.Style.WindowBarSize + this.Style.InnerShrink);
             for (var i = buttons.Count - 1; i >= 0; i--)
             {
                 var button = buttons[i];

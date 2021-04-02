@@ -5,6 +5,7 @@
     using HalftoneFx.Views;
 
     using System.Windows.Forms;
+    using System.Drawing;
 
     using KWUI.Controls;
     using KWUI;
@@ -25,15 +26,8 @@
             {
                 Container = this,
             };
-
+            
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
-
-            var wnd = this.ui.NewWindow("", "Test").SetLayoutPreset(UILayoutPreset.Center);
-            wnd.NewButton("", "Test").OnMouseClick += (s, e) => Console.WriteLine("Test");
-            wnd.Show();
-
-            var wnd2 = this.ui.NewWindow("", "Window title").SetLayoutPreset(UILayoutPreset.CenterRight);
-            wnd2.Show();
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

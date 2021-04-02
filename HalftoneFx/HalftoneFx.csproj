@@ -60,7 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\UIColorPicker.cs" />
-    <Compile Include="UI\UILayoutPanel.cs" />
+    <Compile Include="UI\UILayoutContainer.cs" />
     <Compile Include="UI\UIPictureBoxPopupMenuItems.cs" />
     <Compile Include="UI\UIWinForms.cs" />
     <Compile Include="Views\HalftoneOptionsView.cs" />

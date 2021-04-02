@@ -3,6 +3,7 @@
     using KWUI;
     using KWUI.BaseControls;
     using KWUI.Controls;
+
     using HalftoneFx.Helpers;
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;
@@ -11,7 +12,7 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class PictureOptionsView : UILayoutPanel, IView<WorkspacePresenter>
+    public class PictureOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
         private UILabel labelSize;
 
@@ -36,6 +37,10 @@
         public PictureOptionsView(UILayoutBuilder builder)
             : base(builder)
         {
+            this.Container.Caption = "PICTURE";
+            this.Container.CustomColor("WindowCaption", Color.Gold);
+            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.Show();
         }
 
         public WorkspacePresenter Presenter { get; set; }
@@ -94,9 +99,6 @@
         protected override void BuildLayout(UILayoutBuilder builder)
         {
             builder
-                .Label("PICTURE")
-                .TextColor(Color.Gold)
-
                 .Button("LOAD")
                 .Hint("Load picture from a file")
                 .Click(this.OnLoadClick)

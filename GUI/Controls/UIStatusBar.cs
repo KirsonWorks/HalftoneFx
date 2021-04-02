@@ -48,8 +48,9 @@
 
             if (this.Parent is UIControl parent)
             {
-                this.SetPosition(0.0f, parent.Height - this.Height);
-                this.SetSize(parent.Width, this.Height);
+                var cr = parent.ClientRect;
+                this.SetPosition(0.0f, cr.Height - this.Height);
+                this.SetSize(cr.Width, this.Height);
             }
         }
 

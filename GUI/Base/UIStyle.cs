@@ -31,7 +31,9 @@ namespace KWUI
 
         public Color Window { get; set; }
 
-        public Color WindowTitle { get; set; }
+        public Color WindowBar { get; set; }
+
+        public Color WindowCaption { get; set; }
 
         public Color WindowShadow { get; set; }
 
@@ -126,6 +128,38 @@ namespace KWUI
             new PointF(0.95f, 0.05f),
             new PointF(0.475f, 0.95f),
         };
+
+        public PointF[] Cross = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.3f, 0.1f),
+            new PointF(0.5f, 0.4f),
+            new PointF(0.7f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.6f, 0.5f),
+            new PointF(0.9f, 0.9f),
+            new PointF(0.7f, 0.9f),
+            new PointF(0.5f, 0.6f),
+            new PointF(0.3f, 0.9f),
+            new PointF(0.1f, 0.9f),
+            new PointF(0.4f, 0.5f),
+        };
+
+        public PointF[] Upperscore = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.9f, 0.3f),
+            new PointF(0.1f, 0.3f),
+        };
+
+        public PointF[] Square = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.9f, 0.9f),
+            new PointF(0.1f, 0.9f),
+        };
     }
 
     public class UIStyle
@@ -138,7 +172,7 @@ namespace KWUI
 
         public int WindowRounding { get; set; } = 5;
 
-        public float WindowTitleSize { get; set; } = 24;
+        public float WindowBarSize { get; set; } = 24;
 
         public float WindowShadowSize { get; set; } = 3.5f;
 
@@ -190,7 +224,8 @@ namespace KWUI
             this.Colors.CheckMark = Color.ForestGreen;
 
             this.Colors.Window = Color.FromArgb(255, 28, 38, 43);
-            this.Colors.WindowTitle = Color.FromArgb(255, 23, 31, 36);
+            this.Colors.WindowBar = Color.FromArgb(255, 23, 31, 36);
+            this.Colors.WindowCaption = Color.FromArgb(255, 242, 244, 249);
             this.Colors.WindowShadow = Color.FromArgb(100, 0, 0, 0);
 
             this.Colors.SliderGrab = Color.FromArgb(255, 71, 143, 255);

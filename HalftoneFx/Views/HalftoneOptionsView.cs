@@ -10,7 +10,7 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class HalftoneOptionsView : UILayoutPanel, IView<WorkspacePresenter>
+    public class HalftoneOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
         private UICheckBox checkBoxEnabled;
 
@@ -33,6 +33,10 @@
         public HalftoneOptionsView(UILayoutBuilder builder)
             : base(builder)
         {
+            this.Container.Caption = "HALFTONE";
+            this.Container.CustomColor("WindowCaption", Color.Gold);
+            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.Show();
         }
 
         public WorkspacePresenter Presenter { get; set; }
@@ -71,9 +75,8 @@
         protected override void BuildLayout(UILayoutBuilder builder)
         {
             builder
-                .CheckBox("HALFTONE")
+                .CheckBox("ENABLED")
                 .Ref(ref checkBoxEnabled)
-                .TextColor(Color.Gold)
                 .Hint("")
                 .Changed(this.OnHalftoneEnabledChanged)
 

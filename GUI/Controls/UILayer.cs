@@ -14,7 +14,7 @@
 
             if (this.Parent is UIControl parent)
             {
-                this.Size = parent.Size;
+                this.Size = parent.ClientSize;
             }
         }
     }

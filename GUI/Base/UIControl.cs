@@ -41,7 +41,7 @@
         public UIAnchors Anchors { get; set; } = UIAnchors.Left | UIAnchors.Top;
 
         public PointF ScreenPosition { get; private set; } = PointF.Empty;
-        
+
         public float Left
         {
             get => this.LocalPosition.X;
@@ -79,6 +79,12 @@
                     this.UpdateSize(value);
                 }
             }
+        }
+
+        public SizeF ClientSize
+        {
+            get => this.ClientRect.Size;
+            set => this.SetSize(this.Size - this.ClientSize + value);
         }
 
         public float Width
@@ -150,7 +156,7 @@
         }
         
         protected PointF LocalPosition { get; private set; } = PointF.Empty;
-        
+
         protected virtual RectangleF ClipRect
         {
             get
@@ -332,6 +338,8 @@
 
         protected void UpdateSize(SizeF value)
         {
+            value = value.Max(this.ClientRect.Location.ToSize());
+
             if (this.size != value)
             {
                 var prevSize = this.size;
