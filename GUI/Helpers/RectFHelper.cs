@@ -1,4 +1,4 @@
-﻿namespace GUI.Helpers
+﻿namespace KWUI.Helpers
 {
     using System;
     using System.Drawing;
@@ -12,7 +12,7 @@
             return newRect;
         }
 
-        public static RectangleF Clamp(this RectangleF rect, RectangleF other)
+        public static RectangleF Inside(this RectangleF rect, RectangleF other)
         {
             var diffLeft = rect.Left - other.Left;
             var diffTop = rect.Top - other.Top;

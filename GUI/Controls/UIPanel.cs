@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System.Drawing;
     using System.Drawing.Drawing2D;

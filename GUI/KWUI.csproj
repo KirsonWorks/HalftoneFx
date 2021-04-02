@@ -7,8 +7,8 @@
     <ProjectGuid>{827D0C49-D29B-4918-AA9C-53BE70C3342B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GUI</RootNamespace>
-    <AssemblyName>GUI</AssemblyName>
+    <RootNamespace>KWUI</RootNamespace>
+    <AssemblyName>KWUI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -60,6 +60,7 @@
     <Compile Include="Base Controls\UIRangeControl.cs" />
     <Compile Include="Controls\UISlider.cs" />
     <Compile Include="Controls\UIStatusBar.cs" />
+    <Compile Include="Controls\UIToolButton.cs" />
     <Compile Include="Controls\UIWindow.cs" />
     <Compile Include="Editor\UIToolPan.cs" />
     <Compile Include="Editor\UIToolZoom.cs" />

@@ -1,7 +1,7 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
-    using GUI.BaseControls;
+    using KWUI.Helpers;
+    using KWUI.BaseControls;
 
     using System;
     using System.Drawing;
@@ -13,7 +13,7 @@
             var markSize = new RectangleF(this.ScreenPosition, this.GetCheckMarkSize());
             var rounding = (int)Math.Floor(markSize.Width / 2) - 1;
 
-            graphics.DrawFrame(markSize, this.GetColor(), this.Style.Colors.Border, rounding);
+            graphics.DrawFrame(markSize, this.GetBgColor(), this.Style.Colors.Border, rounding);
 
             if (this.Checked)
             {

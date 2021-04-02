@@ -1,4 +1,4 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
     using System;
     using System.Collections.Generic;
@@ -37,7 +37,7 @@
 
         public UIControl GetControlAt(PointF location)
         {
-            if (this.Visible && this.Enabled)
+            if (this.Visible && this.Enabled && this.HitTest(location))
             {
                 var children = this.GetChildren<UIControl>().Reverse().Where(c => c.Visible);
 
@@ -51,7 +51,7 @@
                     }
                 }
 
-                if (this.HandleMouseEvents && this.HitTest(location))
+                if (this.HandleMouseEvents)
                 {
                     return this;
                 }

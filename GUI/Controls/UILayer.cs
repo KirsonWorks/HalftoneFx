@@ -1,4 +1,4 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
     public class UILayer : UIControl
     {

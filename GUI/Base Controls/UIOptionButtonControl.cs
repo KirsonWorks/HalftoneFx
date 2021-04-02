@@ -1,6 +1,6 @@
-﻿namespace GUI.BaseControls
+﻿namespace KWUI.BaseControls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System.Drawing;
 
@@ -8,7 +8,8 @@
     {
         private SizeF textSize = new SizeF(1, 1);
 
-        public UIOptionButtonControl() : base()
+        public UIOptionButtonControl() 
+            : base()
         {
             this.SetSize(100, 20);
             this.ToggleMode = true;
@@ -19,7 +20,7 @@
 
         public PointF TextAlign { get; set; } = UIAlign.LeftTop;
 
-        public override string Caption 
+        public override string Caption
         { 
             get => base.Caption;
 
@@ -57,25 +58,15 @@
             return new SizeF().OneValue(this.Style.ToggleSize);
         }
 
-        protected Color GetColor()
-        {
-            if (this.Enabled)
-            {
-                if (this.IsPressed)
-                {
-                    return this.Colors.FrameActive;
-                }
-                else if (this.IsHovered)
-                {
-                    return this.Colors.FrameHovered;
-                }
-            }
-            else
-            {
-                return this.Colors.FrameDisabled;
-            }
 
-            return this.Colors.Frame;
+        protected Color GetBgColor()
+        {
+            return this.GetStateColor(
+                this.Colors.Frame,
+                this.Colors.FrameActive,
+                this.Colors.FrameHovered,
+                this.Colors.Frame,
+                this.Colors.FrameDisabled);
         }
 
         protected override void DoRender(Graphics graphics)
@@ -88,7 +79,7 @@
                 sr.X += cmw;
                 sr.Width -= cmw;
 
-                graphics.DrawText(sr, this.Style.Fonts.Default, this.GetTextColor(), this.TextAlign, this.AutoSize, this.WordWrap, this.Caption);
+                graphics.DrawText(sr, this.Style.Fonts.Default, this.GetFgColor(), this.TextAlign, this.AutoSize, this.WordWrap, this.Caption);
             }
         }
     }

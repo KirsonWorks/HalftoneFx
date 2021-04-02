@@ -1,4 +1,4 @@
-﻿namespace GUI.Common
+﻿namespace KWUI.Common
 {
     using System;
 

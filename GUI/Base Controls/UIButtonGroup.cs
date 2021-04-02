@@ -1,6 +1,6 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
-    using GUI.BaseControls;
+    using KWUI.BaseControls;
     using System.Collections.Generic;
 
     public class UIButtonGroup

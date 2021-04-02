@@ -1,7 +1,7 @@
 ﻿namespace HalftoneFx.Views
 {
-    using GUI;
-    using GUI.Controls;
+    using KWUI;
+    using KWUI.Controls;
 
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;

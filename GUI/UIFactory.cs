@@ -1,4 +1,4 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
     using System;
     using System.Collections.Generic;

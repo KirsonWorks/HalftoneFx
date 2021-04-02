@@ -1,4 +1,4 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
     using System.Collections.Generic;
     using System.Drawing;
@@ -14,6 +14,8 @@
         protected UIColors Colors => this.Style.Colors;
 
         protected UIFonts Fonts => this.Style.Fonts;
+
+        protected UIShapes Shapes => this.Style.Shapes;
 
         public UIControl CustomColor(string name, Color value)
         {

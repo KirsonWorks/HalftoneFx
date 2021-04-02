@@ -1,7 +1,7 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
-    using GUI.BaseControls;
+    using KWUI.Helpers;
+    using KWUI.BaseControls;
 
     using System.Drawing;
 
@@ -9,7 +9,8 @@
     {
         private SizeF textSize = new SizeF(1, 1);
 
-        public UIButton() : base()
+        public UIButton()
+            : base()
         {
             this.Size = new SizeF(60, 24);
             this.AutoSize = true;
@@ -30,41 +31,31 @@
             }
         }
 
-        protected Color GetBgColor()
-        {
-            if (this.Enabled)
-            {
-                if (this.Checked)
-                {
-                    return this.Colors.ButtonChecked;
-                }
-                else if (this.IsPressed)
-                {
-                    return this.Colors.ButtonActive;
-                }
-                else if (this.IsHovered)
-                {
-                    return this.Colors.ButtonHovered;
-                }
-            }
-            else
-            {
-                return this.Colors.ButtonDisabled;
-            }
-
-            return this.Colors.Button;
-        }
+        public bool Flat { get; set; }
 
         protected override SizeF GetPreferredSize()
         {
             return this.textSize + new SizeF().OneValue(this.Style.Padding * 2);
         }
 
+
         protected override void DoRender(Graphics graphics)
         {
-            graphics.DrawFrame(this.ScreenRect, this.GetBgColor(), this.Style.Colors.Border, this.Style.Rounding);
-            graphics.DrawText(this.ScreenRect, this.Style.Fonts.Default, this.GetTextColor(), UIAlign.Center, false, true, this.Caption);
-            graphics.DrawBorderVolume(this.ScreenRect, this.Style.Colors.BorderVolume, this.Style.Rounding);
+            var rect = this.ScreenRect;
+            var color = this.GetStateColor(
+                this.Flat ? Color.Transparent : this.Colors.Button,
+                this.Colors.ButtonActive,
+                this.Colors.ButtonHovered,
+                this.Colors.ButtonChecked,
+                this.Colors.ButtonDisabled);
+
+            graphics.DrawFrame(rect, color, this.Flat ? Color.Transparent : this.Style.Colors.Border, this.Style.Rounding);
+            graphics.DrawText(rect, this.Style.Fonts.Default, this.GetFgColor(), UIAlign.Center, false, true, this.Caption);
+
+            if (!this.Flat)
+            {
+                graphics.DrawBorderVolume(rect, this.Style.Colors.BorderVolume, this.Style.Rounding);
+            }
         }
     }
 }

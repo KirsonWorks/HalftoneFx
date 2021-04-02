@@ -1,6 +1,6 @@
 ﻿namespace HalftoneFx.UI
 {
-    using GUI;
+    using KWUI;
 
     using System;
     using System.Diagnostics;

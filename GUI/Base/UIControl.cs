@@ -1,6 +1,6 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System;
     using System.Linq;

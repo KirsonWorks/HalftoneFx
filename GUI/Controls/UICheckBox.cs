@@ -1,7 +1,7 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
-    using GUI.BaseControls;
+    using KWUI.Helpers;
+    using KWUI.BaseControls;
 
     using System.Drawing;
 
@@ -10,11 +10,11 @@
         protected override void DoRender(Graphics graphics)
         {
             var markRect = new RectangleF(this.ScreenPosition, this.GetCheckMarkSize());
-            graphics.DrawFrame(markRect, this.GetColor(), this.Colors.Border, this.Style.Rounding);
+            graphics.DrawFrame(markRect, this.GetBgColor(), this.Colors.Border, this.Style.Rounding);
 
             if (this.Checked)
             {
-                graphics.DrawCheckMark(markRect, this.Colors.CheckMark);
+                graphics.DrawSolidShape(markRect.Inflate(-this.Style.InnerShrink), this.Colors.CheckMark, this.Shapes.CheckMark);
             }
 
             graphics.DrawBorderVolume(markRect, this.Colors.BorderVolume, this.Style.Rounding);

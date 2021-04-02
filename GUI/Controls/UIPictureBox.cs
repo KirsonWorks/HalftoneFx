@@ -1,7 +1,7 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI;
-    using GUI.Editor;
+    using KWUI;
+    using KWUI.Editor;
 
     using System;
     using System.Drawing;

@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
 
-namespace GUI
+namespace KWUI
 {
     using ColorPair = KeyValuePair<string, Color>;
 
@@ -115,6 +115,19 @@ namespace GUI
         public Font Description { get; set; } = new Font("Microsoft Sans Serif", 9);
     }
 
+    public class UIShapes
+    {
+        public PointF[] CheckMark = new PointF[]
+        {
+            new PointF(0.05f, 0.4f),
+            new PointF(0.25f, 0.4f),
+            new PointF(0.45f, 0.675f),
+            new PointF(0.75f, 0.05f),
+            new PointF(0.95f, 0.05f),
+            new PointF(0.475f, 0.95f),
+        };
+    }
+
     public class UIStyle
     {
         public int Padding { get; set; } = 5;
@@ -138,6 +151,8 @@ namespace GUI
         public UIFonts Fonts { get; } = new UIFonts();
 
         public UIColors Colors { get; } = new UIColors();
+
+        public UIShapes Shapes { get; } = new UIShapes();
 
         public UIStyle()
         {

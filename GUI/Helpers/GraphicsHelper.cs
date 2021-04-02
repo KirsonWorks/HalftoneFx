@@ -1,4 +1,4 @@
-﻿namespace GUI.Helpers
+﻿namespace KWUI.Helpers
 {
     using System;
     using System.Drawing;
@@ -6,16 +6,6 @@
 
     public static class GraphicsHelper
     {
-        private static readonly PointF[] CheckMarkPath = new PointF[]
-        {
-            new PointF(0.15f, 0.5f),
-            new PointF(0.3f, 0.5f),
-            new PointF(0.45f, 0.65f),
-            new PointF(0.7f, 0.2f),
-            new PointF(0.85f, 0.2f),
-            new PointF(0.45f, 0.8f),
-        };
-
         public static readonly Graphics GraphicsDummy = Graphics.FromImage(new Bitmap(1, 1));
 
         public static GraphicsPath GetRectPath(this Graphics graphics, RectangleF rect, int cornerRadius)
@@ -174,14 +164,14 @@
             }
         }
 
-        public static void DrawCheckMark(this Graphics graphics, RectangleF rect, Color color)
+        public static void DrawSolidShape(this Graphics graphics, RectangleF rect, Color color, PointF[] shape)
         {
             if (!color.IsEmpty && color.A > 0)
             {
                 using (var path = new GraphicsPath())
                 using (var brush = new SolidBrush(color))
                 {
-                    path.AddLines(CheckMarkPath);
+                    path.AddLines(shape);
 
                     var matrix = new Matrix();
                     matrix.Translate(rect.X, rect.Y);

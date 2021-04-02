@@ -99,9 +99,9 @@
       <Project>{1de79f0d-0e2c-4a76-afd5-eb9a05dfb051}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GUI\GUI.csproj">
+    <ProjectReference Include="..\GUI\KWUI.csproj">
       <Project>{827d0c49-d29b-4918-aa9c-53be70c3342b}</Project>
-      <Name>GUI</Name>
+      <Name>KWUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Halftone\Halftone.csproj">
       <Project>{aafc6719-d20d-4d17-9771-9470e90fbe3f}</Project>

@@ -1,6 +1,7 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.BaseControls;
+    using KWUI.Helpers;
 
     using System;
     using System.Collections.Generic;
@@ -19,9 +20,9 @@
 
     public class UIWindow : UIControl
     {
-        private readonly UIButton buttonClose;
+        private readonly UIToolButton buttonClose;
 
-        private readonly UIButton buttonExpand;
+        private readonly UIToolButton buttonExpand;
 
         private UIWindowFeatures features;
 
@@ -40,11 +41,31 @@
             this.ClipContent = true;
             this.Size = new SizeF(180, 180);
 
-            this.buttonClose = this.NewButton("", "x");
+            this.buttonClose = this.NewNode<UIToolButton>("");
+            this.buttonClose.SetSize(16, 16);
+            
+            this.buttonClose.Shape = new PointF[]
+                {
+                    new PointF(0.1f, 0.1f),
+                    new PointF(0.3f, 0.1f),
+                    new PointF(0.5f, 0.4f),
+                    new PointF(0.7f, 0.1f),
+                    new PointF(0.9f, 0.1f),
+                    new PointF(0.6f, 0.5f),
+                    new PointF(0.9f, 0.9f),
+                    new PointF(0.7f, 0.9f),
+                    new PointF(0.5f, 0.6f),
+                    new PointF(0.3f, 0.9f),
+                    new PointF(0.1f, 0.9f),
+                    new PointF(0.4f, 0.5f),
+                };
+
             this.buttonClose.OnMouseClick += (s, e) => this.Close();
 
-            this.buttonExpand = this.NewButton("", "_");
+            this.buttonExpand = this.NewNode<UIToolButton>("");
+            this.buttonExpand.SetSize(16, 16);
             this.buttonExpand.ToggleMode = true;
+            this.buttonExpand.Shape = this.Shapes.CheckMark;
             this.buttonExpand.OnChanged += (s, e) => this.Expanded = !this.buttonExpand.Checked;
 
             this.Features = UIWindowFeatures.TitleBar | UIWindowFeatures.ClosingBox | UIWindowFeatures.ExpandingBox | UIWindowFeatures.Draggable;
@@ -110,6 +131,7 @@
         public void Close()
         {
             this.Hide();
+            this.OnClose(this, EventArgs.Empty);
         }
 
         protected override GraphicsPath GetClipPath(Graphics graphics, RectangleF rect)
@@ -187,10 +209,11 @@
 
             base.DoMouseInput(e);
         }
+
         private void TitleBarPerform()
         {
             var features = this.features;
-            var buttons = new List<UIButton> { this.buttonExpand, this.buttonClose };
+            var buttons = new List<UIButtonControl> { this.buttonExpand, this.buttonClose };
 
             if (!features.HasFlag(UIWindowFeatures.TitleBar))
             {
@@ -210,7 +233,7 @@
                 buttons.RemoveAt(0);
             }
 
-            var margin = new SizeF(this.Style.Padding, -this.Style.WindowTitleSize);
+            var margin = new SizeF(this.Style.Padding, -this.Style.WindowTitleSize + 4);
             for (var i = buttons.Count - 1; i >= 0; i--)
             {
                 var button = buttons[i];

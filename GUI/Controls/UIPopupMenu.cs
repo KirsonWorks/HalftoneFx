@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System;
     using System.Drawing;
@@ -156,7 +156,7 @@
 
             if (this.Parent is UIControl parent)
             {
-                var rect = this.ScreenRect.Clamp(parent.ScreenRect);
+                var rect = this.ScreenRect.Inside(parent.ScreenRect);
                 this.SetGlobalPosition(rect.Location);
             }
         }

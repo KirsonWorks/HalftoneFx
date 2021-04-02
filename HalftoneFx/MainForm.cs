@@ -6,8 +6,9 @@
 
     using System.Windows.Forms;
 
-    using GUI.Controls;
-    using GUI;
+    using KWUI.Controls;
+    using KWUI;
+    using System;
 
     public partial class MainForm : Form
     {
@@ -28,6 +29,7 @@
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
 
             var wnd = this.ui.NewWindow("", "Test").SetLayoutPreset(UILayoutPreset.Center);
+            wnd.NewButton("", "Test").OnMouseClick += (s, e) => Console.WriteLine("Test");
             wnd.Show();
 
             var wnd2 = this.ui.NewWindow("", "Window title").SetLayoutPreset(UILayoutPreset.CenterRight);
