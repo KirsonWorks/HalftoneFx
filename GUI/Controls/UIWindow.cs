@@ -15,7 +15,8 @@
         TitleBar = 1,
         ClosingBox = 2,
         ExpandingBox = 4,
-        Draggable = 8,
+        FullDraggable = 8,
+        Disposable = 16,
     }
 
     public class UIWindow : UIControl
@@ -41,15 +42,17 @@
             this.ClipContent = true;
             this.Size = new SizeF(180, 180);
 
-            var size = this.Style.WindowBarSize - this.Style.InnerShrink * 2;
-            this.buttonClose = this.NewToolButton(size: size, shape: this.Shapes.Cross);
+            var bsize = this.Style.WindowBarSize - this.Style.InnerShrink * 2;
+            this.buttonClose = this.NewToolButton(size: bsize, shape: this.Shapes.Cross);
             this.buttonClose.OnMouseClick += (s, e) => this.Close();
 
-            this.buttonExpand = this.NewToolButton(size: size, shape: this.Shapes.Upperscore);
+            this.buttonExpand = this.NewToolButton(size: bsize, shape: this.Shapes.Upperscore);
             this.buttonExpand.OnMouseClick += (s, e) => this.Expanded = !this.Expanded;
 
             this.Features = UIWindowFeatures.TitleBar | UIWindowFeatures.ClosingBox;
         }
+
+        public bool IsModal { get; private set; }
 
         public UIWindowFeatures Features
         {
@@ -58,7 +61,7 @@
             set
             {
                 this.features = value;
-                this.TitleBarPerform();
+                this.ApplyFeatures();
             }
         }
 
@@ -77,6 +80,18 @@
                     }
                 }
             }
+        }
+
+        public UIWindow FeatureOn(UIWindowFeatures feature)
+        {
+            this.Features |= feature;
+            return this;
+        }
+
+        public UIWindow FeatureOff(UIWindowFeatures feature)
+        {
+            this.Features &= ~feature;
+            return this;
         }
 
         private void ExpandCollapse(bool expanded)
@@ -110,12 +125,37 @@
             }
         }
 
-        public void Close()
+        public void ShowModal()
         {
             if (this.Visible)
             {
-                this.Hide();
-                this.OnClose(this, EventArgs.Empty);
+                return;
+            }
+
+            this.Visible = true;
+            this.IsModal = true;
+
+            if (this.Parent is UIControl parent)
+            {
+                this.SetPositionToCenterFrom(parent.ScreenPositionCenter);
+            }
+
+            this.NotifyRoot(UINotification.BeginModal);
+        }
+
+        public void Close()
+        {
+            this.Visible = false;
+            this.OnClose(this, EventArgs.Empty);
+
+            if (this.IsModal)
+            {
+                this.NotifyRoot(UINotification.EndModal);
+            }
+
+            if (this.Features.HasFlag(UIWindowFeatures.Disposable) && this.Parent != null)
+            {
+                this.Parent.RemoveNode(this);
             }
         }
 
@@ -125,19 +165,7 @@
         }
 
         protected override void DoRender(Graphics graphics)
-        { 
-            /*
-             * For modal window.
-             * 
-            if (this.Parent is UIControl parent)
-            {
-                using (var brush = new SolidBrush(Color.FromArgb(180, Color.Black)))
-                {
-                    graphics.FillRectangle(brush, parent.ScreenClientRect);
-                }
-            }
-            */
-
+        {
             // Window frame.
             var rect = this.ScreenRect;
             graphics.DrawRect(rect, this.Colors.WindowShadow, this.Style.WindowRounding, -this.Style.WindowShadowSize);
@@ -168,7 +196,7 @@
 
                     var dragArea = this.ScreenRect;
 
-                    if (!this.Features.HasFlag(UIWindowFeatures.Draggable))
+                    if (!this.Features.HasFlag(UIWindowFeatures.FullDraggable))
                     {
                         dragArea.Height = this.Style.WindowBarSize;
                     }
@@ -197,15 +225,15 @@
             base.DoMouseInput(e);
         }
 
-        private void TitleBarPerform()
+        private void ApplyFeatures()
         {
             var features = this.features;
             var buttons = new List<UIButtonControl> { this.buttonExpand, this.buttonClose };
 
             if (!features.HasFlag(UIWindowFeatures.TitleBar))
             {
-                features &= ~UIWindowFeatures.ClosingBox;
-                features &= ~UIWindowFeatures.ExpandingBox;
+                this.FeatureOff(UIWindowFeatures.ClosingBox)
+                    .FeatureOff(UIWindowFeatures.ExpandingBox);
             }
 
             if (!features.HasFlag(UIWindowFeatures.ClosingBox))

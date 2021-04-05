@@ -10,6 +10,8 @@
         ParentChanged,
         MouseOver,
         MouseOut,
+        BeginModal,
+        EndModal,
     }
 
     [Flags]

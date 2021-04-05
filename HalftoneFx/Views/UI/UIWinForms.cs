@@ -110,7 +110,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseDown(this, args);
+            HandleMouseDown(this.TopLevelControl, args);
         }
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -122,7 +122,7 @@
                 Button = UIMouseEventArgs.ParseButtonType(e.Button.ToString())
             };
 
-            HandleMouseMove(this, args);
+            HandleMouseMove(this.TopLevelControl, args);
         }
 
         private void MouseUpHandler(object sender, MouseEventArgs e)
@@ -134,7 +134,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseUp(this, args);
+            HandleMouseUp(this.TopLevelControl, args);
         }
 
         private void MouseWheelHandler(object sender, MouseEventArgs e)
@@ -146,7 +146,7 @@
                 Delta = e.Delta
             };
 
-            HandleMouseWheel(this, args);
+            HandleMouseWheel(this.TopLevelControl, args);
         }
     }
 }

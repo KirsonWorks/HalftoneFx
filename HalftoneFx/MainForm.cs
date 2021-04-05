@@ -5,11 +5,6 @@
     using HalftoneFx.Views;
 
     using System.Windows.Forms;
-    using System.Drawing;
-
-    using KWUI.Controls;
-    using KWUI;
-    using System;
 
     public partial class MainForm : Form
     {
@@ -42,6 +37,5 @@
             var filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             this.workspace.LoadPictureFromFile(filenames[0]);
         }
-        
     }
 }

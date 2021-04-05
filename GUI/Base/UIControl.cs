@@ -155,6 +155,14 @@
             get => new RectangleF(PointF.Empty, this.Size);
         }
         
+
+        public RectangleF ScreenClientRect
+        {
+            get => new RectangleF(
+                this.ScreenPosition + this.ClientRect.Location.ToSize(),
+                this.ClientSize);
+        }
+
         protected PointF LocalPosition { get; private set; } = PointF.Empty;
 
         protected virtual RectangleF ClipRect
