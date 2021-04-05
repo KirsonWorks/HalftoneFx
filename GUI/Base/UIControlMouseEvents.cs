@@ -101,24 +101,27 @@
 
         protected virtual void DoMouseInput(UIMouseEventArgs e)
         {
-            if (this.PopupControl != null &&
-                e.EventType == UIMouseEventType.Up &&
-                e.Button == UIMouseButtons.Right)
+            if (this.HandleMouseEvents)
             {
-                this.PopupControl.Popup(e.Location);
+                if (this.PopupControl != null &&
+                    e.EventType == UIMouseEventType.Up &&
+                    e.Button == UIMouseButtons.Right)
+                {
+                    this.PopupControl.Popup(e.Location);
+                }
+
+                var events = new Dictionary<UIMouseEventType, EventHandler<UIMouseEventArgs>>
+                {
+                    { UIMouseEventType.Down, this.OnMouseDown },
+                    { UIMouseEventType.Move, this.OnMouseMove },
+                    { UIMouseEventType.Up, this.OnMouseUp },
+                    { UIMouseEventType.Wheel, this.OnMouseWheel }
+                };
+
+                events[e.EventType]?.Invoke(this, e);
             }
 
-            var events = new Dictionary<UIMouseEventType, EventHandler<UIMouseEventArgs>>
-            {
-                { UIMouseEventType.Down, this.OnMouseDown },
-                { UIMouseEventType.Move, this.OnMouseMove },
-                { UIMouseEventType.Up, this.OnMouseUp },
-                { UIMouseEventType.Wheel, this.OnMouseWheel }
-            };
-
-            events[e.EventType]?.Invoke(this, e);
-
-            if (this.Parent is UIControl parent && parent.HandleMouseEvents)
+            if (this.Parent is UIControl parent)
             {
                 parent.DoMouseInput(e);
             }
