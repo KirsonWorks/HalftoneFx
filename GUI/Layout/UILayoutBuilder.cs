@@ -145,7 +145,7 @@
         public UILayoutBuilder Add<T>()
             where T : UIControl
         {
-            this.Control = UIFactory.NewNode<T>(this.Container, string.Empty);
+            this.Control = UIFactory.NewNode<T>(this.Container);
             return this;
         }
 
@@ -180,7 +180,7 @@
         public UILayoutBuilder Begin<T>(PointF? location = null)
             where T: UIControl
         {
-            var container = this.Container.NewNode<T>(string.Empty);
+            var container = this.Container.NewNode<T>();
             this.Begin(container, location);
             return this;
         }
@@ -210,7 +210,7 @@
 
         public UILayoutBuilder Label(string caption, bool autoSize = true)
         {
-            var label = this.Container.NewLabel(string.Empty, caption);
+            var label = this.Container.NewLabel(caption);
             label.AutoSize = autoSize;
             label.TextAlign = UIAlign.LeftMiddle;
             this.Control = label;
@@ -219,13 +219,13 @@
 
         public UILayoutBuilder Button(string caption)
         {
-            this.Control = this.Container.NewButton(string.Empty, caption);
+            this.Control = this.Container.NewButton(caption);
             return this;
         }
 
         public UILayoutBuilder CheckBox(string caption, bool value = false)
         {
-            var checkbox = this.Container.NewCheckBox(string.Empty, caption);
+            var checkbox = this.Container.NewCheckBox(caption);
             checkbox.Checked = value;
             this.Control = checkbox;
             return this;
@@ -233,7 +233,7 @@
 
         public UILayoutBuilder Slider(int value, int min = 0, int max = 100)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, 1, value);
             slider.TextType = UIRangeTextType.Caption;
             this.Control = slider;
@@ -247,7 +247,7 @@
                 throw new ArgumentNullException(nameof(lookup));
             }
 
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(0, lookup.Length - 1, 1, value);
             slider.TextType = UIRangeTextType.Caption;
             slider.Lookup = lookup;
@@ -259,7 +259,7 @@
             UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, step, value);
             slider.TextType = textType;
             slider.TextFlags = flags;
@@ -271,7 +271,7 @@
             UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, step, value);
             slider.TextType = textType;
             slider.TextFlags = UIRangeTextFlags.Decimal | flags;
@@ -281,7 +281,7 @@
 
         public UILayoutBuilder Image(float width, float height, Image img = null, bool center = false)
         {
-            var image = this.Container.NewImage(string.Empty, img);
+            var image = this.Container.NewImage(img);
             image.Center = center;
             image.Stretch = true;
             image.BorderSize = 1;
@@ -294,7 +294,7 @@
 
         public UILayoutBuilder Progress(float min, float max, float step)
         {
-            var progress = this.Container.NewProgressBar(string.Empty);
+            var progress = this.Container.NewProgressBar();
             progress.Setup(min, max, step, 0.0f);
             this.Control = progress;
             return this;
