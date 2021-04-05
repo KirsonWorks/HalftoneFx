@@ -132,7 +132,6 @@
                 return;
             }
 
-            this.Visible = true;
             this.IsModal = true;
 
             if (this.Parent is UIControl parent)
@@ -141,11 +140,11 @@
             }
 
             this.NotifyRoot(UINotification.BeginModal);
+            this.Show();
         }
 
         public void Close()
         {
-            this.Visible = false;
             this.OnClose(this, EventArgs.Empty);
 
             if (this.IsModal)
@@ -157,11 +156,21 @@
             {
                 this.Parent.RemoveNode(this);
             }
+
+            this.Hide();
         }
 
         protected override GraphicsPath GetClipPath(Graphics graphics, RectangleF rect)
         {
             return graphics.GetClipPath(rect, this.Style.Rounding);
+        }
+
+        protected override void DoChangeVisibility()
+        {
+            if (this.Visible)
+            {
+                this.BringToFront();
+            }
         }
 
         protected override void DoRender(Graphics graphics)

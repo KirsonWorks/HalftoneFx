@@ -81,7 +81,7 @@
 
         protected byte StepByte(byte a, byte b)
         {
-            return (byte)(a > b ? 255 : 0);
+            return (byte)(a >= b ? 255 : 0);
         }
 
         protected virtual void DoValueChanged()
