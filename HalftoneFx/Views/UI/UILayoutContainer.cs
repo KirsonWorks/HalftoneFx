@@ -1,23 +1,30 @@
 ﻿namespace HalftoneFx.UI
 {
-    using GUI;
-    using GUI.Controls;
+    using KWUI;
 
     using System;
 
-    public abstract class UILayoutPanel : UIPanel
+    public abstract class UILayoutContainer<T>
+        where T : UIControl
     {
-        public UILayoutPanel(UILayoutBuilder builder)
+        private readonly T container;
+
+        public UILayoutContainer(UILayoutBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Begin(this);
+            builder
+                .Begin<T>()
+                .Ref(ref container);
+
             this.BuildLayout(builder);
             builder.End();
         }
+
+        public T Container => this.container;
 
         protected abstract void BuildLayout(UILayoutBuilder builder);
     }

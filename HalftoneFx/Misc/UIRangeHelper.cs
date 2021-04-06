@@ -1,6 +1,6 @@
 ﻿namespace HalftoneFx.Helpers
 {
-    using GUI.BaseControls;
+    using KWUI.BaseControls;
     using HalftoneFx.Models;
 
     using System;

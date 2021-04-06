@@ -83,22 +83,34 @@ namespace HalftoneFx
         {
             this.GenerateThumbnail(ImageGenerationFlags.Filtering);
 
-            await this.GenerateAsync((Bitmap)this.original, ImageGenerationFlags.Filtering, delay)
-                    .ContinueWith(async (task) =>
-                    {
-                        if (task.Result != null)
+            try
+            {
+                await this.GenerateAsync((Bitmap)this.original, ImageGenerationFlags.Filtering, delay)
+                        .ContinueWith(async (task) =>
                         {
-                            this.filtered = task.Result;
-                            await this.GenerateHalftoneAsync(100);
-                        }
-                    },
-                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously)
-                    .ConfigureAwait(false);
+                            if (task.Result != null)
+                            {
+                                this.filtered = task.Result;
+                                await this.GenerateHalftoneAsync(100);
+                            }
+                        },
+                        TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously)
+                        .ConfigureAwait(false);
+            }
+            catch
+            {
+            }
         }
 
         private async Task GenerateHalftoneAsync(int delay)
         {
-            await this.GenerateAsync(this.filtered, ImageGenerationFlags.Halftoning, delay);
+            try
+            {
+                await this.GenerateAsync(this.filtered, ImageGenerationFlags.Halftoning, delay);
+            }
+            catch
+            {
+            }
         }
     }
 }

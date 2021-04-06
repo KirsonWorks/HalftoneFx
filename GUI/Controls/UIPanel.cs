@@ -1,12 +1,18 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System.Drawing;
     using System.Drawing.Drawing2D;
 
     public class UIPanel : UIControl
     {
+        public UIPanel()
+            : base()
+        {
+            this.SetSize(100, 100);
+        }
+
         protected override GraphicsPath GetClipPath(Graphics graphics, RectangleF rect)
         {
             return graphics.GetClipPath(rect, this.Style.Rounding);

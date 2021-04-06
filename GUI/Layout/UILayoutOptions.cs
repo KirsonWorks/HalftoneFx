@@ -1,4 +1,4 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
     using System.Drawing;
 

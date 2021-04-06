@@ -1,4 +1,4 @@
-﻿namespace GUI.BaseControls
+﻿namespace KWUI.BaseControls
 {
     using System;
     using System.Drawing;
@@ -61,9 +61,36 @@
                 this.OnChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        protected Color GetTextColor()
+
+        protected Color GetFgColor()
         {
             return this.Enabled ? this.Colors.Text : this.Colors.TextDisabled;
+        }
+
+        protected Color GetStateColor(Color normal, Color pressed, Color hovered,
+            Color @checked, Color disabled)
+        {
+            if (this.Enabled)
+            {
+                if (this.Checked)
+                {
+                    return @checked;
+                }
+                else if (this.IsPressed)
+                {
+                    return pressed;
+                }
+                else if (this.IsHovered)
+                {
+                    return hovered;
+                }
+            }
+            else
+            {
+                return disabled;
+            }
+
+            return normal;
         }
 
         protected override void DoMouseClick(UIMouseEventArgs e)

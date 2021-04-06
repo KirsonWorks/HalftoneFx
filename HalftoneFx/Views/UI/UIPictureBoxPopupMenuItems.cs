@@ -1,6 +1,6 @@
 ﻿namespace HalftoneFx.UI
 {
-    using GUI.Controls;
+    using KWUI.Controls;
 
     using System.Collections.Generic;
 

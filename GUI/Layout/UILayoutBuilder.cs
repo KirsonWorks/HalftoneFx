@@ -1,7 +1,7 @@
-﻿namespace GUI
+﻿namespace KWUI
 {
-    using GUI.Controls;
-    using GUI.BaseControls;
+    using KWUI.Controls;
+    using KWUI.BaseControls;
 
     using System;
     using System.Drawing;
@@ -17,6 +17,7 @@
 
         private UIControl control = null;
 
+        // FIX ME!
         public UILayoutBuilder(UIManager manager)
         {
             this.manager = manager ?? throw new ArgumentNullException(nameof(manager));
@@ -144,7 +145,7 @@
         public UILayoutBuilder Add<T>()
             where T : UIControl
         {
-            this.Control = UIFactory.NewNode<T>(this.Container, string.Empty);
+            this.Control = UIFactory.NewNode<T>(this.Container);
             return this;
         }
 
@@ -179,7 +180,7 @@
         public UILayoutBuilder Begin<T>(PointF? location = null)
             where T: UIControl
         {
-            var container = this.Container.NewNode<T>(string.Empty);
+            var container = this.Container.NewNode<T>();
             this.Begin(container, location);
             return this;
         }
@@ -196,7 +197,7 @@
 
             if (!size.IsEmpty)
             {
-                this.Container.Size = size;
+                this.Container.ClientSize = size;
             }
 
             var previous = this.workbench;
@@ -209,7 +210,7 @@
 
         public UILayoutBuilder Label(string caption, bool autoSize = true)
         {
-            var label = this.Container.NewLabel(string.Empty, caption);
+            var label = this.Container.NewLabel(caption);
             label.AutoSize = autoSize;
             label.TextAlign = UIAlign.LeftMiddle;
             this.Control = label;
@@ -218,13 +219,13 @@
 
         public UILayoutBuilder Button(string caption)
         {
-            this.Control = this.Container.NewButton(string.Empty, caption);
+            this.Control = this.Container.NewButton(caption);
             return this;
         }
 
         public UILayoutBuilder CheckBox(string caption, bool value = false)
         {
-            var checkbox = this.Container.NewCheckBox(string.Empty, caption);
+            var checkbox = this.Container.NewCheckBox(caption);
             checkbox.Checked = value;
             this.Control = checkbox;
             return this;
@@ -232,7 +233,7 @@
 
         public UILayoutBuilder Slider(int value, int min = 0, int max = 100)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, 1, value);
             slider.TextType = UIRangeTextType.Caption;
             this.Control = slider;
@@ -246,7 +247,7 @@
                 throw new ArgumentNullException(nameof(lookup));
             }
 
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(0, lookup.Length - 1, 1, value);
             slider.TextType = UIRangeTextType.Caption;
             slider.Lookup = lookup;
@@ -255,22 +256,24 @@
         }
 
         public UILayoutBuilder SliderFloat(float value, float min, float max, float step,
+            UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, step, value);
-            slider.TextType = UIRangeTextType.Value;
+            slider.TextType = textType;
             slider.TextFlags = flags;
             this.Control = slider;
             return this;
         }
 
-        public UILayoutBuilder SliderInt(int value, int min, int max, int step,
+        public UILayoutBuilder SliderInt(int value, int min, int max, int step, 
+            UIRangeTextType textType = UIRangeTextType.Value,
             UIRangeTextFlags flags = UIRangeTextFlags.None)
         {
-            var slider = this.Container.NewSlider(string.Empty);
+            var slider = this.Container.NewSlider();
             slider.Setup(min, max, step, value);
-            slider.TextType = UIRangeTextType.Value;
+            slider.TextType = textType;
             slider.TextFlags = UIRangeTextFlags.Decimal | flags;
             this.Control = slider;
             return this;
@@ -278,7 +281,7 @@
 
         public UILayoutBuilder Image(float width, float height, Image img = null, bool center = false)
         {
-            var image = this.Container.NewImage(string.Empty, img);
+            var image = this.Container.NewImage(img);
             image.Center = center;
             image.Stretch = true;
             image.BorderSize = 1;
@@ -291,7 +294,7 @@
 
         public UILayoutBuilder Progress(float min, float max, float step)
         {
-            var progress = this.Container.NewProgressBar(string.Empty);
+            var progress = this.Container.NewProgressBar();
             progress.Setup(min, max, step, 0.0f);
             this.Control = progress;
             return this;

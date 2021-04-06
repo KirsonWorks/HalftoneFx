@@ -1,29 +1,20 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using System.Drawing;
-
     public class UILayer : UIControl
     {
         public UILayer() : base()
         {
-            this.HandleEvents = false;
-        }
-
-        protected override void DoParentResize(SizeF deltaSize)
-        {
-            this.UpdateSize();
+            this.HandleMouseEvents = false;
+            this.Anchors = UIAnchors.All;
         }
 
         protected override void DoParentChanged()
         {
-            this.UpdateSize();
-        }
+            base.DoParentChanged();
 
-        private void UpdateSize()
-        {
-            if (this.Parent is UIManager parent)
+            if (this.Parent is UIControl parent)
             {
-                this.Size = parent.Size;
+                this.Size = parent.ClientSize;
             }
         }
     }

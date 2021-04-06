@@ -74,19 +74,14 @@
             return (byte)this.Clamp(value, byte.MinValue, byte.MaxValue);
         }
 
-        protected float Snap(float value, float step)
+        protected int Snap(int value, int step)
         {
-            if (step == 0)
-            {
-                return value;
-            }
-
-            return (float)Math.Floor((value + 0.5f * step) / step) * step;
+            return step > 0 ? (value + step / 2) / step * step : value;
         }
 
         protected byte StepByte(byte a, byte b)
         {
-            return (byte)(a > b ? 255 : 0);
+            return (byte)(a >= b ? 255 : 0);
         }
 
         protected virtual void DoValueChanged()

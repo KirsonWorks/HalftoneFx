@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
     
     using System;
     using System.Drawing;
@@ -10,6 +10,8 @@
         private Image image;
 
         private string path;
+
+        private Size imageSize;
 
         public event EventHandler OnImageChanged = delegate { };
 
@@ -25,14 +27,10 @@
             get => this.image;
 
             set
-            {   
+            {
                 this.image = value;
-
-                if (this.AutoSize && this.image != null)
-                {
-                    this.Size = this.image.Size;
-                }
-
+                this.imageSize = value != null ? value.Size : System.Drawing.Size.Empty;
+                this.UpdatePreferredSize();
                 this.OnImageChanged(this, EventArgs.Empty);
             }
         }
@@ -64,14 +62,9 @@
             return this.Image != null;
         }
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetPreferredSize()
         {
-            if (this.HasImage())
-            {
-                return this.Image.Size;
-            }
-
-            return base.GetFittedSize();
+            return this.imageSize;
         }
 
         protected override void DoRender(Graphics graphics)
@@ -86,9 +79,12 @@
                 graphics.DrawBorder(this.ScreenRect, this.BorderColor, 0, -this.BorderSize);
             }
 
+            var interpolationMode = graphics.InterpolationMode;
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+
             if (this.AutoSize)
             {
-                graphics.DrawImage(this.Image, this.ScreenPosition);
+                graphics.DrawImage(this.Image, Point.Round(this.ScreenPosition));
             }
             else
             {
@@ -96,16 +92,19 @@
 
                 if (this.Stretch)
                 {
-                    cropRect = new RectangleF(PointF.Empty, this.Image.Size);
+                    cropRect = new RectangleF(PointF.Empty, this.imageSize);
                 }
                 else if (this.Center)
                 {
-                    cropRect.X = (this.Image.Width - this.Width) / 2;
-                    cropRect.Y = (this.Image.Height - this.Height) / 2;
+                    cropRect.X = (this.imageSize.Width - this.Width) / 2;
+                    cropRect.Y = (this.imageSize.Height - this.Height) / 2;
                 }
 
-                graphics.DrawImage(this.Image, this.ScreenRect, cropRect, GraphicsUnit.Pixel);
+                graphics.DrawImage(this.Image, Rectangle.Round(this.ScreenRect),
+                    Rectangle.Round(cropRect), GraphicsUnit.Pixel);
             }
+
+            graphics.InterpolationMode = interpolationMode;
         }
     }
 }

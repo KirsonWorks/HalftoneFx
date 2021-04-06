@@ -11,7 +11,7 @@
 
         public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
-            r = g = b = this.ClampByte((int)(r * 0.2989 + g * 0.5870 + b * 0.1140));
+            r = g = b = this.ClampByte((r * 19595 + g * 38470 + b * 7471) >> 16);
         }
     }
 }

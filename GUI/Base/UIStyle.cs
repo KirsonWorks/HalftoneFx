@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
 
-namespace GUI
+namespace KWUI
 {
     using ColorPair = KeyValuePair<string, Color>;
 
@@ -31,7 +31,11 @@ namespace GUI
 
         public Color Window { get; set; }
 
-        public Color WindowTitle { get; set; }
+        public Color WindowBar { get; set; }
+
+        public Color WindowCaption { get; set; }
+
+        public Color WindowShadow { get; set; }
 
         public Color Button { get; set; }
 
@@ -113,6 +117,51 @@ namespace GUI
         public Font Description { get; set; } = new Font("Microsoft Sans Serif", 9);
     }
 
+    public class UIShapes
+    {
+        public PointF[] CheckMark = new PointF[]
+        {
+            new PointF(0.05f, 0.4f),
+            new PointF(0.25f, 0.4f),
+            new PointF(0.45f, 0.675f),
+            new PointF(0.75f, 0.05f),
+            new PointF(0.95f, 0.05f),
+            new PointF(0.475f, 0.95f),
+        };
+
+        public PointF[] Cross = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.3f, 0.1f),
+            new PointF(0.5f, 0.4f),
+            new PointF(0.7f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.6f, 0.5f),
+            new PointF(0.9f, 0.9f),
+            new PointF(0.7f, 0.9f),
+            new PointF(0.5f, 0.6f),
+            new PointF(0.3f, 0.9f),
+            new PointF(0.1f, 0.9f),
+            new PointF(0.4f, 0.5f),
+        };
+
+        public PointF[] Upperscore = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.9f, 0.3f),
+            new PointF(0.1f, 0.3f),
+        };
+
+        public PointF[] Square = new PointF[]
+        {
+            new PointF(0.1f, 0.1f),
+            new PointF(0.9f, 0.1f),
+            new PointF(0.9f, 0.9f),
+            new PointF(0.1f, 0.9f),
+        };
+    }
+
     public class UIStyle
     {
         public int Padding { get; set; } = 5;
@@ -123,15 +172,21 @@ namespace GUI
 
         public int WindowRounding { get; set; } = 5;
 
+        public float WindowBarSize { get; set; } = 24;
+
+        public float WindowShadowSize { get; set; } = 3.5f;
+
         public float ToggleSize { get; set; } = 20;
 
         public float SliderGrabSize { get; set; } = 15;
 
-        public float InnerShrink { get; set; } = 3.5F;
+        public float InnerShrink { get; set; } = 3.5f;
 
         public UIFonts Fonts { get; } = new UIFonts();
 
         public UIColors Colors { get; } = new UIColors();
+
+        public UIShapes Shapes { get; } = new UIShapes();
 
         public UIStyle()
         {
@@ -169,7 +224,9 @@ namespace GUI
             this.Colors.CheckMark = Color.ForestGreen;
 
             this.Colors.Window = Color.FromArgb(255, 28, 38, 43);
-            this.Colors.WindowTitle = Color.FromArgb(255, 23, 31, 36);
+            this.Colors.WindowBar = Color.FromArgb(255, 23, 31, 36);
+            this.Colors.WindowCaption = Color.FromArgb(255, 242, 244, 249);
+            this.Colors.WindowShadow = Color.FromArgb(100, 0, 0, 0);
 
             this.Colors.SliderGrab = Color.FromArgb(255, 71, 143, 255);
             this.Colors.SliderGrabActive = Color.Crimson;

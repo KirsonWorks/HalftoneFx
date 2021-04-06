@@ -1,6 +1,6 @@
 ﻿namespace HalftoneFx.UI
 {
-    using GUI;
+    using KWUI;
 
     using System;
     using System.Diagnostics;
@@ -84,8 +84,7 @@
                 if (this.idleInterval.ElapsedMilliseconds >= 1000 / 60)
                 {   
                     this.idleInterval.Restart();
-                    this.container.Refresh();
-                    this.container.Invalidate();
+                    this.Refresh();
                 }
             }
         }
@@ -93,13 +92,12 @@
         private void ResizeHandler(object sender, EventArgs e)
         {
             this.Size = this.container.ClientSize;
-            this.container.Invalidate();
+            this.Refresh();
         }
 
         private void PaintHandler(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(this.Style.Colors.Background);
-
             this.Render(e.Graphics);
         }
 
@@ -112,7 +110,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseDown(this, args);
+            HandleMouseDown(this.TopLevelControl, args);
         }
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -124,8 +122,7 @@
                 Button = UIMouseEventArgs.ParseButtonType(e.Button.ToString())
             };
 
-            this.CursorPosition = e.Location;
-            HandleMouseMove(this, args);
+            HandleMouseMove(this.TopLevelControl, args);
         }
 
         private void MouseUpHandler(object sender, MouseEventArgs e)
@@ -137,7 +134,7 @@
                 Clicks = e.Clicks
             };
 
-            HandleMouseUp(this, args);
+            HandleMouseUp(this.TopLevelControl, args);
         }
 
         private void MouseWheelHandler(object sender, MouseEventArgs e)
@@ -149,7 +146,7 @@
                 Delta = e.Delta
             };
 
-            HandleMouseWheel(this, args);
+            HandleMouseWheel(this.TopLevelControl, args);
         }
     }
 }

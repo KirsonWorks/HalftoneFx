@@ -38,12 +38,6 @@
             set => this.halftone.Smoothing.Value = Convert.ToInt32(value);
         }
 
-        public bool Grayscale
-        {
-            get => this.halftone.Grayscale.Value == 1;
-            set => this.halftone.Grayscale.Value = Convert.ToInt32(value);
-        }
-
         public bool Negative
         {
             get => this.halftone.Negative.Value == 1;
@@ -65,6 +59,14 @@
         }
 
         public Range<int> ContrastRange => this.halftone.Contrast.GetRange();
+
+        public int Saturation
+        {
+            get => this.halftone.Saturation.Value;
+            set => this.halftone.Saturation.Value = value;
+        }
+
+        public Range<int> SaturationRange => this.halftone.Saturation.GetRange();
 
         public int Quantization
         {
@@ -120,8 +122,8 @@
 
         public void LoadPicture(Image picture)
         {
-            this.halftone.Image = this.pictureForSave = picture;
             this.view.SetPicture(picture);
+            this.halftone.Image = this.pictureForSave = picture;
         }
 
         public void LoadPictureFromFile(string path)

@@ -1,7 +1,8 @@
-﻿namespace GUI.Editor
+﻿namespace KWUI.Editor
 {
-    using GUI;
-
+    using KWUI;
+    using KWUI.Helpers;
+    using System;
     using System.Drawing;
 
     public class UIToolPan
@@ -29,7 +30,7 @@
 
         public void Reset(PointF location)
         {
-            this.Control?.SetCenterPos(location);
+            this.Control?.SetPositionToCenterFrom(location);
         }
     }
 }

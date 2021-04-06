@@ -45,23 +45,24 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\IImageFilterHelper.cs" />
+    <Compile Include="Misc\IImageFilterHelper.cs" />
     <Compile Include="Generator\HalftoneGenerator.cs" />
     <Compile Include="Generator\HalftoneImage.cs" />
-    <Compile Include="Helpers\UIRangeHelper.cs" />
+    <Compile Include="Misc\UIRangeHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Range{T}.cs" />
+    <Compile Include="Misc\Range{T}.cs" />
     <Compile Include="Presenters\WorkspacePresenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\UILayoutPanel.cs" />
-    <Compile Include="UI\UIPictureBoxPopupMenuItems.cs" />
-    <Compile Include="UI\UIWinForms.cs" />
+    <Compile Include="Views\UI\UIColorPicker.cs" />
+    <Compile Include="Views\UI\UILayoutContainer.cs" />
+    <Compile Include="Views\UI\UIPictureBoxPopupMenuItems.cs" />
+    <Compile Include="Views\UI\UIWinForms.cs" />
     <Compile Include="Views\HalftoneOptionsView.cs" />
     <Compile Include="Views\IView{T}.cs" />
     <Compile Include="Views\PictureOptionsView.cs" />
@@ -98,9 +99,9 @@
       <Project>{1de79f0d-0e2c-4a76-afd5-eb9a05dfb051}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GUI\GUI.csproj">
+    <ProjectReference Include="..\GUI\KWUI.csproj">
       <Project>{827d0c49-d29b-4918-aa9c-53be70c3342b}</Project>
-      <Name>GUI</Name>
+      <Name>KWUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Halftone\Halftone.csproj">
       <Project>{aafc6719-d20d-4d17-9771-9470e90fbe3f}</Project>

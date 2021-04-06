@@ -1,15 +1,18 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System.Drawing;
 
     public class UIStatusBar : UIControl
     {
+        private UIManager manager;
+
         public UIStatusBar() : base()
         {
             this.Height = 26;
-            this.HandleEvents = false;
+            this.HandleMouseEvents = false;
+            this.Anchors = UIAnchors.Left | UIAnchors.Right | UIAnchors.Bottom;
         }
 
         public override string Caption
@@ -28,19 +31,27 @@
                     this.Style.Colors.Text, UIAlign.LeftMiddle, false, false, this.Caption);
         }
 
-        protected override void DoParentResize(SizeF deltaSize)
-        {
-            this.UpdateSize();
-        }
-
         protected override void DoParentChanged()
         {
+            base.DoParentChanged();
+
             if (this.Root is UIManager manager)
             {
+                if (this.manager != null)
+                {
+                    this.manager.OnNotification -= OnManagerNotification;
+                }
+
                 manager.OnNotification += OnManagerNotification;
+                this.manager = manager;
             }
 
-            this.UpdateSize();
+            if (this.Parent is UIControl parent)
+            {
+                var cr = parent.ClientRect;
+                this.SetPosition(0.0f, cr.Height - this.Height);
+                this.SetSize(cr.Width, this.Height);
+            }
         }
 
         private void OnManagerNotification(object sender, UINotificationEventArgs e)
@@ -61,15 +72,6 @@
                         this.Caption = string.Empty;
                         break;
                 }
-            }
-        }
-
-        private void UpdateSize()
-        {
-            if (this.Parent is UIControl parent)
-            {
-                this.SetPosition(0.0f, parent.Height - this.Height);
-                this.Width = parent.Width;
             }
         }
     }

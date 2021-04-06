@@ -40,10 +40,10 @@
         public HalftoneGenerator()
         {
             this.Smoothing = this.filters.Add("Smoothing", new ImageFilterGaussian5x5());
-            this.Grayscale = this.filters.Add("Grayscale", new ImageFilterGrayscale());
             this.Negative = this.filters.Add("Negative", new ImageFilterNegative());
             this.Brightness = this.filters.Add("Brightness", new ImageFilterBrightness());
             this.Contrast = this.filters.Add("Contrast", new ImageFilterContrast());
+            this.Saturation = this.filters.Add("Saturation", new ImageFilterSaturation());
             this.Quantization = this.filters.Add("Quantization", new ImageFilterQuantization());
             this.Dithering = this.filters.Add("Dithering", new ImageFilterDithering());
             
@@ -61,13 +61,13 @@
 
         public IImageFilter Smoothing { get; private set; }
 
-        public IImageFilter Grayscale { get; private set; }
-
         public IImageFilter Negative { get; private set; }
 
         public IImageFilter Brightness { get; private set; }
 
         public IImageFilter Contrast { get; private set; }
+
+        public IImageFilter Saturation { get; private set; }
 
         public IImageFilter Quantization { get; private set; }
 

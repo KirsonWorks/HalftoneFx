@@ -1,7 +1,7 @@
 ﻿namespace HalftoneFx.Views
 {
-    using GUI;
-    using GUI.Controls;
+    using KWUI;
+    using KWUI.Controls;
 
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;
@@ -80,13 +80,13 @@
         {
             var layoutBuilder = new UILayoutBuilder(this.ui);
 
-            this.pictureBox = this.ui.NewPictureBox(string.Empty);
+            this.pictureBox = this.ui.NewPictureBox();
+            this.pictureBox.SetLayoutPreset(UILayoutPreset.Wide);
 
             this.pictureBox.OnZoomChanged += (s, e) =>
                 this.pictureOptions.ValueForZoom(this.pictureBox.Scale);
 
-            this.pictureBox.NewPopupMenu(string.Empty,
-                UIPictureBoxPopupMenuItems.Get(this.pictureBox));
+            this.pictureBox.NewPopupMenu(UIPictureBoxPopupMenuItems.Get(this.pictureBox));
 
             layoutBuilder.Translate(25, 25);
             this.pictureOptions = new PictureOptionsView(layoutBuilder);
@@ -94,7 +94,7 @@
             layoutBuilder.Translate(150, 25);
             this.halftoneOptions = new HalftoneOptionsView(layoutBuilder);
 
-            this.statusBar = this.ui.NewStatusBar(string.Empty);
+            this.statusBar = this.ui.NewStatusBar();
             this.statusBar.ShowControlHints = true;
         }
     }

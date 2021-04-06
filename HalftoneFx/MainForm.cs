@@ -5,7 +5,6 @@
     using HalftoneFx.Views;
 
     using System.Windows.Forms;
-    
 
     public partial class MainForm : Form
     {
@@ -29,7 +28,7 @@
         private void OnFormDragEnter(object sender, DragEventArgs e)
         {
             // And need to check the file extension.
-            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? 
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ?
                 DragDropEffects.All : DragDropEffects.None;
         }
 
@@ -38,6 +37,5 @@
             var filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             this.workspace.LoadPictureFromFile(filenames[0]);
         }
-        
     }
 }

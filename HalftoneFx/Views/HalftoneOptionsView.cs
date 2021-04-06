@@ -1,7 +1,7 @@
 ﻿namespace HalftoneFx.Views
 {
-    using GUI;
-    using GUI.Controls;
+    using KWUI;
+    using KWUI.Controls;
 
     using HalftoneFx.Presenters;
     using HalftoneFx.UI;
@@ -10,7 +10,7 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class HalftoneOptionsView : UILayoutPanel, IView<WorkspacePresenter>
+    public class HalftoneOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
         private UICheckBox checkBoxEnabled;
 
@@ -26,9 +26,17 @@
 
         private UIImage customPattern;
 
+        private UIColorBox colorBoxForeground;
+
+        private UIColorBox colorBoxBackground;
+
         public HalftoneOptionsView(UILayoutBuilder builder)
             : base(builder)
         {
+            this.Container.Caption = "HALFTONE";
+            this.Container.CustomColor("WindowCaption", Color.Gold);
+            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.Show();
         }
 
         public WorkspacePresenter Presenter { get; set; }
@@ -67,12 +75,11 @@
         protected override void BuildLayout(UILayoutBuilder builder)
         {
             builder
-                .CheckBox("HALFTONE")
+                .CheckBox("ENABLED")
                 .Ref(ref checkBoxEnabled)
-                .TextColor(Color.Gold)
                 .Hint("")
                 .Changed(this.OnHalftoneEnabledChanged)
-                
+
                 .Label("GRID TYPE")
                 .Slider(0, new[] { "Square", "Hexagon", "Checkerboard", "Lines", "Columns", "Noise" })
                 .Ref(ref sliderGridType)
@@ -100,7 +107,7 @@
                 .Changing(this.OnShapeSizeByChanging)
 
                 .Label("CELL SIZE")
-                .SliderInt(8, 2, 64, 1)
+                .SliderInt(4, 2, 64, 1)
                 .Ref(ref sliderCellSize)
                 .TextFormat("{0}px")
                 .Changing(this.OnCellSizeChanging)
@@ -112,9 +119,11 @@
 
                 .Label("FOREGROUND")
                 .Add<UIColorBox>()
+                .Ref(ref colorBoxForeground)
 
                 .Label("BACKGROUND")
-                .Add<UIColorBox>();
+                .Add<UIColorBox>()
+                .Ref(ref colorBoxBackground);
         }
         private void OnHalftoneEnabledChanged(object sender, EventArgs e) => 
             this.Presenter.HalftoneEnabled = this.checkBoxEnabled.Checked;

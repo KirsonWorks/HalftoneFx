@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.BaseControls;
+    using KWUI.BaseControls;
 
     public static class UIRangeHelper
     {

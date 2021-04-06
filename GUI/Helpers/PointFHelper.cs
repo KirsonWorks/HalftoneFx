@@ -1,4 +1,4 @@
-﻿namespace GUI.Helpers
+﻿namespace KWUI.Helpers
 {
     using System;
     using System.Drawing;

@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
     using System;
     using System.Drawing;
 
@@ -10,7 +10,7 @@
 
         public UILabel() : base()
         {
-            this.textSize = this.Size = new SizeF(30, 20);
+            this.textSize = SizeF.Empty;
             this.AutoSize = true;
         }
 
@@ -24,6 +24,7 @@
                 {
                     base.Caption = value;
                     this.textSize = GraphicsHelper.StringSize(value, this.Style.Fonts.Default);
+                    this.UpdatePreferredSize();
                 }
             }
         }
@@ -32,7 +33,7 @@
 
         public PointF TextAlign { get; set; } = UIAlign.None;
 
-        protected override SizeF GetFittedSize()
+        protected override SizeF GetPreferredSize()
         {
             return this.textSize;
         }

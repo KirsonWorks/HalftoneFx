@@ -1,6 +1,6 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
-    using GUI.Helpers;
+    using KWUI.Helpers;
 
     using System;
     using System.Drawing;
@@ -27,7 +27,7 @@
 
         public List<UIPopupMenuItem> Items => this.items;
 
-        protected override SizeF GetFittedSize() => this.fittedSize;
+        protected override SizeF GetPreferredSize() => this.fittedSize;
 
         protected override void DoChangeVisibility()
         {
@@ -152,10 +152,12 @@
             this.fittedSize = new SizeF(padding * 2 + itemSize.Width,
                     padding * 2 + ((itemSize.Height + spacing) * this.items.Count - spacing));
 
+            base.UpdatePreferredSize();
+
             if (this.Parent is UIControl parent)
             {
-                var rect = this.ScreenRect.Clamp(parent.ScreenRect);
-                this.SetPosition(rect.Location);
+                var rect = this.ScreenRect.Inside(parent.ScreenRect);
+                this.SetGlobalPosition(rect.Location);
             }
         }
     }

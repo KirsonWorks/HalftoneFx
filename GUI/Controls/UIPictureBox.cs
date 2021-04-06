@@ -1,10 +1,10 @@
-﻿namespace GUI.Controls
+﻿namespace KWUI.Controls
 {
+    using KWUI;
+    using KWUI.Editor;
+
     using System;
     using System.Drawing;
-    
-    using GUI;
-    using GUI.Editor;
 
     public class UIPictureBox : UIControl
     {
@@ -24,7 +24,7 @@
                 Parent = this,
                 Stretch = true,
                 AutoSize = false,
-                HandleEvents = false,
+                HandleMouseEvents = false,
                 BorderColor = Color.LightSlateGray,
             };
 
@@ -43,6 +43,7 @@
         public Image Image
         { 
             get => this.imageControl.Image;
+            
             set 
             {
                 this.imageControl.Image = value;
@@ -116,18 +117,9 @@
             }
         }
 
-        protected override void DoParentResize(SizeF deltaSize)
+        protected override void DoParentResize()
         {
-            if (this.Parent is UIControl parent)
-            {
-                this.Size = parent.Size;
-                this.toolPan.Reset(this.ScreenPositionCenter);
-            }
-        }
-
-        protected override void DoParentChanged()
-        {
-            this.DoParentResize(SizeF.Empty);
+            this.toolPan.Reset(this.ScreenPositionCenter);
         }
 
         protected override void DoMouseInput(UIMouseEventArgs e)
