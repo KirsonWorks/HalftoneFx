@@ -39,7 +39,8 @@
         {
             this.Container.Caption = "PICTURE";
             this.Container.CustomColor("WindowCaption", Color.Gold);
-            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.FeatureOff(UIWindowFeatures.ClosingBox);
+            this.Container.FeatureOn(UIWindowFeatures.ExpandingBox);
             this.Container.Show();
         }
 

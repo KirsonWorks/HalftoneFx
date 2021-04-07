@@ -9,6 +9,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Collections.Generic;
 
     public class HalftoneOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
@@ -35,7 +36,8 @@
         {
             this.Container.Caption = "HALFTONE";
             this.Container.CustomColor("WindowCaption", Color.Gold);
-            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.FeatureOff(UIWindowFeatures.ClosingBox);
+            this.Container.FeatureOn(UIWindowFeatures.ExpandingBox);
             this.Container.Show();
         }
 
@@ -102,7 +104,7 @@
                 .Ref(ref customPattern)
 
                 .Label("SIZE BY")
-                .Slider(0, new[] { "None", "Brightness", "Brightness Inv", "Dithering 2x2", "Dithering 4x4", "Dithering 8x8", "Alpha" })
+                .Slider(0, new[] { "None", "Brightness", "Brightness Inv", "Alpha" })
                 .Ref(ref sliderShapeSizeBy)
                 .Changing(this.OnShapeSizeByChanging)
 
@@ -125,9 +127,19 @@
                 .Add<UIColorBox>()
                 .Ref(ref colorBoxBackground);
         }
-        private void OnHalftoneEnabledChanged(object sender, EventArgs e) => 
-            this.Presenter.HalftoneEnabled = this.checkBoxEnabled.Checked;
-        
+        private void OnHalftoneEnabledChanged(object sender, EventArgs e)
+        {
+            var @checked = this.checkBoxEnabled.Checked;
+            this.Presenter.HalftoneEnabled = @checked;
+
+            var dependents = new List<UIControl>();
+            dependents.AddRange(this.Container.GetChildren<UILabel>());
+            dependents.AddRange(this.Container.GetChildren<UISlider>());
+            dependents.AddRange(this.Container.GetChildren<UIButton>());
+            dependents.AddRange(this.Container.GetChildren<UIColorBox>());
+            dependents.ForEach(control => control.Enabled = @checked);
+        }
+
         private void OnGridTypeChanging(object sender, EventArgs e) =>
             this.Presenter.GridType = (int)this.sliderGridType.Value;
 

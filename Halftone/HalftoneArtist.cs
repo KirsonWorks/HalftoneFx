@@ -1,7 +1,5 @@
 ﻿namespace Halftone
 {
-    using Common;
-
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -12,9 +10,6 @@
         None,
         Brightness,
         BrightnessInv,
-        Dithering2x2,
-        Dithering4x4,
-        Dithering8x8,
         Alpha,
         Max
     }
@@ -160,14 +155,13 @@
 
             var width = image.Width;
             var height = image.Height;
-            var bayer = CreateBayerMatrix();
             var result = new Bitmap(width, height);
             var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var shapeSizing = (HalftoneShapeSizeBy)this.ShapeSizeBy;
             var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
-            IShapePattern pattern = this.customPattern != null ? 
+            IShapePattern pattern = this.customPattern != null ?
                     new ShapePatternCustom(this.CustomPattern) :
                     ShapePatternFactory.GetPattern((HalftoneShapeType)this.shapeType);
             
@@ -215,19 +209,12 @@
                             case HalftoneShapeSizeBy.Alpha:
                                 scale = (float)color.A / 255.0f;
                                 break;
-
-                            case HalftoneShapeSizeBy.Dithering2x2:
-                            case HalftoneShapeSizeBy.Dithering4x4:
-                            case HalftoneShapeSizeBy.Dithering8x8:
-                                var mid = (color.R + color.B + color.G) / 3;
-                                scale = mid > bayer[cell.X, cell.Y] ? mid / 255.0f : 0.0f;
-                                break;
                         }
 
                         if (scale > float.Epsilon)
                         {
                             var size = shapeSize * scale;
-                            var offset = ((float)cellSize / 2) - (size / 2);
+                            var offset = ((float)cellSize - size) / 2;
                             var rect = new RectangleF(cell.X + offset, cell.Y + offset, size, size);
 
                             pattern.Draw(graphics, rect, color);
@@ -249,24 +236,6 @@
         private void DoPropertyChanged()
         {
             this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private BayerMatrix CreateBayerMatrix()
-        {
-            switch ((HalftoneShapeSizeBy)this.ShapeSizeBy)
-            {
-                case HalftoneShapeSizeBy.Dithering2x2:
-                    return new BayerMatrix(1);
-
-                case HalftoneShapeSizeBy.Dithering4x4:
-                    return new BayerMatrix(2);
-  
-                case HalftoneShapeSizeBy.Dithering8x8:
-                    return new BayerMatrix(3);
-
-                default:
-                    return new BayerMatrix(0);
-            }
         }
     }
 }
