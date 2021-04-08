@@ -22,11 +22,11 @@
         public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             int lum = r * 19595 + g * 38470 + b * 7471;
-            int lumMask = lum >> 16;
+            int lumrgb = lum >> 16;
 
-            b = this.ClampByte(lum + (b - lumMask) * this.factor >> 16);
-            g = this.ClampByte(lum + (g - lumMask) * this.factor >> 16);
-            r = this.ClampByte(lum + (r - lumMask) * this.factor >> 16);
+            b = this.ClampByte(lum + (b - lumrgb) * this.factor >> 16);
+            g = this.ClampByte(lum + (g - lumrgb) * this.factor >> 16);
+            r = this.ClampByte(lum + (r - lumrgb) * this.factor >> 16);
         }
     }
 }

@@ -22,6 +22,8 @@
 
         private UICheckBox checkBoxNegative;
 
+        private UISlider sliderPalette;
+
         private UISlider sliderBrightness;
 
         private UISlider sliderContrast;
@@ -65,6 +67,9 @@
         public void ValueForNegative(bool value) =>
             this.checkBoxNegative.Checked = value;
 
+        public void ValueForPalette(int value) =>
+            this.sliderPalette.Value = value;
+
         public void ValueForBrightness(int value) =>
             this.sliderBrightness.Value = value;
 
@@ -82,6 +87,7 @@
 
         public void SetUp()
         {
+            this.sliderPalette.SetRange(this.Presenter.PaletteRange);
             this.sliderBrightness.SetRange(this.Presenter.BrightnessRange);
             this.sliderContrast.SetRange(this.Presenter.ContrastRange);
             this.sliderSaturation.SetRange(this.Presenter.SaturationRange);
@@ -118,6 +124,12 @@
                 .Ref(ref checkBoxNegative)
                 .Hint("On/Off Negative filter")
                 .Changed(this.OnNegativeChanged)
+
+                .Label("PALETTE")
+                .Slider(0, new[] { "None", "Gameboy"})
+                .Ref(ref sliderPalette)
+                .Hint("")
+                .Changing(this.OnPaletteChanging)
 
                 .Label("BRIGHTNESS")
                 .SliderInt(0, 0, 0, 1, flags: UIRangeTextFlags.PlusSign)
@@ -165,6 +177,9 @@
         
         private void OnNegativeChanged(object sender, EventArgs e) =>
             this.Presenter.Negative = this.checkBoxNegative.Checked;
+
+        private void OnPaletteChanging(object sender, EventArgs e) =>
+            this.Presenter.Palette = (int)this.sliderPalette.Value;
 
         private void OnBrightnessChanging(object sender, EventArgs e) => 
             this.Presenter.Brightness = (int)this.sliderBrightness.Value;

@@ -5,6 +5,8 @@
     using HalftoneFx.Views;
 
     using System.Windows.Forms;
+    using System.Drawing;
+    using System;
 
     public partial class MainForm : Form
     {
@@ -23,6 +25,24 @@
             };
             
             this.workspace = new WorkspacePresenter(new WorkspaceView(this.ui));
+
+            var c1 = Color.Red;
+            var c2 = Color.FromArgb(0xff55ff);
+            var c3 = Color.Blue;
+
+            Console.WriteLine(c1.GetHue());
+            Console.WriteLine(c2.GetHue());
+            Console.WriteLine(c3.GetHue());
+            
+            Console.WriteLine();
+            Console.WriteLine(c1.GetSaturation());
+            Console.WriteLine(c2.GetSaturation());
+            Console.WriteLine(c3.GetSaturation());
+
+            Console.WriteLine();
+            Console.WriteLine(c1.GetBrightness());
+            Console.WriteLine(c2.GetBrightness());
+            Console.WriteLine(c3.GetBrightness());
         }
 
         private void OnFormDragEnter(object sender, DragEventArgs e)

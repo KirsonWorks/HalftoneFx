@@ -39,14 +39,37 @@
 
         public HalftoneGenerator()
         {
-            this.Smoothing = this.filters.Add("Smoothing", new ImageFilterGaussian5x5());
-            this.Negative = this.filters.Add("Negative", new ImageFilterNegative());
-            this.Brightness = this.filters.Add("Brightness", new ImageFilterBrightness());
-            this.Contrast = this.filters.Add("Contrast", new ImageFilterContrast());
-            this.Saturation = this.filters.Add("Saturation", new ImageFilterSaturation());
-            this.Quantization = this.filters.Add("Quantization", new ImageFilterQuantization());
-            this.Dithering = this.filters.Add("Dithering", new ImageFilterDithering());
-            
+            this.Smoothing = new ImageFilterGaussian5x5();
+            this.filters.Add(this.Smoothing);
+
+            this.Negative = new ImageFilterNegative();
+            this.filters.Add(this.Negative);
+
+            this.Brightness = new ImageFilterBrightness();
+            this.filters.Add(this.Brightness);
+
+            this.Contrast = new ImageFilterContrast();
+            this.filters.Add(this.Contrast);
+
+            this.Saturation = new ImageFilterSaturation();
+            this.filters.Add(this.Saturation);
+
+            this.Quantization = new ImageFilterQuantization();
+            this.filters.Add(this.Quantization);
+
+            this.Dithering = new ImageFilterDithering();
+            this.filters.Add(this.Dithering);
+
+            this.Palettes = new ImageFilterPalettes();
+            this.filters.Add(this.Palettes);
+
+            // For testing
+            this.Palettes.AddPalette(new[] {
+                Color.FromArgb(0x081820),
+                Color.FromArgb(0x346856),
+                Color.FromArgb(0x88c070),
+                Color.FromArgb(0xe0f8d0)});
+
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
         }
@@ -72,6 +95,8 @@
         public IImageFilter Quantization { get; private set; }
 
         public IImageFilter Dithering { get; private set; }
+
+        public ImageFilterPalettes Palettes { get; private set; }
 
         public int GridType
         {

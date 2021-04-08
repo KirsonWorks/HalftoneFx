@@ -44,6 +44,14 @@
             set => this.halftone.Negative.Value = Convert.ToInt32(value);
         }
 
+        public int Palette
+        {
+            get => this.halftone.Palettes.Value;
+            set => this.halftone.Palettes.Value = value;
+        }
+
+        public Range<int> PaletteRange => this.halftone.Palettes.GetRange();
+
         public int Brightness
         {
             get => this.halftone.Brightness.Value;
