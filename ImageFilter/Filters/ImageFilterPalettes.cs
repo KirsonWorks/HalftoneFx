@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace ImageFilter
 {
@@ -19,6 +20,15 @@ namespace ImageFilter
         {
             this.palettes.Add(palette);
             this.MaxValue = this.palettes.Count;
+        }
+
+        public void AddPalette(params int[] colors)
+        {
+            var palette = colors
+                .Select(c => Color.FromArgb(c))
+                .ToArray();
+
+            this.AddPalette(palette);
         }
 
         public override bool HasEffect() => this.Value > 0;

@@ -26,7 +26,7 @@
 
         private float cellScale = 1.0f;
 
-        private bool enabled = true;
+        private bool enabled = false;
 
         private bool transparentBg = true;
 

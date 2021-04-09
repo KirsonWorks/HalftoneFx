@@ -64,11 +64,30 @@
             this.filters.Add(this.Palettes);
 
             // For testing
-            this.Palettes.AddPalette(new[] {
-                Color.FromArgb(0x081820),
-                Color.FromArgb(0x346856),
-                Color.FromArgb(0x88c070),
-                Color.FromArgb(0xe0f8d0)});
+
+            // CGA
+            this.Palettes.AddPalette(
+                0x000000, 0x0000aa, 0x00aa00, 0x00aaaa,
+                0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
+                0x555555, 0x5555ff, 0x55ff55, 0x55ffff,
+                0xff5555, 0xff55ff, 0xffff55, 0xffffff
+                );
+
+            // CGA0
+            this.Palettes.AddPalette(0x000000, 0x00aa00, 0xaa0000, 0xaa5500);
+            
+            // CGA1
+            this.Palettes.AddPalette(0x000000, 0x00aaaa, 0xaa00aa, 0xaaaaaa);
+
+            // Game Boy
+            this.Palettes.AddPalette(0x081820, 0x346856, 0x88c070, 0xe0f8d0);
+
+            // Old school
+            this.Palettes.AddPalette(0x058789, 0x503d2e, 0xd54b1a, 0xe3a72f, 0xf0ecc9);
+            
+            // Retro
+            this.Palettes.AddPalette(0x666547, 0xfb2e01, 0x6fcb9f, 0xffe28a, 0xfffeb3);
+
 
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);

@@ -126,7 +126,7 @@
                 .Changed(this.OnNegativeChanged)
 
                 .Label("PALETTE")
-                .Slider(0, new[] { "None", "Gameboy"})
+                .Slider(0, new[] { "None", "CGA", "CGA0", "CGA1", "Game Boy", "Old school", "Retro", })
                 .Ref(ref sliderPalette)
                 .Hint("")
                 .Changing(this.OnPaletteChanging)
