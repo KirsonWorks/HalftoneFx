@@ -33,12 +33,16 @@
 
         private readonly HalftoneArtist halftone = new HalftoneArtist();
 
+        private readonly ColorPalettes palettes;
+
         private CancellationTokenSource cancelationToken = null;
 
         private Task<Bitmap> task = null;
 
-        public HalftoneGenerator()
+        public HalftoneGenerator(ColorPalettes palettes)
         {
+            this.palettes = palettes;
+
             this.Smoothing = new ImageFilterGaussian5x5();
             this.filters.Add(this.Smoothing);
 
@@ -60,34 +64,9 @@
             this.Dithering = new ImageFilterDithering();
             this.filters.Add(this.Dithering);
 
-            this.Palettes = new ImageFilterPalettes();
-            this.filters.Add(this.Palettes);
-
-            // For testing
-
-            // CGA
-            this.Palettes.AddPalette(
-                0x000000, 0x0000aa, 0x00aa00, 0x00aaaa,
-                0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
-                0x555555, 0x5555ff, 0x55ff55, 0x55ffff,
-                0xff5555, 0xff55ff, 0xffff55, 0xffffff
-                );
-
-            // CGA0
-            this.Palettes.AddPalette(0x000000, 0x00aa00, 0xaa0000, 0xaa5500);
-            
-            // CGA1
-            this.Palettes.AddPalette(0x000000, 0x00aaaa, 0xaa00aa, 0xaaaaaa);
-
-            // Game Boy
-            this.Palettes.AddPalette(0x081820, 0x346856, 0x88c070, 0xe0f8d0);
-
-            // Old school
-            this.Palettes.AddPalette(0x058789, 0x503d2e, 0xd54b1a, 0xe3a72f, 0xf0ecc9);
-            
-            // Retro
-            this.Palettes.AddPalette(0x666547, 0xfb2e01, 0x6fcb9f, 0xffe28a, 0xfffeb3);
-
+            this.Palette = new ImageFilterPalette();
+            this.Palette.MaxValue = palettes != null ? palettes.Count : 0;
+            this.filters.Add(this.Palette);
 
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
             this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
@@ -115,7 +94,29 @@
 
         public IImageFilter Dithering { get; private set; }
 
-        public ImageFilterPalettes Palettes { get; private set; }
+        public IImageFilter Palette { get; private set; }
+
+        public int PaletteIndex
+        {
+            get => this.Palette.Value;
+
+            set
+            {
+                if (this.palettes == null)
+                {
+                    this.Palette.Value = 0;
+                    return;
+                }
+
+                if (value > 0)
+                {
+                    var palette = this.palettes.GetByIndex(value - 1);
+                    (this.Palette as ImageFilterPalette).SetPalette(palette);
+                }
+
+                this.Palette.Value = value;
+            }
+        }
 
         public int GridType
         {

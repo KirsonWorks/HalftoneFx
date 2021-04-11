@@ -45,6 +45,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generator\ColorPalettes.cs" />
     <Compile Include="Misc\IImageFilterHelper.cs" />
     <Compile Include="Generator\HalftoneGenerator.cs" />
     <Compile Include="Generator\HalftoneImage.cs" />

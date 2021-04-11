@@ -14,6 +14,8 @@
 
         void SetPattern(Image image);
 
+        void UpdatePalettes();
+
         void Error(string text);
     }
 }

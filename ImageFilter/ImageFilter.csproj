@@ -45,7 +45,7 @@
     <Compile Include="Filters\ImageFilterContrast.cs" />
     <Compile Include="Filters\ImageFilterGrayscale.cs" />
     <Compile Include="Filters\ImageFilterNegative.cs" />
-    <Compile Include="Filters\ImageFilterPalettes.cs" />
+    <Compile Include="Filters\ImageFilterPalette.cs" />
     <Compile Include="Filters\ImageFilterQuantization.cs" />
     <Compile Include="Filters\ImageFilterSaturation.cs" />
     <Compile Include="IImageFilter.cs" />

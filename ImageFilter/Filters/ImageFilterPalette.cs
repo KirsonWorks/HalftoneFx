@@ -1,43 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
-namespace ImageFilter
+﻿namespace ImageFilter
 {
-    public class ImageFilterPalettes : ImageFilterNoKernel
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+
+    public class ImageFilterPalette : ImageFilterNoKernel
     {
-        private readonly List<Color[]> palettes = new List<Color[]>();
+        private bool isPaletteChanged;
 
-        private Color[] palette;
+        private IEnumerable<Color> newPalette;
 
-        public ImageFilterPalettes()
+        private Color[] palette = new[] { Color.Black, Color.White };
+
+        public ImageFilterPalette()
             : base()
         {
+            this.MaxValue = 1;
         }
 
-        public void AddPalette(Color[] palette)
+        public void SetPalette(IEnumerable<Color> palette)
         {
-            this.palettes.Add(palette);
-            this.MaxValue = this.palettes.Count;
-        }
-
-        public void AddPalette(params int[] colors)
-        {
-            var palette = colors
-                .Select(c => Color.FromArgb(c))
-                .ToArray();
-
-            this.AddPalette(palette);
+            this.newPalette = palette ?? throw new ArgumentNullException(nameof(palette));
+            this.isPaletteChanged = true;
         }
 
         public override bool HasEffect() => this.Value > 0;
 
         public override void Prepare()
         {
-            this.palette = this.palettes.Count > 0 ?
-                this.palettes[this.Value - 1] :
-                new[] { Color.White, Color.Black };
+            if (this.isPaletteChanged)
+            {
+                this.palette = this.newPalette.ToArray();
+                this.isPaletteChanged = false;
+            }
         }
 
         public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
@@ -48,11 +44,9 @@ namespace ImageFilter
             for (var i = 0; i < palette.Length; i++)
             {
                 var c = palette[i];
-
                 var diffR = ((c.R - r) * 19595) >> 16;
                 var diffG = ((c.G - g) * 38470) >> 16;
                 var diffB = ((c.B - b) * 7471) >> 16;
-
                 var distance = diffR * diffR + diffG * diffG + diffB * diffB;
 
                 if (distance == 0)

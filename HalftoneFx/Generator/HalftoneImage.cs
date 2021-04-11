@@ -13,7 +13,8 @@ namespace HalftoneFx
 
         private Bitmap filtered, thumbnail;
 
-        public HalftoneImage()
+        public HalftoneImage(ColorPalettes palettes)
+            : base(palettes)
         {
             this.OnFilterPropertyChanged += async (s, e) =>
             {

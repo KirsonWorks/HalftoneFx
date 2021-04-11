@@ -4,13 +4,15 @@
     using KWUI.BaseControls;
     using KWUI.Controls;
 
+    using HalftoneFx.UI;
     using HalftoneFx.Helpers;
     using HalftoneFx.Presenters;
-    using HalftoneFx.UI;
-
+    
     using System;
+    using System.Linq;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Collections.Generic;
 
     public class PictureOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
@@ -85,6 +87,13 @@
         public void ValueForDithering(int value) =>
             this.sliderDithering.Value = value;
 
+        public void LookupForPalette(IEnumerable<string> names)
+        {
+            var nameList = new List<string> { "None" };
+            nameList.AddRange(names);
+            this.sliderPalette.Lookup = nameList.ToArray();
+        }
+
         public void SetUp()
         {
             this.sliderPalette.SetRange(this.Presenter.PaletteRange);
@@ -101,6 +110,7 @@
             this.ValueForSaturation(this.Presenter.Saturation);
             this.ValueForQuantization(this.Presenter.Quantization);
             this.ValueForDithering(this.Presenter.Dithering);
+            this.LookupForPalette(this.Presenter.Palettes.GetNames());
         }
 
         protected override void BuildLayout(UILayoutBuilder builder)
@@ -126,7 +136,7 @@
                 .Changed(this.OnNegativeChanged)
 
                 .Label("PALETTE")
-                .Slider(0, new[] { "None", "CGA", "CGA0", "CGA1", "Game Boy", "Old school", "Retro", })
+                .Slider(0, new[] { "None" })
                 .Ref(ref sliderPalette)
                 .Hint("")
                 .Changing(this.OnPaletteChanging)
@@ -179,7 +189,7 @@
             this.Presenter.Negative = this.checkBoxNegative.Checked;
 
         private void OnPaletteChanging(object sender, EventArgs e) =>
-            this.Presenter.Palette = (int)this.sliderPalette.Value;
+            this.Presenter.PaletteIndex = (int)this.sliderPalette.Value;
 
         private void OnBrightnessChanging(object sender, EventArgs e) => 
             this.Presenter.Brightness = (int)this.sliderBrightness.Value;
@@ -196,7 +206,6 @@
         private void OnDitheringChanging(object sender, EventArgs e) => 
             this.Presenter.Dithering = (int)this.sliderDithering.Value;
         
-
         private void OnLoadClick(object sender, EventArgs e)
         {
             using (var dialog = new OpenFileDialog())
@@ -209,6 +218,7 @@
                 }
             }
         }
+
         private void OnSaveClick(object sender, EventArgs e)
         {
             using (var dialog = new SaveFileDialog())

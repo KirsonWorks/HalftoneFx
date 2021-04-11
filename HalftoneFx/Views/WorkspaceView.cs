@@ -71,6 +71,11 @@
             this.ui.Refresh();
         }
 
+        public void UpdatePalettes()
+        {
+            this.pictureOptions.LookupForPalette(this.Presenter.Palettes.GetNames());
+        }
+
         public void Error(string text)
         {
             MessageBox.Show(text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
