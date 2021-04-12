@@ -59,6 +59,11 @@
 
                         for (var x = 0; x < widthInBytes; x += channels)
                         {
+                            if (options.CancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
                             for (var i = 0; i < kernelOffsets.Length; i++)
                             {
                                 var px = x + kernelOffsets[i].X * channels;

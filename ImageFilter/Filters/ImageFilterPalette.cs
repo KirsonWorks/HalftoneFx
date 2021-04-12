@@ -41,9 +41,14 @@
             var index = 0;
             int maxDistance = int.MaxValue;
 
-            for (var i = 0; i < palette.Length; i++)
+            for (var i = 0; i < this.palette.Length; i++)
             {
-                var c = palette[i];
+                if (this.isPaletteChanged)
+                {
+                    return;
+                }
+
+                var c = this.palette[i];
                 var diffR = ((c.R - r) * 19595) >> 16;
                 var diffG = ((c.G - g) * 38470) >> 16;
                 var diffB = ((c.B - b) * 7471) >> 16;
@@ -62,10 +67,13 @@
                 }
             }
 
-            var color = palette[index];
-            r = color.R;
-            g = color.G;
-            b = color.B;
+            //if (index < this.palette.Length) // I don't want to use the lockers for profit.
+            {
+                var color = this.palette[index];
+                r = color.R;
+                g = color.G;
+                b = color.B;
+            }
         }
     }
 }

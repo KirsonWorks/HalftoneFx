@@ -64,8 +64,11 @@
             this.Dithering = new ImageFilterDithering();
             this.filters.Add(this.Dithering);
 
-            this.Palette = new ImageFilterPalette();
-            this.Palette.MaxValue = palettes != null ? palettes.Count : 0;
+            this.Palette = new ImageFilterPalette
+            {
+                MaxValue = palettes != null ? palettes.Count : 0
+            };
+
             this.filters.Add(this.Palette);
 
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
