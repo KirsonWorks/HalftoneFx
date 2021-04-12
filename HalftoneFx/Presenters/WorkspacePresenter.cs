@@ -16,8 +16,6 @@
 
         private readonly HalftoneImage image;
 
-        private readonly ColorPalettes palettes;
-
         private Image pictureForSave;
 
         public WorkspacePresenter(IWorkspaceView view)
@@ -25,11 +23,11 @@
             this.view = view ?? throw new ArgumentNullException(nameof(view));
             this.view.Presenter = this;
 
-            this.palettes = new ColorPalettes();
-            this.palettes.OnAdded += OnPalettesChanged;
-            this.palettes.OnRemoved += OnPalettesChanged;
+            this.Palettes = new ColorPalettes();
+            this.Palettes.OnAdded += OnPalettesChanged;
+            this.Palettes.OnRemoved += OnPalettesChanged;
 
-            this.image = new HalftoneImage(this.palettes);
+            this.image = new HalftoneImage(this.Palettes);
             this.image.OnProgress += OnProgress;
             this.image.OnImageAvailable += this.OnImageAvailable;
             this.image.OnThumbnailAvailable += this.OnThumbnailAvailable;
@@ -56,9 +54,9 @@
             set => this.image.PaletteIndex = value;
         }
 
-        public ColorPalettes Palettes => this.palettes;
+        public ColorPalettes Palettes { get; }
 
-        public Range<int> PaletteRange => new Range<int>(0, this.palettes.Count);
+        public Range<int> PaletteRange => new Range<int>(0, this.Palettes.Count);
 
         public int Brightness
         {
@@ -224,7 +222,7 @@
 
         private void OnPalettesChanged(object sender, EventArgs e)
         {
-            this.image.Palette.MaxValue = this.palettes.Count;
+            this.image.Palette.MaxValue = this.Palettes.Count;
             this.view.UpdatePalettes();
         }
     }

@@ -39,142 +39,55 @@
         public int GridType
         {
             get => this.gridType;
-
-            set
-            {
-                if (this.gridType != value)
-                {
-                    this.gridType = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref gridType, value);
         }
 
         public int ShapeType
         {
             get => this.shapeType;
-
-            set
-            {
-                if (this.shapeType != value)
-                {
-                    this.shapeType = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref shapeType, value);
         }
 
         public int ShapeSizeBy
         {
             get => this.shapeSizeBy;
-
-            set
-            {
-                if (this.shapeSizeBy != value)
-                {
-                    this.shapeSizeBy = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref shapeSizeBy, value);
         }
 
         public int CellSize
         {
             get => this.cellSize;
-
-            set
-            {
-                if (this.cellSize != value)
-                {
-                    this.cellSize = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref cellSize, value);
         }
 
         public float CellScale
         {
             get => this.cellScale;
-            
-            set
-            {
-                var val = Math.Max(0, value);
-
-                if (this.cellScale != val)
-                {
-                    this.cellScale = val;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref cellScale, Math.Max(0, value));
         }
 
         public bool Enabled
         {
             get => this.enabled;
-
-            set
-            {
-                if (this.enabled != value)
-                {
-                    this.enabled = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref enabled, value);
         }
-
-        /*
-        public bool TransparentBg
-        {
-            get => this.transparentBg;
-
-            set
-            {
-                if (this.transparentBg != value)
-                {
-                    this.transparentBg = value;
-                    this.DoPropertyChanged();
-                }
-            }
-        }
-        */
 
         public Color ForegroundColor
         {
             get => this.fgColor;
-
-            set
-            {
-                if (this.fgColor != value)
-                {
-                    this.fgColor = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref fgColor, value);
         }
 
         public Color BackgroundColor
         {
             get => this.bgColor;
-
-            set
-            {
-                if (this.bgColor != value)
-                {
-                    this.bgColor = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref bgColor, value);
         }
 
         public Image CustomPattern
         {
             get => this.customPattern;
-
-            set
-            {
-                this.customPattern = value;
-                this.DoPropertyChanged();
-            }
+            set => this.DoPropertyChanged(ref customPattern, value);
         }
 
         public Bitmap Generate(Bitmap image, Action<float> progress, CancellationToken token)
@@ -194,9 +107,9 @@
             var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
             IShapePattern pattern = this.customPattern != null ?
-                    new ShapePatternCustom(this.CustomPattern) :
+                    new ShapePatternCustom(this.customPattern) :
                     ShapePatternFactory.GetPattern((HalftoneShapeType)this.shapeType);
-            
+
             using (var graphics = Graphics.FromImage(result))
             {
                 if (!this.bgColor.IsEmpty && this.bgColor.A > 0)
@@ -215,8 +128,8 @@
                     var cell = grid.Current;
                     var xPixel = Math.Min(cell.X + halfSize, width - 1);
                     var yPixel = Math.Min(cell.Y + halfSize, height - 1);
-                    var color = image.GetPixel(xPixel, yPixel);
-
+                    var color = image.GetPixel(cell.X, cell.Y);
+                    
                     if (color.A != 0)
                     {
                         var scale = 1.0f;
@@ -263,9 +176,13 @@
             return result;
         }
 
-        private void DoPropertyChanged()
+        private void DoPropertyChanged<T>(ref T obj, T value)
         {
-            this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
+            if (obj == null || !obj.Equals(value))
+            {
+                obj = value;
+                this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }
