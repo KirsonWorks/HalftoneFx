@@ -279,6 +279,18 @@
             return this;
         }
 
+        public UILayoutBuilder SliderInt(int min, int max, int step,
+            UIRangeTextType textType = UIRangeTextType.Value,
+            UIRangeTextFlags flags = UIRangeTextFlags.None)
+        {
+            var slider = this.Container.NewSlider();
+            slider.Setup(min, max, step);
+            slider.TextType = textType;
+            slider.TextFlags = UIRangeTextFlags.Decimal | flags;
+            this.Control = slider;
+            return this;
+        }
+
         public UILayoutBuilder Image(float width, float height, Image img = null, bool center = false)
         {
             var image = this.Container.NewImage(img);
@@ -297,6 +309,13 @@
             var progress = this.Container.NewProgressBar();
             progress.Setup(min, max, step, 0.0f);
             this.Control = progress;
+            return this;
+        }
+
+        public UILayoutBuilder ColorBox()
+        {
+            var colorBox = this.Container.NewColorBox();
+            this.Control = colorBox;
             return this;
         }
 

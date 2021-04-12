@@ -67,13 +67,10 @@
                 }
             }
 
-            //if (index < this.palette.Length) // I don't want to use the lockers for profit.
-            {
-                var color = this.palette[index];
-                r = color.R;
-                g = color.G;
-                b = color.B;
-            }
+            var color = this.palette[index];
+            r = color.R;
+            g = color.G;
+            b = color.B;
         }
     }
 }

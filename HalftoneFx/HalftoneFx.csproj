@@ -63,6 +63,7 @@
     <Compile Include="Views\UI\UIColorPicker.cs" />
     <Compile Include="Views\UI\UILayoutContainer.cs" />
     <Compile Include="Views\UI\UIPictureBoxPopupMenuItems.cs" />
+    <Compile Include="Views\UI\UIPopupColorPicker.cs" />
     <Compile Include="Views\UI\UIWinForms.cs" />
     <Compile Include="Views\HalftoneOptionsView.cs" />
     <Compile Include="Views\IView{T}.cs" />

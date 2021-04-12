@@ -28,7 +28,9 @@
 
         private bool enabled = false;
 
-        private bool transparentBg = true;
+        private Color fgColor = Color.FromArgb(0, Color.White);
+
+        private Color bgColor = Color.FromArgb(0, Color.Black);
 
         private Image customPattern;
 
@@ -120,6 +122,7 @@
             }
         }
 
+        /*
         public bool TransparentBg
         {
             get => this.transparentBg;
@@ -129,6 +132,35 @@
                 if (this.transparentBg != value)
                 {
                     this.transparentBg = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+        */
+
+        public Color ForegroundColor
+        {
+            get => this.fgColor;
+
+            set
+            {
+                if (this.fgColor != value)
+                {
+                    this.fgColor = value;
+                    this.DoPropertyChanged();
+                }
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get => this.bgColor;
+
+            set
+            {
+                if (this.bgColor != value)
+                {
+                    this.bgColor = value;
                     this.DoPropertyChanged();
                 }
             }
@@ -167,16 +199,9 @@
             
             using (var graphics = Graphics.FromImage(result))
             {
-                if (!this.transparentBg)
+                if (!this.bgColor.IsEmpty && this.bgColor.A > 0)
                 {
-                    if (shapeSizing == HalftoneShapeSizeBy.BrightnessInv)
-                    {
-                        graphics.Clear(Color.White);
-                    }
-                    else
-                    {
-                        graphics.Clear(Color.Black);
-                    }
+                    graphics.Clear(this.bgColor);
                 }
 
                 graphics.SmoothingMode = pattern.AntialiasingRequired() ? 
@@ -216,6 +241,11 @@
                             var size = shapeSize * scale;
                             var offset = ((float)cellSize - size) / 2;
                             var rect = new RectangleF(cell.X + offset, cell.Y + offset, size, size);
+
+                            if (!this.fgColor.IsEmpty && this.fgColor.A > 0)
+                            {
+                                color = this.fgColor;
+                            }
 
                             pattern.Draw(graphics, rect, color);
                         }

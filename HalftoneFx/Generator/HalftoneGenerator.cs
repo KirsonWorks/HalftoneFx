@@ -157,10 +157,16 @@
             set => this.halftone.Enabled = value;
         }
 
-        public bool TransparentBg
+        public Color ForegroundColor
         {
-            get => this.halftone.TransparentBg;
-            set => this.halftone.TransparentBg = value;
+            get => this.halftone.ForegroundColor;
+            set => this.halftone.ForegroundColor = value;
+        }
+
+        public Color BackgroundColor
+        {
+            get => this.halftone.BackgroundColor;
+            set => this.halftone.BackgroundColor = value;
         }
 
         public Image CustomPattern

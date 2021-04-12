@@ -152,12 +152,12 @@
                 this.NotifyRoot(UINotification.EndModal);
             }
 
+            this.Hide();
+
             if (this.Features.HasFlag(UIWindowFeatures.Disposable) && this.Parent != null)
             {
                 this.Parent.RemoveNode(this);
             }
-
-            this.Hide();
         }
 
         protected override GraphicsPath GetClipPath(Graphics graphics, RectangleF rect)
@@ -170,6 +170,10 @@
             if (this.Visible)
             {
                 this.BringToFront();
+            }
+            else
+            {
+                this.Close();
             }
         }
 
@@ -203,14 +207,19 @@
                 case UIMouseEventType.Down:
                     this.BringToFront();
 
-                    var dragArea = this.ScreenRect;
+                    var dragArea = RectangleF.Empty;
 
-                    if (!this.Features.HasFlag(UIWindowFeatures.FullDraggable))
+                    if (this.Features.HasFlag(UIWindowFeatures.FullDraggable))
                     {
+                        dragArea = this.ScreenRect;
+                    }
+                    else if (this.Features.HasFlag(UIWindowFeatures.TitleBar))
+                    {
+                        dragArea = this.ScreenRect;
                         dragArea.Height = this.Style.WindowBarSize;
                     }
 
-                    if (IsMouseOver && dragArea.Contains(e.Location))
+                    if (IsMouseOver && !dragArea.IsEmpty && dragArea.Contains(e.Location))
                     {
                         this.StarDrag(e.Location);
                         this.dragging = true;
@@ -241,8 +250,8 @@
 
             if (!features.HasFlag(UIWindowFeatures.TitleBar))
             {
-                this.FeatureOff(UIWindowFeatures.ClosingBox)
-                    .FeatureOff(UIWindowFeatures.ExpandingBox);
+                this.features &= ~UIWindowFeatures.ClosingBox;
+                this.features &= ~UIWindowFeatures.ExpandingBox;
             }
 
             if (!features.HasFlag(UIWindowFeatures.ClosingBox))

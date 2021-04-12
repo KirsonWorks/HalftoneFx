@@ -24,6 +24,31 @@
 
         public Color Color { get; set; } = Color.Empty;
 
+        public byte R
+        {
+            get => this.Color.R;
+            set => this.Color = Color.FromArgb(this.A, value, this.G, this.B);
+        }
+
+        public byte G
+        {
+            get => this.Color.G;
+            set => this.Color = Color.FromArgb(this.A, this.R, value, this.B);
+        }
+
+        public byte B
+        {
+            get => this.Color.B;
+            set => this.Color = Color.FromArgb(this.A, this.R, this.G, value);
+        }
+
+        public byte A
+        {
+            get => this.Color.A;
+            set => this.Color = Color.FromArgb(value, this.R, this.G, this.B);
+        }
+
+
         protected override void DoRender(Graphics graphics)
         {
             var rect = this.ScreenRect;
@@ -34,15 +59,16 @@
                 graphics.DrawRect(rect, background, radius);
             }
 
-            if (!Color.IsEmpty)
+            if (!this.Color.IsEmpty)
             {
-                var r = Rectangle.Round(rect);
-                var rgb = Color.FromArgb(255, this.Color);
-
-                using (var gradient = new LinearGradientBrush(r, rgb, this.Color, LinearGradientMode.Vertical))
+                using (var gradient = new SolidBrush(this.Color))
                 {
                     graphics.DrawRect(rect, gradient, radius);
                 }
+
+                var mixed = Color.White.Blend(this.Color, this.Color.A / 255.0f);
+                var textColor = mixed.GetLuminance() >= 0.65 ? Color.Black : Color.White;
+                graphics.DrawText(rect, this.Fonts.Default, textColor, UIAlign.Center, false, false, $"#{Color.ToArgb():X8}");
             }
 
             var stateColor = this.GetStateColor();

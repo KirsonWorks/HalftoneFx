@@ -127,6 +127,11 @@
             return NewNode<UIPictureBox>(parent);
         }
 
+        public static UIColorBox NewColorBox(this UIControl parent)
+        {
+            return NewNode<UIColorBox>(parent);
+        }
+
         public static UIPopupMenu NewPopupMenu(this UIControl parent,
             IEnumerable<UIPopupMenuItem> items = null)
         {

@@ -64,6 +64,12 @@
         public void ValueForCellScale(float value) =>
             this.sliderCellScale.Value = value;
 
+        public void ValueForFgColor(Color value) =>
+            this.colorBoxForeground.Color = value;
+
+        public void ValueForBgColor(Color value) =>
+            this.colorBoxBackground.Color = value;
+
         public void SetUp()
         {
             this.ValueForEnabled(this.Presenter.HalftoneEnabled);
@@ -72,6 +78,8 @@
             this.ValueForShapeSizeBy(this.Presenter.ShapeSizeBy);
             this.ValueForCellSize(this.Presenter.CellSize);
             this.ValueForCellScale(this.Presenter.CellScale);
+            this.ValueForFgColor(this.Presenter.Foreground);
+            this.ValueForBgColor(this.Presenter.Background);
         }
 
         protected override void BuildLayout(UILayoutBuilder builder)
@@ -122,10 +130,12 @@
                 .Label("FOREGROUND")
                 .Add<UIColorBox>()
                 .Ref(ref colorBoxForeground)
+                .Click(this.OnFgColorClick)
 
                 .Label("BACKGROUND")
                 .Add<UIColorBox>()
-                .Ref(ref colorBoxBackground);
+                .Ref(ref colorBoxBackground)
+                .Click(this.OnBgColorClick);
         }
         private void OnHalftoneEnabledChanged(object sender, EventArgs e)
         {
@@ -171,6 +181,38 @@
         private void OnClearPatternClick(object sender, EventArgs e)
         {
             this.Presenter.ClearPattern();
+        }
+
+        private void OnFgColorClick(object sender, EventArgs e)
+        {
+            if (this.Container.Root is UIManager manager)
+            {
+                var builder = manager.NewLayoutBuilder();
+                var picker = new UIPopupColorPicker(builder, this.colorBoxForeground.Color);
+                picker.Popup((e as UIMouseEventArgs).Location);
+
+                picker.OnClose += (s, ev) =>
+                {
+                    this.colorBoxForeground.Color = picker.Color;
+                    this.Presenter.Foreground = picker.Color;
+                };
+            }
+        }
+
+        private void OnBgColorClick(object sender, EventArgs e)
+        {
+            if (this.Container.Root is UIManager manager)
+            {
+                var builder = manager.NewLayoutBuilder();
+                var picker = new UIPopupColorPicker(builder, this.colorBoxBackground.Color);
+                picker.Popup((e as UIMouseEventArgs).Location);
+
+                picker.OnClose += (s, ev) =>
+                {
+                    this.colorBoxBackground.Color = picker.Color;
+                    this.Presenter.Background = picker.Color;
+                };
+            }
         }
     }
 }

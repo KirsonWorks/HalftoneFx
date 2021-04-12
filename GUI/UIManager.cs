@@ -28,6 +28,11 @@
 
         public UILayoutOptions LayoutOptions { get; set; } = UILayoutOptions.Default;
 
+        public UILayoutBuilder NewLayoutBuilder()
+        {
+            return new UILayoutBuilder(this);
+        }
+
         public virtual void Refresh()
         {
         }

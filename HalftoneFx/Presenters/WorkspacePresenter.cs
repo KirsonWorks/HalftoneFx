@@ -136,6 +136,18 @@
             set => this.image.CellScale = value;
         }
 
+        public Color Foreground
+        {
+            get => this.image.ForegroundColor;
+            set => this.image.ForegroundColor = value;
+        }
+
+        public Color Background
+        {
+            get => this.image.BackgroundColor;
+            set => this.image.BackgroundColor = value;
+        }
+
         public void LoadPicture(Image picture)
         {
             this.view.SetPicture(picture);

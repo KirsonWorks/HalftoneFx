@@ -83,7 +83,7 @@
 
         private void BuildLayout()
         {
-            var layoutBuilder = new UILayoutBuilder(this.ui);
+            var layoutBuilder = this.ui.NewLayoutBuilder();
 
             this.pictureBox = this.ui.NewPictureBox();
             this.pictureBox.SetLayoutPreset(UILayoutPreset.Wide);
