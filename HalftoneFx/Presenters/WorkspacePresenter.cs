@@ -90,60 +90,69 @@
 
         public Range<int> QuantizationRange => this.image.Quantization.GetRange();
 
-        public int Dithering
+        public int DitherMethod
         {
-            get => this.image.Dithering.Value;
-            set => this.image.Dithering.Value = value;
+            get => this.image.Palette.DitherMethod;
+            set => this.image.Palette.DitherMethod = value;
         }
 
-        public Range<int> DitheringRange => this.image.Dithering.GetRange();
+        public Range<int> DitherMethodRange =>
+            new Range<int>(0, this.image.Palette.DitherMethodMax);
+
+        public int DitherAmount
+        {
+            get => (int)(this.image.Palette.DitherAmount * this.DitherAmountRange.MaxValue);
+            set => this.image.Palette.DitherAmount = (float)value / this.DitherAmountRange.MaxValue;
+        }
+
+        public Range<int> DitherAmountRange = new Range<int>(0, 100);
 
         public bool HalftoneEnabled
         {
-            get => this.image.HalftoneEnabled;
-            set => this.image.HalftoneEnabled = value; 
+            get => this.image.Halftone.Enabled;
+            set => this.image.Halftone.Enabled = value; 
         }
 
         public int GridType
         {
-            get => this.image.GridType;
-            set => this.image.GridType = value;
+            get => this.image.Halftone.GridType;
+            set => this.image.Halftone.GridType = value;
         }
 
         public int ShapeType
         {
-            get => this.image.ShapeType;
-            set => this.image.ShapeType = value;
+            get => this.image.Halftone.ShapeType;
+            set => this.image.Halftone.ShapeType = value;
         }
 
         public int ShapeSizeBy
         {
-            get => this.image.ShapeSizeBy;
-            set => this.image.ShapeSizeBy = value;
+            get => this.image.Halftone.ShapeSizeBy;
+            set => this.image.Halftone.ShapeSizeBy = value;
         }
 
         public int CellSize
         {
-            get => this.image.CellSize;
-            set => this.image.CellSize = value;
+            get => this.image.Halftone.CellSize;
+            set => this.image.Halftone.CellSize = value;
         }
 
         public float CellScale
         {
-            get => this.image.CellScale;
-            set => this.image.CellScale = value;
+            get => this.image.Halftone.CellScale;
+            set => this.image.Halftone.CellScale = value;
         }
 
         public Color Foreground
         {
-            get => this.image.ForegroundColor;
-            set => this.image.ForegroundColor = value;
+            get => this.image.Halftone.ForegroundColor;
+            set => this.image.Halftone.ForegroundColor = value;
         }
 
         public Color Background
         {
-            get => this.image.BackgroundColor;
-            set => this.image.BackgroundColor = value;
+            get => this.image.Halftone.BackgroundColor;
+            set => this.image.Halftone.BackgroundColor = value;
         }
 
         public void LoadPicture(Image picture)
@@ -185,7 +194,7 @@
                     .Resize(64, 64, InterpolationMode.High);
 
                 this.view.SetPattern(pattern);
-                this.image.CustomPattern = new Bitmap(pattern);
+                this.image.Halftone.CustomPattern = new Bitmap(pattern);
             }
             catch
             {
@@ -196,7 +205,7 @@
         public void ClearPattern()
         {
             this.view.SetPattern(null);
-            this.image.CustomPattern = null;
+            this.image.Halftone.CustomPattern = null;
         }
 
         private void OnProgress(object sender, ProgressChangedEventArgs e)

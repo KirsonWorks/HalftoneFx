@@ -31,8 +31,6 @@
     {
         private readonly ImageFilterComplex filters = new ImageFilterComplex();
 
-        private readonly HalftoneArtist halftone = new HalftoneArtist();
-
         private readonly ColorPalettes palettes;
 
         private CancellationTokenSource cancelationToken = null;
@@ -41,6 +39,8 @@
 
         public HalftoneGenerator(ColorPalettes palettes)
         {
+            this.Halftone = new HalftoneArtist();
+
             this.palettes = palettes;
 
             this.Smoothing = new ImageFilterGaussian5x5();
@@ -61,9 +61,6 @@
             this.Quantization = new ImageFilterQuantization();
             this.filters.Add(this.Quantization);
 
-            this.Dithering = new ImageFilterDithering();
-            this.filters.Add(this.Dithering);
-
             this.Palette = new ImageFilterPalette
             {
                 MaxValue = palettes != null ? palettes.Count : 0
@@ -72,7 +69,7 @@
             this.filters.Add(this.Palette);
 
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
-            this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
+            this.Halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
         }
 
         public event EventHandler OnFilterPropertyChanged = delegate { };
@@ -82,6 +79,8 @@
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
 
         public event EventHandler<ProgressChangedEventArgs> OnProgress = delegate { };
+
+        public HalftoneArtist Halftone { get; }
 
         public IImageFilter Smoothing { get; private set; }
 
@@ -95,9 +94,7 @@
 
         public IImageFilter Quantization { get; private set; }
 
-        public IImageFilter Dithering { get; private set; }
-
-        public IImageFilter Palette { get; private set; }
+        public ImageFilterPalette Palette { get; private set; }
 
         public int PaletteIndex
         {
@@ -114,65 +111,11 @@
                 if (value > 0)
                 {
                     var palette = this.palettes.GetByIndex(value - 1);
-                    (this.Palette as ImageFilterPalette).SetPalette(palette);
+                    this.Palette.SetPalette(palette);
                 }
 
                 this.Palette.Value = value;
             }
-        }
-
-        public int GridType
-        {
-            get => this.halftone.GridType;
-            set => this.halftone.GridType = value;
-        }
-
-        public int ShapeType
-        {
-            get => this.halftone.ShapeType;
-            set => this.halftone.ShapeType = value;
-        }
-
-        public int ShapeSizeBy
-        {
-            get => this.halftone.ShapeSizeBy;
-            set => this.halftone.ShapeSizeBy = value;
-        }
-            
-        public int CellSize
-        {
-            get => this.halftone.CellSize;
-            set => this.halftone.CellSize = value;
-        }
-
-        public float CellScale
-        {
-            get => this.halftone.CellScale;
-            set => this.halftone.CellScale = value;
-        }
-
-        public bool HalftoneEnabled
-        {
-            get => this.halftone.Enabled;
-            set => this.halftone.Enabled = value;
-        }
-
-        public Color ForegroundColor
-        {
-            get => this.halftone.ForegroundColor;
-            set => this.halftone.ForegroundColor = value;
-        }
-
-        public Color BackgroundColor
-        {
-            get => this.halftone.BackgroundColor;
-            set => this.halftone.BackgroundColor = value;
-        }
-
-        public Image CustomPattern
-        {
-            get => this.halftone.CustomPattern;
-            set => this.halftone.CustomPattern = value;
         }
 
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
@@ -196,7 +139,7 @@
 
             if (flags.HasFlag(ImageGenerationFlags.Halftoning))
             {
-                img = this.halftone.Generate(img, (percent) =>
+                img = this.Halftone.Generate(img, (percent) =>
                 {
                     this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
                 }, token);

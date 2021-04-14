@@ -69,6 +69,11 @@
             return value < from ? from : (value > to ? to : value);
         }
 
+        protected float Clamp(float value, float from, float to)
+        {
+            return value < from ? from : (value > to ? to : value);
+        }
+
         protected byte ClampByte(int value)
         {
             return (byte)this.Clamp(value, byte.MinValue, byte.MaxValue);

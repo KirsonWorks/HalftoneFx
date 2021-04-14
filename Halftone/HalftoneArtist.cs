@@ -128,7 +128,7 @@
                     var cell = grid.Current;
                     var xPixel = Math.Min(cell.X + halfSize, width - 1);
                     var yPixel = Math.Min(cell.Y + halfSize, height - 1);
-                    var color = image.GetPixel(cell.X, cell.Y);
+                    var color = image.GetPixel(xPixel, yPixel);
                     
                     if (color.A != 0)
                     {
