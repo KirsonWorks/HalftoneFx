@@ -2,11 +2,11 @@
 {
     using System;
 
-    public class BayerMatrix
+    public class BayerMatrix : ICloneable
     {
         private readonly int dimension;
 
-        private readonly byte[] matrix;
+        private byte[] matrix;
 
         public BayerMatrix(int n)
         {
@@ -42,6 +42,13 @@
                 var index = (x % this.dimension) + (y % this.dimension * this.dimension);
                 return (index >= 0 && index < this.matrix.Length) ? this.matrix[index] : (byte)0;
             }
+        }
+
+        public object Clone()
+        {
+            var clone = (BayerMatrix)this.MemberwiseClone();
+            this.matrix.CopyTo(clone.matrix, 0);
+            return clone;
         }
     }
 }

@@ -54,7 +54,7 @@
                 return image.Resize((int)(size * aspect), size, mode);
             }
 
-            return new Bitmap(image);
+            return (Bitmap)image;
         }
 
         public static Bitmap Downsampling(this Image image, int level)

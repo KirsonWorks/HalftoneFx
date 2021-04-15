@@ -123,7 +123,7 @@
             var parallelOpt = new ParallelOptions
             {
                 CancellationToken = token,
-                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount),
+                MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
             var img = new Bitmap(source);

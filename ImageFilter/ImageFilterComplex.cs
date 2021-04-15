@@ -6,7 +6,7 @@
 
     public class ImageFilterComplex : IImageFilter
     {
-        private readonly List<IImageFilter> filters;
+        private List<IImageFilter> filters;
 
         private IList<IImageFilter> activeFilters = new List<IImageFilter>();
 
@@ -69,6 +69,19 @@
         private void DoFilterValueChanged(object sender, EventArgs e)
         {
             this.OnPropertyChanged?.Invoke(sender, e);
+        }
+
+        public IImageFilter Clone()
+        {
+            var clone = (ImageFilterComplex)this.MemberwiseClone();
+            clone.filters = new List<IImageFilter>();
+
+            for (var i = 0; i < this.filters.Count; i++)
+            {
+                clone.Add(this.filters[i].Clone());
+            }
+
+            return clone;
         }
     }
 }

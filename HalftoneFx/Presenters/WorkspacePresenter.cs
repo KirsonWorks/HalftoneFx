@@ -221,7 +221,6 @@
             }
 
             this.view.UpdatePicture(e.Image);
-            GC.Collect();
         }
 
         private void OnThumbnailAvailable(object sender, GenerateDoneEventArgs e)

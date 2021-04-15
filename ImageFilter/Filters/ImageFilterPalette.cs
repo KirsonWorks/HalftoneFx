@@ -12,11 +12,7 @@
 
         private int ditherMethod = 0;
 
-        private bool isPaletteChanged;
-
         private BayerMatrix matrix = new BayerMatrix(0);
-
-        private IEnumerable<Color> newPalette;
 
         private Color[] palette = new[] { Color.Black, Color.White };
 
@@ -68,28 +64,22 @@
 
         public void SetPalette(IEnumerable<Color> palette)
         {
-            this.newPalette = palette ?? throw new ArgumentNullException(nameof(palette));
-            this.isPaletteChanged = true;
+            if (palette == null)
+            {
+                throw new ArgumentNullException(nameof(palette));
+            }
+
+            this.palette = palette.ToArray();
         }
 
         public override bool HasEffect() => this.Value > 0;
-
-        public override void Prepare()
-        {
-            if (this.isPaletteChanged)
-            {
-                // need to use mutex.
-                this.palette = this.newPalette.ToArray();
-                this.isPaletteChanged = false;
-            }
-        }
 
         public override void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
             var index = 0;
             int maxDistance = int.MaxValue;
 
-            if (this.ditherAmount > float.Epsilon)
+            if (this.DitherMethod > 0 && this.ditherAmount > float.Epsilon)
             {
                 var d = (byte)(this.matrix[x, y] * this.ditherAmount);
                 r = this.ClampByte(r + d);
@@ -122,6 +112,13 @@
             r = color.R;
             g = color.G;
             b = color.B;
+        }
+
+        public override IImageFilter Clone()
+        {
+            var clone = (ImageFilterPalette)base.Clone();
+            clone.matrix = (BayerMatrix)this.matrix.Clone();
+            return clone;
         }
     }
 }
