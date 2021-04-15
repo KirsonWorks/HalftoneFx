@@ -13,5 +13,10 @@
         public virtual void RGB(ref byte r, ref byte g, ref byte b, byte[] kernel, int x, int y)
         {
         }
+
+        public virtual IImageFilter Clone()
+        {
+            return (IImageFilter)this.MemberwiseClone();
+        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿namespace Halftone
 {
-    using Common;
-
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -12,9 +10,6 @@
         None,
         Brightness,
         BrightnessInv,
-        Dithering2x2,
-        Dithering4x4,
-        Dithering8x8,
         Alpha,
         Max
     }
@@ -31,9 +26,11 @@
 
         private float cellScale = 1.0f;
 
-        private bool enabled = true;
+        private bool enabled = false;
 
-        private bool transparentBg = true;
+        private Color fgColor = Color.FromArgb(0, Color.White);
+
+        private Color bgColor = Color.FromArgb(0, Color.Black);
 
         private Image customPattern;
 
@@ -42,112 +39,55 @@
         public int GridType
         {
             get => this.gridType;
-
-            set
-            {
-                if (this.gridType != value)
-                {
-                    this.gridType = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref gridType, value);
         }
 
         public int ShapeType
         {
             get => this.shapeType;
-
-            set
-            {
-                if (this.shapeType != value)
-                {
-                    this.shapeType = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref shapeType, value);
         }
 
         public int ShapeSizeBy
         {
             get => this.shapeSizeBy;
-
-            set
-            {
-                if (this.shapeSizeBy != value)
-                {
-                    this.shapeSizeBy = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref shapeSizeBy, value);
         }
 
         public int CellSize
         {
             get => this.cellSize;
-
-            set
-            {
-                if (this.cellSize != value)
-                {
-                    this.cellSize = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref cellSize, value);
         }
 
         public float CellScale
         {
             get => this.cellScale;
-            
-            set
-            {
-                var val = Math.Max(0, value);
-
-                if (this.cellScale != val)
-                {
-                    this.cellScale = val;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref cellScale, Math.Max(0, value));
         }
 
         public bool Enabled
         {
             get => this.enabled;
-
-            set
-            {
-                if (this.enabled != value)
-                {
-                    this.enabled = value;
-                    this.DoPropertyChanged();
-                }
-            }
+            set => this.DoPropertyChanged(ref enabled, value);
         }
 
-        public bool TransparentBg
+        public Color ForegroundColor
         {
-            get => this.transparentBg;
+            get => this.fgColor;
+            set => this.DoPropertyChanged(ref fgColor, value);
+        }
 
-            set
-            {
-                if (this.transparentBg != value)
-                {
-                    this.transparentBg = value;
-                    this.DoPropertyChanged();
-                }
-            }
+        public Color BackgroundColor
+        {
+            get => this.bgColor;
+            set => this.DoPropertyChanged(ref bgColor, value);
         }
 
         public Image CustomPattern
         {
             get => this.customPattern;
-
-            set
-            {
-                this.customPattern = value;
-                this.DoPropertyChanged();
-            }
+            set => this.DoPropertyChanged(ref customPattern, value);
         }
 
         public Bitmap Generate(Bitmap image, Action<float> progress, CancellationToken token)
@@ -160,29 +100,21 @@
 
             var width = image.Width;
             var height = image.Height;
-            var bayer = CreateBayerMatrix();
             var result = new Bitmap(width, height);
             var halfSize =  (int)Math.Ceiling((float)this.CellSize / 2);
             int shapeSize = (int)(this.CellSize * this.CellScale);
             var shapeSizing = (HalftoneShapeSizeBy)this.ShapeSizeBy;
             var grid = GridPatternFactory.GetPattern((HalftoneGridType)this.gridType, width, height, this.cellSize);
 
-            IShapePattern pattern = this.customPattern != null ? 
-                    new ShapePatternCustom(this.CustomPattern) :
+            IShapePattern pattern = this.customPattern != null ?
+                    new ShapePatternCustom(this.customPattern) :
                     ShapePatternFactory.GetPattern((HalftoneShapeType)this.shapeType);
-            
+
             using (var graphics = Graphics.FromImage(result))
             {
-                if (!this.transparentBg)
+                if (!this.bgColor.IsEmpty && this.bgColor.A > 0)
                 {
-                    if (shapeSizing == HalftoneShapeSizeBy.BrightnessInv)
-                    {
-                        graphics.Clear(Color.White);
-                    }
-                    else
-                    {
-                        graphics.Clear(Color.Black);
-                    }
+                    graphics.Clear(this.bgColor);
                 }
 
                 graphics.SmoothingMode = pattern.AntialiasingRequired() ? 
@@ -197,7 +129,7 @@
                     var xPixel = Math.Min(cell.X + halfSize, width - 1);
                     var yPixel = Math.Min(cell.Y + halfSize, height - 1);
                     var color = image.GetPixel(xPixel, yPixel);
-
+                    
                     if (color.A != 0)
                     {
                         var scale = 1.0f;
@@ -215,20 +147,18 @@
                             case HalftoneShapeSizeBy.Alpha:
                                 scale = (float)color.A / 255.0f;
                                 break;
-
-                            case HalftoneShapeSizeBy.Dithering2x2:
-                            case HalftoneShapeSizeBy.Dithering4x4:
-                            case HalftoneShapeSizeBy.Dithering8x8:
-                                var mid = (color.R + color.B + color.G) / 3;
-                                scale = mid > bayer[cell.X, cell.Y] ? mid / 255.0f : 0.0f;
-                                break;
                         }
 
                         if (scale > float.Epsilon)
                         {
                             var size = shapeSize * scale;
-                            var offset = ((float)cellSize / 2) - (size / 2);
+                            var offset = ((float)cellSize - size) / 2;
                             var rect = new RectangleF(cell.X + offset, cell.Y + offset, size, size);
+
+                            if (!this.fgColor.IsEmpty && this.fgColor.A > 0)
+                            {
+                                color = this.fgColor;
+                            }
 
                             pattern.Draw(graphics, rect, color);
                         }
@@ -246,26 +176,12 @@
             return result;
         }
 
-        private void DoPropertyChanged()
+        private void DoPropertyChanged<T>(ref T obj, T value)
         {
-            this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private BayerMatrix CreateBayerMatrix()
-        {
-            switch ((HalftoneShapeSizeBy)this.ShapeSizeBy)
+            if (obj == null || !obj.Equals(value))
             {
-                case HalftoneShapeSizeBy.Dithering2x2:
-                    return new BayerMatrix(1);
-
-                case HalftoneShapeSizeBy.Dithering4x4:
-                    return new BayerMatrix(2);
-  
-                case HalftoneShapeSizeBy.Dithering8x8:
-                    return new BayerMatrix(3);
-
-                default:
-                    return new BayerMatrix(0);
+                obj = value;
+                this.OnPropertyChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }

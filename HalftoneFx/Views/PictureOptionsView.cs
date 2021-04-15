@@ -4,13 +4,14 @@
     using KWUI.BaseControls;
     using KWUI.Controls;
 
+    using HalftoneFx.UI;
     using HalftoneFx.Helpers;
     using HalftoneFx.Presenters;
-    using HalftoneFx.UI;
-
+    
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Collections.Generic;
 
     public class PictureOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
@@ -30,7 +31,11 @@
 
         private UISlider sliderQuantization;
 
-        private UISlider sliderDithering;
+        private UISlider sliderPalette;
+
+        private UISlider sliderDitherMethod;
+
+        private UISlider sliderDitherAmount;
 
         private UIProgressBar progress;
 
@@ -39,7 +44,8 @@
         {
             this.Container.Caption = "PICTURE";
             this.Container.CustomColor("WindowCaption", Color.Gold);
-            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.FeatureOff(UIWindowFeatures.ClosingBox);
+            this.Container.FeatureOn(UIWindowFeatures.ExpandingBox);
             this.Container.Show();
         }
 
@@ -76,16 +82,34 @@
         public void ValueForQuantization(int value) =>
             this.sliderQuantization.Value = value;
 
-        public void ValueForDithering(int value) =>
-            this.sliderDithering.Value = value;
+        public void ValueForPalette(int value)
+        {
+            this.sliderPalette.Value = value;
+            this.sliderDitherMethod.Enabled = this.sliderDitherAmount.Enabled = value > 0;
+        }
+
+        public void ValueForDitherMethod(int value) =>
+            this.sliderDitherMethod.Value = value;
+
+        public void ValueForDitherAmount(int value) =>
+            this.sliderDitherAmount.Value = value;
+
+        public void LookupForPalette(IEnumerable<string> names)
+        {
+            var nameList = new List<string> { "None" };
+            nameList.AddRange(names);
+            this.sliderPalette.Lookup = nameList.ToArray();
+        }
 
         public void SetUp()
         {
+            this.sliderPalette.SetRange(this.Presenter.PaletteRange);
             this.sliderBrightness.SetRange(this.Presenter.BrightnessRange);
             this.sliderContrast.SetRange(this.Presenter.ContrastRange);
             this.sliderSaturation.SetRange(this.Presenter.SaturationRange);
             this.sliderQuantization.SetRange(this.Presenter.QuantizationRange);
-            this.sliderDithering.SetRange(this.Presenter.DitheringRange);
+            this.sliderDitherMethod.SetRange(this.Presenter.DitherMethodRange);
+            this.sliderDitherAmount.SetRange(this.Presenter.DitherAmountRange);
 
             this.ValueForSmoothing(this.Presenter.Smoothing);
             this.ValueForNegative(this.Presenter.Negative);
@@ -93,61 +117,67 @@
             this.ValueForContrast(this.Presenter.Contrast);
             this.ValueForSaturation(this.Presenter.Saturation);
             this.ValueForQuantization(this.Presenter.Quantization);
-            this.ValueForDithering(this.Presenter.Dithering);
+            this.ValueForDitherMethod(this.Presenter.DitherMethod);
+            this.ValueForDitherAmount(this.Presenter.DitherAmount);
+
+            this.ValueForPalette(this.Presenter.PaletteIndex);
+            this.LookupForPalette(this.Presenter.Palettes.GetNames());
         }
 
         protected override void BuildLayout(UILayoutBuilder builder)
         {
             builder
                 .Button("LOAD")
-                .Hint("Load picture from a file")
                 .Click(this.OnLoadClick)
 
                 .SameLine()
                 .Button("SAVE")
-                .Hint("Save picture to a file")
                 .Click(this.OnSaveClick)
 
                 .CheckBox("SMOOTHING")
                 .Ref(ref checkBoxSmoothing)
-                .Hint("On/Off Smoothing filter")
                 .Changed(this.OnSmoothingChanged)
 
                 .CheckBox("NEGATIVE")
                 .Ref(ref checkBoxNegative)
-                .Hint("On/Off Negative filter")
                 .Changed(this.OnNegativeChanged)
 
                 .Label("BRIGHTNESS")
                 .SliderInt(0, 0, 0, 1, flags: UIRangeTextFlags.PlusSign)
                 .Ref(ref sliderBrightness)
-                .Hint("Brightness adjusting")
                 .Changing(this.OnBrightnessChanging)
 
                 .Label("CONTRAST")
                 .SliderInt(0, 0, 0, 1, flags: UIRangeTextFlags.PlusSign)
                 .Ref(ref sliderContrast)
-                .Hint("Contrast adjusting")
                 .Changing(this.OnContrastChanging)
 
                 .Label("SATURATION")
                 .SliderInt(100, 0, 100, 1)
                 .TextFormat("{0}%")
                 .Ref(ref sliderSaturation)
-                .Hint("Saturation adjusting")
+
                 .Changing(this.OnSaturationChanging)
 
                 .Label("QUANTIZATION")
                 .SliderInt(0, 0, 0, 1)
                 .Ref(ref sliderQuantization)
-                .Hint("Quantization adjusting")
                 .Changing(this.OnQuantizationChanging)
 
-                .Label("DITHERING")
-                .Slider(0, new [] { "None", "2x2", "4x4", "8x8" })
-                .Ref(ref sliderDithering)
-                .Hint("Dithering effect")
-                .Changing(this.OnDitheringChanging)
+                .Label("PALETTE")
+                .Slider(0, new[] { "None" })
+                .Ref(ref sliderPalette)
+                .Changing(this.OnPaletteChanging)
+
+                .Label("DITHER METHOD")
+                .Slider(0, new [] { "None", "Bayer 2x2", "Bayer 4x4", "Bayer 8x8" })
+                .Ref(ref sliderDitherMethod)
+                .Changing(this.OnDitherMethodChanging)
+
+                .Label("DITHER AMOUNT")
+                .SliderInt(0, 0, 100, 1)
+                .Ref(ref sliderDitherAmount)
+                .Changing(this.OnDitherAmountChanging)
 
                 .Label("SIZE: 0x0")
                 .Ref(ref labelSize)
@@ -176,10 +206,18 @@
 
         private void OnQuantizationChanging(object sender, EventArgs e) =>
             this.Presenter.Quantization = (int)this.sliderQuantization.Value;
+        private void OnPaletteChanging(object sender, EventArgs e)
+        {
+            var value = (int)this.sliderPalette.Value;
+            this.sliderDitherMethod.Enabled = this.sliderDitherAmount.Enabled = value > 0;
+            this.Presenter.PaletteIndex = value;
+        }
 
-        private void OnDitheringChanging(object sender, EventArgs e) => 
-            this.Presenter.Dithering = (int)this.sliderDithering.Value;
-        
+        private void OnDitherMethodChanging(object sender, EventArgs e) => 
+            this.Presenter.DitherMethod = (int)this.sliderDitherMethod.Value;
+
+        private void OnDitherAmountChanging(object sender, EventArgs e) =>
+            this.Presenter.DitherAmount = (int)this.sliderDitherAmount.Value;
 
         private void OnLoadClick(object sender, EventArgs e)
         {
@@ -193,6 +231,7 @@
                 }
             }
         }
+
         private void OnSaveClick(object sender, EventArgs e)
         {
             using (var dialog = new SaveFileDialog())

@@ -55,6 +55,8 @@ namespace KWUI
 
         public Color SliderGrabActive { get; set; }
 
+        public Color SliderGrabDisabled { get; set; }
+
         public Color Line { get; set; }
 
         public Color StatusBar { get; set; }
@@ -208,7 +210,7 @@ namespace KWUI
             this.Colors.Frame = Color.FromArgb(255, 51, 64, 74);
             this.Colors.FrameHovered = Color.FromArgb(255, 31, 51, 71);
             this.Colors.FrameActive = Color.FromArgb(255, 23, 31, 36);
-            this.Colors.FrameDisabled = Color.Gray;
+            this.Colors.FrameDisabled = Color.FromArgb(255, 42, 50, 56);
 
             this.Colors.Border = Color.FromArgb(255, 20, 26, 31);
             this.Colors.BorderVolume = Color.FromArgb(10, 255, 255, 255);
@@ -218,7 +220,7 @@ namespace KWUI
             this.Colors.Button = Color.FromArgb(255, 51, 63, 73);
             this.Colors.ButtonHovered = Color.FromArgb(255, 71, 143, 255);
             this.Colors.ButtonActive = Color.FromArgb(255, 15, 135, 249);
-            this.Colors.ButtonDisabled = Color.Gray;
+            this.Colors.ButtonDisabled = Color.FromArgb(255, 42, 50, 56);
             this.Colors.ButtonChecked = Color.Goldenrod;
 
             this.Colors.CheckMark = Color.ForestGreen;
@@ -230,6 +232,7 @@ namespace KWUI
 
             this.Colors.SliderGrab = Color.FromArgb(255, 71, 143, 255);
             this.Colors.SliderGrabActive = Color.Crimson;
+            this.Colors.SliderGrabDisabled = Color.FromArgb(83, 114, 162);
 
             this.Colors.ProgressBar = Color.Crimson;
             this.Colors.StatusBar = Color.Black;

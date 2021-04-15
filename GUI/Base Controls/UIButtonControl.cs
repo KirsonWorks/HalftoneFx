@@ -55,11 +55,11 @@
 
         internal void SetChecked(bool value)
         {
-            if (this.isChecked != value)
-            {
+            //if (this.isChecked != value)
+            //{
                 this.isChecked = value;
                 this.OnChanged?.Invoke(this, EventArgs.Empty);
-            }
+            //}
         }
 
         protected Color GetFgColor()

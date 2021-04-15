@@ -31,24 +31,45 @@
     {
         private readonly ImageFilterComplex filters = new ImageFilterComplex();
 
-        private readonly HalftoneArtist halftone = new HalftoneArtist();
+        private readonly ColorPalettes palettes;
 
         private CancellationTokenSource cancelationToken = null;
 
         private Task<Bitmap> task = null;
 
-        public HalftoneGenerator()
+        public HalftoneGenerator(ColorPalettes palettes)
         {
-            this.Smoothing = this.filters.Add("Smoothing", new ImageFilterGaussian5x5());
-            this.Negative = this.filters.Add("Negative", new ImageFilterNegative());
-            this.Brightness = this.filters.Add("Brightness", new ImageFilterBrightness());
-            this.Contrast = this.filters.Add("Contrast", new ImageFilterContrast());
-            this.Saturation = this.filters.Add("Saturation", new ImageFilterSaturation());
-            this.Quantization = this.filters.Add("Quantization", new ImageFilterQuantization());
-            this.Dithering = this.filters.Add("Dithering", new ImageFilterDithering());
-            
+            this.Halftone = new HalftoneArtist();
+
+            this.palettes = palettes;
+
+            this.Smoothing = new ImageFilterGaussian5x5();
+            this.filters.Add(this.Smoothing);
+
+            this.Negative = new ImageFilterNegative();
+            this.filters.Add(this.Negative);
+
+            this.Brightness = new ImageFilterBrightness();
+            this.filters.Add(this.Brightness);
+
+            this.Contrast = new ImageFilterContrast();
+            this.filters.Add(this.Contrast);
+
+            this.Saturation = new ImageFilterSaturation();
+            this.filters.Add(this.Saturation);
+
+            this.Quantization = new ImageFilterQuantization();
+            this.filters.Add(this.Quantization);
+
+            this.Palette = new ImageFilterPalette
+            {
+                MaxValue = palettes != null ? palettes.Count : 0
+            };
+
+            this.filters.Add(this.Palette);
+
             this.filters.OnPropertyChanged += (s, e) => this.OnFilterPropertyChanged(s, e);
-            this.halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
+            this.Halftone.OnPropertyChanged += (s, e) => this.OnHalftonePropertyChanged(s, e);
         }
 
         public event EventHandler OnFilterPropertyChanged = delegate { };
@@ -58,6 +79,8 @@
         public event EventHandler<GenerateDoneEventArgs> OnImageAvailable = delegate { };
 
         public event EventHandler<ProgressChangedEventArgs> OnProgress = delegate { };
+
+        public HalftoneArtist Halftone { get; }
 
         public IImageFilter Smoothing { get; private set; }
 
@@ -71,54 +94,28 @@
 
         public IImageFilter Quantization { get; private set; }
 
-        public IImageFilter Dithering { get; private set; }
+        public ImageFilterPalette Palette { get; private set; }
 
-        public int GridType
+        public int PaletteIndex
         {
-            get => this.halftone.GridType;
-            set => this.halftone.GridType = value;
-        }
+            get => this.Palette.Value;
 
-        public int ShapeType
-        {
-            get => this.halftone.ShapeType;
-            set => this.halftone.ShapeType = value;
-        }
+            set
+            {
+                if (this.palettes == null)
+                {
+                    this.Palette.Value = 0;
+                    return;
+                }
 
-        public int ShapeSizeBy
-        {
-            get => this.halftone.ShapeSizeBy;
-            set => this.halftone.ShapeSizeBy = value;
-        }
-            
-        public int CellSize
-        {
-            get => this.halftone.CellSize;
-            set => this.halftone.CellSize = value;
-        }
+                if (value > 0)
+                {
+                    var palette = this.palettes.GetByIndex(value - 1);
+                    this.Palette.SetPalette(palette);
+                }
 
-        public float CellScale
-        {
-            get => this.halftone.CellScale;
-            set => this.halftone.CellScale = value;
-        }
-
-        public bool HalftoneEnabled
-        {
-            get => this.halftone.Enabled;
-            set => this.halftone.Enabled = value;
-        }
-
-        public bool TransparentBg
-        {
-            get => this.halftone.TransparentBg;
-            set => this.halftone.TransparentBg = value;
-        }
-
-        public Image CustomPattern
-        {
-            get => this.halftone.CustomPattern;
-            set => this.halftone.CustomPattern = value;
+                this.Palette.Value = value;
+            }
         }
 
         public Bitmap Generate(Bitmap source, ImageGenerationFlags flags, CancellationToken token)
@@ -126,7 +123,7 @@
             var parallelOpt = new ParallelOptions
             {
                 CancellationToken = token,
-                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount),
+                MaxDegreeOfParallelism = Environment.ProcessorCount,
             };
 
             var img = new Bitmap(source);
@@ -142,7 +139,7 @@
 
             if (flags.HasFlag(ImageGenerationFlags.Halftoning))
             {
-                img = this.halftone.Generate(img, (percent) =>
+                img = this.Halftone.Generate(img, (percent) =>
                 {
                     this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
                 }, token);

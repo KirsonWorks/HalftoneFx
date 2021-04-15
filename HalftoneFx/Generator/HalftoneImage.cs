@@ -13,7 +13,8 @@ namespace HalftoneFx
 
         private Bitmap filtered, thumbnail;
 
-        public HalftoneImage()
+        public HalftoneImage(ColorPalettes palettes)
+            : base(palettes)
         {
             this.OnFilterPropertyChanged += async (s, e) =>
             {
@@ -35,9 +36,11 @@ namespace HalftoneFx
             set
             {
                 this.original?.Dispose();
-                this.original = new Bitmap(value);
-
                 this.filtered?.Dispose();
+
+                GC.Collect();
+
+                this.original = new Bitmap(value);
                 this.filtered = new Bitmap(value);
 
                 this.Thumbnail = this.original;
@@ -58,18 +61,14 @@ namespace HalftoneFx
             private set
             {
                 this.thumbnail?.Dispose();
-
-                if (this.ThumbnailSize > 0)
-                {
-                    this.thumbnail = value.Thumbnail(this.ThumbnailSize);
-                }
+                this.thumbnail = value.Thumbnail(this.ThumbnailSize);
             }
         }
 
         public int ThumbnailSize { get; set; } = 300;
 
-        private void GenerateThumbnail(ImageGenerationFlags flags)
-        {
+        private Image GenerateThumbnail(ImageGenerationFlags flags)
+        {   
             var newThumbnail = this.Generate(this.thumbnail, flags);
 
             this.OnThumbnailAvailable?.Invoke(this, new GenerateDoneEventArgs
@@ -77,21 +76,33 @@ namespace HalftoneFx
                 Flags = flags,
                 Image = newThumbnail,
             });
+
+            return newThumbnail;
         }
 
         private async Task GenerateFilteredAsync(int delay)
         {
-            this.GenerateThumbnail(ImageGenerationFlags.Filtering);
-
             try
             {
+                if (this.ThumbnailSize > 0)
+                {
+                    var newThumbnail = this.GenerateThumbnail(ImageGenerationFlags.Filtering);
+
+                    if (this.thumbnail == this.original)
+                    {
+                        this.filtered = new Bitmap(newThumbnail);
+                        await this.GenerateHalftoneAsync(100).ConfigureAwait(false);
+                        return;
+                    }
+                }
+
                 await this.GenerateAsync((Bitmap)this.original, ImageGenerationFlags.Filtering, delay)
                         .ContinueWith(async (task) =>
                         {
                             if (task.Result != null)
                             {
                                 this.filtered = task.Result;
-                                await this.GenerateHalftoneAsync(100);
+                                await this.GenerateHalftoneAsync(100).ConfigureAwait(false);
                             }
                         },
                         TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously)

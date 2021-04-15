@@ -28,10 +28,11 @@
 
             unsafe
             {
+                filter = filter.Clone();
                 var pixelFormat = image.PixelFormat;
                 var channels = Image.GetPixelFormatSize(pixelFormat) / 8;
                 var rect = new Rectangle(0, 0, image.Width, image.Height);
-                
+
                 var result = new Bitmap(image.Width, image.Height, pixelFormat);
                 var sourceBits = image.LockBits(rect, ImageLockMode.ReadOnly, pixelFormat);
                 var destBits = result.LockBits(rect, ImageLockMode.WriteOnly, pixelFormat);
@@ -51,7 +52,7 @@
 
                     int linesCompleted = 0;
 
-                    Parallel.For(0, height, options, (y) =>
+                    var rs = Parallel.For(0, height, options, (y) =>
                     {
                         byte* sourceLine = sourcePointer + y * stride;
                         byte* destLine = destPointer + y * stride;
@@ -59,16 +60,21 @@
 
                         for (var x = 0; x < widthInBytes; x += channels)
                         {
+                            if (options.CancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
                             for (var i = 0; i < kernelOffsets.Length; i++)
                             {
                                 var px = x + kernelOffsets[i].X * channels;
                                 var py = y + kernelOffsets[i].Y;
-                                
+
                                 px = Math.Min(Math.Max(0, px), widthInBytes - channels);
                                 py = Math.Min(Math.Max(0, py), height - 1);
 
                                 byte* line = sourcePointer + py * stride;
-                               
+
                                 kernel[i * 3] = line[px + 2];
                                 kernel[i * 3 + 1] = line[px + 1];
                                 kernel[i * 3 + 2] = line[px];
@@ -86,7 +92,7 @@
                             filter.RGB(ref destLine[x + 2], ref destLine[x + 1], ref destLine[x], kernel, x / channels, y);
                         }
 
-                        var part =  Math.Max(1, height / 10);
+                        var part = Math.Max(1, height / 10);
                         var count = Interlocked.Increment(ref linesCompleted);
 
                         if (count % part == 0)

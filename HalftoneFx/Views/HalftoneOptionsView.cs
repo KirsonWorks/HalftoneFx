@@ -9,6 +9,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Collections.Generic;
 
     public class HalftoneOptionsView : UILayoutContainer<UIWindow>, IView<WorkspacePresenter>
     {
@@ -35,7 +36,8 @@
         {
             this.Container.Caption = "HALFTONE";
             this.Container.CustomColor("WindowCaption", Color.Gold);
-            this.Container.Features |= UIWindowFeatures.ExpandingBox;
+            this.Container.FeatureOff(UIWindowFeatures.ClosingBox);
+            this.Container.FeatureOn(UIWindowFeatures.ExpandingBox);
             this.Container.Show();
         }
 
@@ -62,6 +64,12 @@
         public void ValueForCellScale(float value) =>
             this.sliderCellScale.Value = value;
 
+        public void ValueForFgColor(Color value) =>
+            this.colorBoxForeground.Color = value;
+
+        public void ValueForBgColor(Color value) =>
+            this.colorBoxBackground.Color = value;
+
         public void SetUp()
         {
             this.ValueForEnabled(this.Presenter.HalftoneEnabled);
@@ -70,6 +78,8 @@
             this.ValueForShapeSizeBy(this.Presenter.ShapeSizeBy);
             this.ValueForCellSize(this.Presenter.CellSize);
             this.ValueForCellScale(this.Presenter.CellScale);
+            this.ValueForFgColor(this.Presenter.Foreground);
+            this.ValueForBgColor(this.Presenter.Background);
         }
 
         protected override void BuildLayout(UILayoutBuilder builder)
@@ -102,7 +112,7 @@
                 .Ref(ref customPattern)
 
                 .Label("SIZE BY")
-                .Slider(0, new[] { "None", "Brightness", "Brightness Inv", "Dithering 2x2", "Dithering 4x4", "Dithering 8x8", "Alpha" })
+                .Slider(0, new[] { "None", "Brightness", "Brightness Inv", "Alpha" })
                 .Ref(ref sliderShapeSizeBy)
                 .Changing(this.OnShapeSizeByChanging)
 
@@ -120,14 +130,26 @@
                 .Label("FOREGROUND")
                 .Add<UIColorBox>()
                 .Ref(ref colorBoxForeground)
+                .Click(this.OnFgColorClick)
 
                 .Label("BACKGROUND")
                 .Add<UIColorBox>()
-                .Ref(ref colorBoxBackground);
+                .Ref(ref colorBoxBackground)
+                .Click(this.OnBgColorClick);
         }
-        private void OnHalftoneEnabledChanged(object sender, EventArgs e) => 
-            this.Presenter.HalftoneEnabled = this.checkBoxEnabled.Checked;
-        
+        private void OnHalftoneEnabledChanged(object sender, EventArgs e)
+        {
+            var @checked = this.checkBoxEnabled.Checked;
+            this.Presenter.HalftoneEnabled = @checked;
+
+            var dependents = new List<UIControl>();
+            dependents.AddRange(this.Container.GetChildren<UILabel>());
+            dependents.AddRange(this.Container.GetChildren<UISlider>());
+            dependents.AddRange(this.Container.GetChildren<UIButton>());
+            dependents.AddRange(this.Container.GetChildren<UIColorBox>());
+            dependents.ForEach(control => control.Enabled = @checked);
+        }
+
         private void OnGridTypeChanging(object sender, EventArgs e) =>
             this.Presenter.GridType = (int)this.sliderGridType.Value;
 
@@ -159,6 +181,38 @@
         private void OnClearPatternClick(object sender, EventArgs e)
         {
             this.Presenter.ClearPattern();
+        }
+
+        private void OnFgColorClick(object sender, EventArgs e)
+        {
+            if (this.Container.Root is UIManager manager)
+            {
+                var builder = manager.NewLayoutBuilder();
+                var picker = new UIPopupColorPicker(builder, this.colorBoxForeground.Color);
+                picker.Popup((e as UIMouseEventArgs).Location);
+
+                picker.OnClose += (s, ev) =>
+                {
+                    this.colorBoxForeground.Color = picker.Color;
+                    this.Presenter.Foreground = picker.Color;
+                };
+            }
+        }
+
+        private void OnBgColorClick(object sender, EventArgs e)
+        {
+            if (this.Container.Root is UIManager manager)
+            {
+                var builder = manager.NewLayoutBuilder();
+                var picker = new UIPopupColorPicker(builder, this.colorBoxBackground.Color);
+                picker.Popup((e as UIMouseEventArgs).Location);
+
+                picker.OnClose += (s, ev) =>
+                {
+                    this.colorBoxBackground.Color = picker.Color;
+                    this.Presenter.Background = picker.Color;
+                };
+            }
         }
     }
 }
