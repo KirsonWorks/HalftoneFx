@@ -3,14 +3,18 @@
     using KWUI.BaseControls;
     using KWUI.Helpers;
 
+    using System;
     using System.Drawing;
-    using System.Drawing.Drawing2D;
 
     public class UIColorBox : UIButtonControl
     {
         private static readonly int checkerSize = 4;
 
         private static Image checkeredTexture = null;
+
+        private Color color = Color.Empty;
+
+        private Color? defaultColor = null;
 
         public UIColorBox()
             : base()
@@ -22,7 +26,24 @@
             }
         }
 
-        public Color Color { get; set; } = Color.Empty;
+        public Color Color 
+        {
+            get => this.color;
+
+            set
+            {
+                if (this.color != value)
+                {
+                    if (this.defaultColor == null)
+                    {
+                        this.defaultColor = value;
+                    }
+
+                    this.color = value;
+                    this.DoChanged();
+                }
+            }
+        }
 
         public byte R
         {
@@ -80,6 +101,16 @@
 
             graphics.DrawBorder(rect, this.Style.Colors.Border, radius);
             graphics.DrawBorderVolume(rect, this.Style.Colors.BorderVolume, radius);
+        }
+
+        protected override void DoMouseInput(UIMouseEventArgs e)
+        {
+            if (e.EventType == UIMouseEventType.Up && e.Button == UIMouseButtons.Right)
+            {
+                this.Color = this.defaultColor ?? this.Color;
+            }
+
+            base.DoMouseInput(e);
         }
 
         private Color GetStateColor()

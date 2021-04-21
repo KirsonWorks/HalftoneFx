@@ -37,7 +37,7 @@
                 0x787878, 0x94e089, 0x7869c4, 0x9f9f9f);
 
             this.Create("Game Boy",
-                0x081820, 0x346856, 0x88c070, 0xe0f8d0);
+                0x081820, 0x346856, 0x88c070, 0xe0f8d0);           
 
             this.Create("Classic",
                 0x058789, 0x503d2e, 0xd54b1a, 0xe3a72f,

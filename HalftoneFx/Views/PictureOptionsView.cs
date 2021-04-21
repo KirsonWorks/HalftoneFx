@@ -64,35 +64,6 @@
         public void ValueForProgress(float value) =>
             this.progress.Value = value;
 
-        public void ValueForSmoothing(bool value) =>
-            this.checkBoxSmoothing.Checked = value;
-
-        public void ValueForNegative(bool value) =>
-            this.checkBoxNegative.Checked = value;
-
-        public void ValueForBrightness(int value) =>
-            this.sliderBrightness.Value = value;
-
-        public void ValueForContrast(int value) =>
-            this.sliderContrast.Value = value;
-
-        public void ValueForSaturation(int value) =>
-            this.sliderSaturation.Value = value;
-
-        public void ValueForQuantization(int value) =>
-            this.sliderQuantization.Value = value;
-
-        public void ValueForPalette(int value)
-        {
-            this.sliderPalette.Value = value;
-            this.sliderDitherMethod.Enabled = this.sliderDitherAmount.Enabled = value > 0;
-        }
-
-        public void ValueForDitherMethod(int value) =>
-            this.sliderDitherMethod.Value = value;
-
-        public void ValueForDitherAmount(int value) =>
-            this.sliderDitherAmount.Value = value;
 
         public void LookupForPalette(IEnumerable<string> names)
         {
@@ -111,16 +82,18 @@
             this.sliderDitherMethod.SetRange(this.Presenter.DitherMethodRange);
             this.sliderDitherAmount.SetRange(this.Presenter.DitherAmountRange);
 
-            this.ValueForSmoothing(this.Presenter.Smoothing);
-            this.ValueForNegative(this.Presenter.Negative);
-            this.ValueForBrightness(this.Presenter.Brightness);
-            this.ValueForContrast(this.Presenter.Contrast);
-            this.ValueForSaturation(this.Presenter.Saturation);
-            this.ValueForQuantization(this.Presenter.Quantization);
-            this.ValueForDitherMethod(this.Presenter.DitherMethod);
-            this.ValueForDitherAmount(this.Presenter.DitherAmount);
+            this.checkBoxSmoothing.Checked = this.Presenter.Smoothing;
+            this.checkBoxNegative.Checked = this.Presenter.Negative;
+            this.sliderBrightness.Value = this.Presenter.Brightness;
+            this.sliderContrast.Value = this.Presenter.Contrast;
+            this.sliderSaturation.Value = this.Presenter.Saturation;
+            this.sliderQuantization.Value = this.Presenter.Quantization;
+            this.sliderPalette.Value = this.Presenter.PaletteIndex;
+            this.sliderDitherMethod.Enabled = this.Presenter.PaletteIndex > 0;
+            this.sliderDitherMethod.Value = this.Presenter.DitherMethod;
+            this.sliderDitherAmount.Enabled = this.Presenter.DitherMethod > 0;
+            this.sliderDitherAmount.Value = this.Presenter.DitherAmount;
 
-            this.ValueForPalette(this.Presenter.PaletteIndex);
             this.LookupForPalette(this.Presenter.Palettes.GetNames());
         }
 
@@ -173,6 +146,7 @@
                 .Slider(0, new [] { "None", "Bayer 2x2", "Bayer 4x4", "Bayer 8x8" })
                 .Ref(ref sliderDitherMethod)
                 .Changing(this.OnDitherMethodChanging)
+                .EnabledChanged(this.OnDitherMethodEnabledChanged)
 
                 .Label("DITHER AMOUNT")
                 .SliderInt(0, 0, 100, 1)
@@ -209,12 +183,23 @@
         private void OnPaletteChanging(object sender, EventArgs e)
         {
             var value = (int)this.sliderPalette.Value;
-            this.sliderDitherMethod.Enabled = this.sliderDitherAmount.Enabled = value > 0;
+            this.sliderDitherMethod.Enabled = value > 0;
             this.Presenter.PaletteIndex = value;
         }
 
-        private void OnDitherMethodChanging(object sender, EventArgs e) => 
-            this.Presenter.DitherMethod = (int)this.sliderDitherMethod.Value;
+        private void OnDitherMethodChanging(object sender, EventArgs e)
+        {
+            var value = (int)this.sliderDitherMethod.Value;
+            this.sliderDitherAmount.Enabled = value > 0;
+            this.Presenter.DitherMethod = value;
+        }
+
+        private void OnDitherMethodEnabledChanged(object sender, EventArgs e)
+        {
+            var value = this.sliderDitherMethod.Value;
+            var enabled = this.sliderDitherMethod.Enabled;
+            this.sliderDitherAmount.Enabled = enabled && value > 0;
+        }
 
         private void OnDitherAmountChanging(object sender, EventArgs e) =>
             this.Presenter.DitherAmount = (int)this.sliderDitherAmount.Value;

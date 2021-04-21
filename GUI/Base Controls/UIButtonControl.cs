@@ -58,7 +58,7 @@
             //if (this.isChecked != value)
             //{
                 this.isChecked = value;
-                this.OnChanged?.Invoke(this, EventArgs.Empty);
+                this.DoChanged();
             //}
         }
 
@@ -129,6 +129,11 @@
         protected override void DoFree()
         {
             this.Group = null;
+        }
+
+        protected void DoChanged()
+        {
+            this.OnChanged.Invoke(this, EventArgs.Empty);
         }
     }
 }

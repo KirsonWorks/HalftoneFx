@@ -117,10 +117,10 @@
                     graphics.Clear(this.bgColor);
                 }
 
-                graphics.SmoothingMode = pattern.AntialiasingRequired() ? 
+                graphics.SmoothingMode = pattern.AntialiasingRequired() ?
                                             SmoothingMode.AntiAlias :
                                             SmoothingMode.HighSpeed;
-                
+
                 while (grid.MoveNext())
                 {
                     token.ThrowIfCancellationRequested();
@@ -168,7 +168,7 @@
 
                     if (grid.Position % part == 0)
                     {
-                        progress?.Invoke((float)grid.Position / grid.CellCount);
+                        progress?.Invoke((float)(grid.Position + 1) / grid.CellCount);
                     }
                 }
             }

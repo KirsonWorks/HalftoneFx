@@ -128,6 +128,18 @@
             return this;
         }
 
+        public UILayoutBuilder EnabledChanged(EventHandler handler)
+        {
+            this.Control.OnEnabledChanged += handler;
+            return this;
+        }
+
+        public UILayoutBuilder VisibleChanged(EventHandler handler)
+        {
+            this.Control.OnVisibleChanged += handler;
+            return this;
+        }
+
         public UILayoutBuilder Changing(EventHandler handler)
         {
             var ev = this.Control.GetType().GetEvent("OnChanging");

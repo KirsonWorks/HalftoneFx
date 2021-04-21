@@ -44,11 +44,21 @@
         { 
             get => this.imageControl.Image;
             
-            set 
+            set
             {
                 this.imageControl.Image = value;
-                this.toolZoom.OriginalSize = (value != null) ? value.Size : System.Drawing.Size.Empty;
+
+                if (this.ImageSize.IsEmpty)
+                {
+                    this.ImageSize = value.Size;
+                }
             }
+        }
+
+        public SizeF ImageSize
+        {
+            get => this.toolZoom.OriginalSize;
+            set => this.toolZoom.OriginalSize = value;
         }
 
         public float Scale => this.toolZoom.Scale;

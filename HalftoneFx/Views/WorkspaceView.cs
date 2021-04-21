@@ -49,6 +49,7 @@
         public void SetPicture(Image picture)
         {
             this.pictureBox.Image = picture;
+            this.pictureBox.ImageSize = picture.Size;
             this.pictureBox.OptimalView();
             this.pictureOptions.ValueForSize(picture.Size);
         }

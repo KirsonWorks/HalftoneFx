@@ -1,5 +1,6 @@
 ﻿namespace HalftoneFx
 {
+    using Common;
     using Halftone;
     using ImageFilter;
 
@@ -130,19 +131,12 @@
 
             if (flags.HasFlag(ImageGenerationFlags.Filtering))
             {
-                img = ImageFilterPass.GetFiltered(img, this.filters,
-                (percent) =>
-                {
-                    this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
-                }, parallelOpt);
+                img = ImageFilterPass.GetFiltered(img, this.filters, this.DoProgress, parallelOpt);
             }
 
             if (flags.HasFlag(ImageGenerationFlags.Halftoning))
             {
-                img = this.Halftone.Generate(img, (percent) =>
-                {
-                    this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
-                }, token);
+                img = this.Halftone.Generate(img, this.DoProgress, token);
             }
 
             return img;
@@ -196,6 +190,11 @@
                 }, token);
 
             return await task.ConfigureAwait(false);
+        }
+
+        private void DoProgress(float percent)
+        {
+            this.OnProgress.Invoke(this, new ProgressChangedEventArgs { Percent = percent });
         }
     }
 }

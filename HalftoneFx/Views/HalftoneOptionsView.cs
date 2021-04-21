@@ -43,43 +43,19 @@
 
         public WorkspacePresenter Presenter { get; set; }
 
-        public void ValueForEnabled(bool value) =>
-            this.checkBoxEnabled.Checked = value;
-
-        public void ValueForGridType(int value) =>
-            this.sliderGridType.Value = value;
-
-        public void ValueForShapeType(int value) =>
-            this.sliderShapeType.Value = value;
-
         public void ValueForCustomPattern(Image image) =>
             this.customPattern.Image = image ?? Properties.Resources.Imageholder;
 
-        public void ValueForShapeSizeBy(int value) =>
-            this.sliderShapeSizeBy.Value = value;
-
-        public void ValueForCellSize(int value) =>
-            this.sliderCellSize.Value = value;
-
-        public void ValueForCellScale(float value) =>
-            this.sliderCellScale.Value = value;
-
-        public void ValueForFgColor(Color value) =>
-            this.colorBoxForeground.Color = value;
-
-        public void ValueForBgColor(Color value) =>
-            this.colorBoxBackground.Color = value;
-
         public void SetUp()
         {
-            this.ValueForEnabled(this.Presenter.HalftoneEnabled);
-            this.ValueForGridType(this.Presenter.GridType);
-            this.ValueForShapeType(this.Presenter.ShapeType);
-            this.ValueForShapeSizeBy(this.Presenter.ShapeSizeBy);
-            this.ValueForCellSize(this.Presenter.CellSize);
-            this.ValueForCellScale(this.Presenter.CellScale);
-            this.ValueForFgColor(this.Presenter.Foreground);
-            this.ValueForBgColor(this.Presenter.Background);
+            this.checkBoxEnabled.Checked = this.Presenter.HalftoneEnabled;
+            this.sliderGridType.Value = this.Presenter.GridType;
+            this.sliderShapeType.Value = this.Presenter.ShapeType;
+            this.sliderShapeSizeBy.Value = this.Presenter.ShapeSizeBy;
+            this.sliderCellSize.Value = this.Presenter.CellSize;
+            this.sliderCellScale.Value = this.Presenter.CellScale;
+            this.colorBoxForeground.Color = this.Presenter.Foreground;
+            this.colorBoxBackground.Color = this.Presenter.Background;
         }
 
         protected override void BuildLayout(UILayoutBuilder builder)
@@ -117,7 +93,7 @@
                 .Changing(this.OnShapeSizeByChanging)
 
                 .Label("CELL SIZE")
-                .SliderInt(4, 2, 64, 1)
+                .SliderInt(4, 2, 32, 1)
                 .Ref(ref sliderCellSize)
                 .TextFormat("{0}px")
                 .Changing(this.OnCellSizeChanging)
@@ -131,12 +107,15 @@
                 .Add<UIColorBox>()
                 .Ref(ref colorBoxForeground)
                 .Click(this.OnFgColorClick)
+                .Changed(this.OnFgColorChanged)
 
                 .Label("BACKGROUND")
                 .Add<UIColorBox>()
                 .Ref(ref colorBoxBackground)
-                .Click(this.OnBgColorClick);
+                .Click(this.OnBgColorClick)
+                .Changed(this.OnBgColorChanged);
         }
+
         private void OnHalftoneEnabledChanged(object sender, EventArgs e)
         {
             var @checked = this.checkBoxEnabled.Checked;
@@ -183,6 +162,9 @@
             this.Presenter.ClearPattern();
         }
 
+        private void OnFgColorChanged(object sender, EventArgs e) =>
+            this.Presenter.Foreground = this.colorBoxForeground.Color;
+
         private void OnFgColorClick(object sender, EventArgs e)
         {
             if (this.Container.Root is UIManager manager)
@@ -194,10 +176,12 @@
                 picker.OnClose += (s, ev) =>
                 {
                     this.colorBoxForeground.Color = picker.Color;
-                    this.Presenter.Foreground = picker.Color;
                 };
             }
         }
+
+        private void OnBgColorChanged(object sender, EventArgs e) =>
+            this.Presenter.Background = this.colorBoxBackground.Color;
 
         private void OnBgColorClick(object sender, EventArgs e)
         {
@@ -210,7 +194,6 @@
                 picker.OnClose += (s, ev) =>
                 {
                     this.colorBoxBackground.Color = picker.Color;
-                    this.Presenter.Background = picker.Color;
                 };
             }
         }
